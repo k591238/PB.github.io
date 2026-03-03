@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Projects — WU CHENG-RU</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/global.css"/>
+  <style>
+    /* ── Projects 頁面：還原你之前做好的左側 sidebar + 作品網格 ── */
+
+    main {
+      padding-top: 60px;
+    }
+    @media (min-width: 800px) {
+      main {
+        padding-top: 0;
+        width: 80%;
+        margin: 0 auto;
+      }
+    }
+
+    .layout {
+      display: block;
+    }
+    .layout::after { content: ''; display: table; clear: both; }
+
+    /* ── 左側 Sidebar ── */
+    .sidebar {
+      display: none;
+    }
+    @media (min-width: 800px) {
+      .sidebar {
+        display: block;
+        float: left;
+        width: 200px;
+        padding-top: 40px;
+        position: sticky;
+        top: 40px;
+      }
+    }
+
+    .contact {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      margin-bottom: 1.5rem;
+    }
+    .contact a {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-size: 0.68rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .contact a:hover { color: var(--accent); }
+    .contact a svg {
+      width: 13px; height: 13px;
+      opacity: 0.45;
+      transition: opacity 0.2s;
+      flex-shrink: 0;
+    }
+    .contact a:hover svg { opacity: 1; }
+    .copyright {
+      font-size: 0.6rem;
+      color: #444;
+      letter-spacing: 1px;
+    }
+
+    /* ── 作品區域 ── */
+    .work_main {
+      padding: 2rem 5%;
+    }
+    @media (min-width: 800px) {
+      .work_main {
+        float: right;
+        width: calc(100% - 220px);
+        padding: 0 0 80px;
+      }
+    }
+
+    /* 頁面小標題 */
+    .page-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2rem;
+      padding-top: 0.5rem;
+      display: block;
+    }
+    @media (min-width: 800px) {
+      .page-label { display: none; } /* 桌面版 sidebar 已有識別，不重複 */
+    }
+
+    /* ── 作品網格 ── */
+    .works_grid {
+      font-size: 0; /* 消除 inline-block 間距 */
+    }
+
+    .work {
+      display: inline-block;
+      vertical-align: top;
+      width: 100%;
+      margin-bottom: 24px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: opacity 0.25s;
+    }
+    .work:hover { opacity: 0.82; }
+
+    @media (min-width: 800px) {
+      .work { width: 49.5%; }
+      .work:nth-child(odd)  { padding-right: 0.5%; }
+      .work:nth-child(even) { padding-left:  0.5%; }
+    }
+
+    /* 封面圖 */
+    .work_img {
+      width: 100%;
+      aspect-ratio: 8 / 5;
+      object-fit: cover;
+      display: block;
+      margin-bottom: 10px;
+      background: var(--surface);
+    }
+
+    /* 封面圖佔位（還沒有圖片時）*/
+    .work_img_placeholder {
+      width: 100%;
+      aspect-ratio: 8 / 5;
+      background: var(--surface);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      letter-spacing: 1px;
+      color: #2a2a2a;
+      transition: background 0.25s;
+    }
+    .work:hover .work_img_placeholder { background: #1c1c1c; }
+
+    /* 作品資訊 */
+    .work_inf {
+      font-size: 0.76rem;
+      letter-spacing: 0.04rem;
+      color: var(--text);
+      line-height: 1.1;
+      margin-bottom: 3px;
+    }
+    .work_inf2 {
+      font-size: 0.58rem;
+      letter-spacing: 0.05rem;
+      color: var(--muted);
+    }
+
+    /* 手機版顯示 / 桌面版與 .work_inf 相同，統一不做分開 */
+
+    /* 載入動畫 */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .work {
+      opacity: 0;
+      animation: fadeUp 0.5s ease both;
+    }
+    .work:nth-child(1) { animation-delay: 0.05s; }
+    .work:nth-child(2) { animation-delay: 0.12s; }
+    .work:nth-child(3) { animation-delay: 0.19s; }
+    .work:nth-child(4) { animation-delay: 0.26s; }
+    .work:nth-child(5) { animation-delay: 0.33s; }
+    .work:nth-child(6) { animation-delay: 0.40s; }
+
+    /* ── 手機版社群（頁尾上方）── */
+    .contact_mobile {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      padding: 2.5rem 5% 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .contact_mobile a {
+      font-size: 0.66rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .contact_mobile a:hover { color: var(--accent); }
+    @media (min-width: 800px) {
+      .contact_mobile { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ 手機選單 ══ -->
+  <div class="menu_mobile" id="menu_mobile">
+    <button class="menu_close" id="menu_close">✕</button>
+    <div class="menu_mobile_inner">
+      <ul class="menu_mobile_list">
+        <li><a href="index.html"    class="menu_link">HOME</a></li>
+        <li><a href="projects.html" class="menu_link active">PROJECTS</a></li>
+        <li><a href="about.html"    class="menu_link">ABOUT</a></li>
+      </ul>
+      <div class="menu_mobile_social">
+        <a href="https://www.instagram.com/pen_bit/" target="_blank" rel="noreferrer">Instagram</a>
+        <a href="mailto:k591238@gmail.com">Email</a>
+        <a href="https://www.youtube.com/@pen_bit" target="_blank" rel="noreferrer">YouTube</a>
+        <a href="https://linktr.ee/penbit" target="_blank" rel="noreferrer">Linktree</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ BAR ══ -->
+  <header class="bar">
+    <a href="index.html" class="title">WU CHENG-RU</a>
+    <nav>
+      <ul class="menu">
+        <li><a href="projects.html" class="menu_link active">PROJECTS</a></li>
+        <li><a href="about.html"    class="menu_link">ABOUT</a></li>
+      </ul>
+    </nav>
+    <button class="menu_icon" id="menu_open" aria-label="open menu">
+      <svg viewBox="0 0 28 20" fill="none">
+        <rect y="0"  width="28" height="2" fill="#e8e8e8"/>
+        <rect y="9"  width="28" height="2" fill="#e8e8e8"/>
+        <rect y="18" width="28" height="2" fill="#e8e8e8"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- ══ MAIN ══ -->
+  <main>
+    <div class="layout">
+
+      <!-- 左側 Sidebar（桌面）-->
+      <aside class="sidebar">
+        <div class="contact">
+          <a href="https://www.instagram.com/pen_bit/" target="_blank" rel="noreferrer">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            Instagram
+          </a>
+          <a href="mailto:k591238@gmail.com">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            Email
+          </a>
+          <a href="https://www.youtube.com/@pen_bit" target="_blank" rel="noreferrer">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            YouTube
+          </a>
+          <a href="https://linktr.ee/penbit" target="_blank" rel="noreferrer">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.511 5.853l4.005-4.117 2.317 2.317-4.15 4.005h5.872v3.306h-5.921l4.199 4.004-2.317 2.317-5.504-5.54-5.504 5.54-2.317-2.317 4.199-4.004H2.44V8.058h5.872L4.162 4.053l2.317-2.317 4.005 4.117V0h3.027v5.853zM10.485 24v-8.548h3.027V24h-3.027z"/></svg>
+            Linktree
+          </a>
+        </div>
+        <div class="copyright">WU CHENG-RU © 2025</div>
+      </aside>
+
+      <!-- 作品區 -->
+      <div class="work_main">
+        <span class="page-label">Projects</span>
+        <div class="works_grid">
+
+          <!-- ╔══════════════════════════════════════╗
+               ║  作品卡片範本                         ║
+               ║  複製這個 <div class="work"> 來新增   ║
+               ║  修改：                               ║
+               ║  onclick → 作品詳細頁路徑              ║
+               ║  work_img_placeholder → 換成 <img>   ║
+               ║  work_inf → 作品名稱                  ║
+               ║  work_inf2 → 年份 · 類型               ║
+               ╚══════════════════════════════════════╝ -->
+
+          <div class="work" onclick="location.href='projects/project1/'">
+            <!-- 有圖片時改成：
+            <img class="work_img" src="assets/images/projects/p1.jpg" alt="作品名稱一"> -->
+            <div class="work_img_placeholder">[ 封面圖 ]</div>
+            <div class="work_inf">作品名稱一</div>
+            <div class="work_inf2">2025 &nbsp;·&nbsp; Interactive</div>
+          </div>
+
+          <div class="work" onclick="location.href='projects/project2/'">
+            <div class="work_img_placeholder">[ 封面圖 ]</div>
+            <div class="work_inf">作品名稱二</div>
+            <div class="work_inf2">2025 &nbsp;·&nbsp; Video</div>
+          </div>
+
+          <div class="work" onclick="location.href='projects/project3/'">
+            <div class="work_img_placeholder">[ 封面圖 ]</div>
+            <div class="work_inf">作品名稱三</div>
+            <div class="work_inf2">2024 &nbsp;·&nbsp; p5.js</div>
+          </div>
+
+          <div class="work" onclick="location.href='projects/project4/'">
+            <div class="work_img_placeholder">[ 封面圖 ]</div>
+            <div class="work_inf">作品名稱四</div>
+            <div class="work_inf2">2024 &nbsp;·&nbsp; Design</div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- end layout -->
+
+    <!-- 手機版社群 -->
+    <div class="contact_mobile">
+      <a href="https://www.instagram.com/pen_bit/" target="_blank">Instagram</a>
+      <a href="mailto:k591238@gmail.com">Email</a>
+      <a href="https://www.youtube.com/@pen_bit" target="_blank">YouTube</a>
+      <a href="https://linktr.ee/penbit" target="_blank">Linktree</a>
+    </div>
+  </main>
+
+  <footer class="footer">WU CHENG-RU © 2025</footer>
+
+  <script src="js/nav.js"></script>
+</body>
+</html>

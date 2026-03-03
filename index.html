@@ -1,395 +1,127 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>WU CHENG-RU</title>
   <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/global.css"/>
   <style>
-
-    /* ══════════════════════════════════════
-       CSS 變數：改這裡就能換全站顏色
-    ══════════════════════════════════════ */
-    :root {
-      --bg:       #0d0d0d;
-      --surface:  #141414;
-      --border:   rgba(255,255,255,0.08);
-      --text:     #e8e8e8;
-      --muted:    #888;
-      --accent:   #ffffff;
-      --font:     'Kumbh Sans', sans-serif;
-    }
-
-    /* ── 基本重置 ── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { overflow-x: hidden; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--font);
-      font-weight: 300;
-      line-height: 1.5;
+    /* ── 首頁：全螢幕 Hero ── */
+    .hero {
       min-height: 100vh;
-    }
-    a { text-decoration: none; color: inherit; }
-    img { display: block; max-width: 100%; }
-    ul { list-style: none; }
-
-    /* ══════════════════════════════════════
-       BAR（頂部標題列）
-       參考原站：桌面版 height:150px，有標題 + 選單
-    ══════════════════════════════════════ */
-    .bar {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 5%;
-      background: rgba(13,13,13,0.92);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--border);
-      transition: height 0.3s;
-    }
-
-    /* 桌面版 bar 加高 */
-    @media (min-width: 800px) {
-      .bar {
-        position: relative;          /* 不fixed，跟原站一樣 */
-        height: 130px;
-        padding: 0;
-        background: var(--bg);
-        backdrop-filter: none;
-        border-bottom: none;
-        width: 80%;
-        margin: 0 auto;
-      }
-    }
-
-    /* ── 標題（左） ── */
-    .title {
-      font-weight: 700;
-      font-size: 0.95rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--accent);
-    }
-
-    /* ── 選單（右，桌面）── */
-    .menu {
-      display: none;
-    }
-    @media (min-width: 800px) {
-      .menu {
-        display: flex;
-        gap: 2rem;
-        font-size: 0.62rem;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        font-weight: 400;
-      }
-    }
-    .menu_link {
-      color: var(--muted);
-      transition: color 0.2s;
-    }
-    .menu_link:hover,
-    .menu_link.active { color: var(--accent); }
-
-    /* ── 漢堡選單（手機）── */
-    .menu_icon {
-      display: block;
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-      width: 28px;
-    }
-    .menu_icon svg { width: 100%; display: block; }
-    @media (min-width: 800px) {
-      .menu_icon { display: none; }
-    }
-
-    /* ── 手機展開選單 ── */
-    .menu_mobile {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      background: var(--bg);
-      z-index: 200;
-      height: 0;
-      overflow: hidden;
-      transition: height 0.3s ease;
-    }
-    .menu_mobile.open {
-      height: 100vh;
-    }
-    .menu_mobile_inner {
-      padding: 80px 5% 0;
-    }
-    .menu_mobile_list li {
-      padding: 1rem 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 1.1rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-    .menu_close {
-      position: absolute;
-      top: 20px; right: 5%;
-      background: none;
-      border: none;
-      color: var(--muted);
-      font-size: 1.5rem;
-      cursor: pointer;
-      font-family: var(--font);
-    }
-
-    /* ══════════════════════════════════════
-       MAIN WRAPPER
-    ══════════════════════════════════════ */
-    main {
-      padding-top: 60px; /* 讓內容不被 fixed bar 蓋住（手機）*/
-    }
-    @media (min-width: 800px) {
-      main {
-        padding-top: 0;
-        width: 80%;
-        margin: 0 auto;
-      }
-    }
-
-    /* ══════════════════════════════════════
-       左側資訊欄（桌面版浮在左邊）
-       包含：社群連結 + 版權
-    ══════════════════════════════════════ */
-    .sidebar {
-      display: none;
-    }
-    @media (min-width: 800px) {
-      .sidebar {
-        display: block;
-        float: left;
-        width: 200px;
-        padding-top: 40px;
-      }
-    }
-
-    /* ── 社群圖示 ── */
-    .contact {
       display: flex;
       flex-direction: column;
-      gap: 0.6rem;
-      margin-bottom: 1.5rem;
+      justify-content: flex-end;
+      padding: 0 5% 6vh;
+      position: relative;
+      overflow: hidden;
     }
-    .contact a {
+
+    /* 背景：純黑加細微雜訊感 */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 80% 30%, rgba(255,255,255,0.02) 0%, transparent 70%),
+        var(--bg);
+      z-index: 0;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* 大標題 */
+    .hero-name {
+      font-size: clamp(2.8rem, 8vw, 7rem);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1;
+      color: var(--accent);
+      margin-bottom: 1.2rem;
+      /* 分行動畫 */
+      overflow: hidden;
+    }
+
+    .hero-name span {
+      display: block;
+      opacity: 0;
+      transform: translateY(40px);
+      animation: slideUp 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    .hero-name span:nth-child(1) { animation-delay: 0.1s; }
+    .hero-name span:nth-child(2) { animation-delay: 0.22s; }
+
+    /* 副標題 */
+    .hero-sub {
+      font-size: clamp(0.7rem, 1.5vw, 0.85rem);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: fadeIn 0.6s ease 0.5s forwards;
+    }
+
+    /* 社群連結（橫排）*/
+    .hero-social {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
-      font-size: 0.7rem;
-      letter-spacing: 1px;
+      gap: 2rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeIn 0.6s ease 0.7s forwards;
+    }
+
+    .hero-social a {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
       text-transform: uppercase;
       color: var(--muted);
       transition: color 0.2s;
     }
-    .contact a:hover { color: var(--accent); }
-    .contact a svg {
-      width: 14px;
-      height: 14px;
+    .hero-social a:hover { color: var(--accent); }
+    .hero-social a svg {
+      width: 13px; height: 13px;
       opacity: 0.5;
       transition: opacity 0.2s;
       flex-shrink: 0;
     }
-    .contact a:hover svg { opacity: 1; }
+    .hero-social a:hover svg { opacity: 1; }
 
-    .copyright {
-      font-size: 0.65rem;
-      color: var(--muted);
-      letter-spacing: 1px;
-    }
-
-    /* 手機版社群（放在頁尾）*/
-    .contact_mobile {
-      display: flex;
-      gap: 1.5rem;
-      padding: 2rem 5%;
-      flex-wrap: wrap;
-    }
-    .contact_mobile a {
-      font-size: 0.7rem;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-    @media (min-width: 800px) {
-      .contact_mobile { display: none; }
-    }
-
-    /* ══════════════════════════════════════
-       WORK_MAIN（作品展示區）
-       參考原站：桌面版右邊 80%，手機全寬
-    ══════════════════════════════════════ */
-    .work_main {
-      padding: 2rem 5%;
-    }
-    @media (min-width: 800px) {
-      .work_main {
-        float: right;
-        width: calc(100% - 220px);
-        padding: 0 0 60px;
-        /* 清除 float */
-      }
-    }
-
-    /* ══════════════════════════════════════
-       WORK（作品卡片）
-       原站：手機全寬，桌面 49.5%
-    ══════════════════════════════════════ */
-    .works_grid {
-      /* 用 inline-block trick 跟原站一樣 */
-      font-size: 0;  /* 消除 inline-block 間距 */
-    }
-
-    .work {
-      display: inline-block;
-      vertical-align: top;
-      width: 100%;
-      margin-bottom: 20px;
-      font-size: 1rem; /* 還原 */
-      cursor: pointer;
-    }
-    @media (min-width: 800px) {
-      .work {
-        width: 49.5%;
-        /* 奇數靠左，偶數靠右 */
-      }
-      .work:nth-child(odd)  { padding-right: 0.5%; }
-      .work:nth-child(even) { padding-left:  0.5%; }
-    }
-
-    /* 封面圖 */
-    .work_img {
-      width: 100%;
-      aspect-ratio: 8 / 5;
-      object-fit: cover;
-      background: var(--surface);
-      margin-bottom: 10px;
-      display: block;
-      transition: opacity 0.3s;
-
-      /* 無圖時顯示佔位符 */
-      position: relative;
-    }
-    .work:hover .work_img { opacity: 0.85; }
-
-    /* 佔位符（無圖片時）*/
-    .work_img_placeholder {
-      width: 100%;
-      aspect-ratio: 8 / 5;
-      background: var(--surface);
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.72rem;
-      letter-spacing: 1px;
-      color: #333;
-      transition: background 0.3s;
-    }
-    .work:hover .work_img_placeholder { background: #1a1a1a; }
-
-    /* 作品標題（桌面）*/
-    .work_inf {
-      display: none;
-    }
-    @media (min-width: 800px) {
-      .work_inf {
-        display: block;
-        font-size: 0.78rem;
-        letter-spacing: 0.05rem;
-        color: var(--text);
-        line-height: 1rem;
-        margin-top: 0;
-      }
-    }
-
-    .work_inf2 {
-      display: none;
-    }
-    @media (min-width: 800px) {
-      .work_inf2 {
-        display: block;
-        font-size: 0.6rem;
-        letter-spacing: 0.05rem;
-        color: var(--muted);
-        margin-top: 4px;
-      }
-    }
-
-    /* 作品標題（手機）*/
-    .work_inf_mobile {
-      display: block;
-      font-size: 0.78rem;
-      color: var(--text);
-      margin-bottom: 2px;
-    }
-    .work_inf2_mobile {
-      display: block;
+    /* 右下角捲動提示 */
+    .scroll-hint {
+      position: absolute;
+      bottom: 3vh;
+      right: 5%;
       font-size: 0.6rem;
-      color: var(--muted);
-    }
-    @media (min-width: 800px) {
-      .work_inf_mobile,
-      .work_inf2_mobile { display: none; }
-    }
-
-    /* ══════════════════════════════════════
-       clearfix
-    ══════════════════════════════════════ */
-    .clearfix::after {
-      content: '';
-      display: table;
-      clear: both;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #333;
+      writing-mode: vertical-rl;
+      opacity: 0;
+      animation: fadeIn 1s ease 1.2s forwards;
     }
 
-    /* ══════════════════════════════════════
-       載入動畫
-    ══════════════════════════════════════ */
+    @keyframes slideUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(12px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .work {
-      animation: fadeIn 0.5s ease both;
-    }
-    .work:nth-child(1) { animation-delay: 0.05s; }
-    .work:nth-child(2) { animation-delay: 0.10s; }
-    .work:nth-child(3) { animation-delay: 0.15s; }
-    .work:nth-child(4) { animation-delay: 0.20s; }
-    .work:nth-child(5) { animation-delay: 0.25s; }
-    .work:nth-child(6) { animation-delay: 0.30s; }
-
-    /* ══════════════════════════════════════
-       頁尾
-    ══════════════════════════════════════ */
-    .footer {
-      clear: both;
-      border-top: 1px solid var(--border);
-      padding: 1.5rem 5%;
-      font-size: 0.65rem;
-      color: var(--muted);
-      letter-spacing: 1px;
-      text-align: center;
-    }
-    @media (min-width: 800px) {
-      .footer {
-        width: 80%;
-        margin: 0 auto;
-        text-align: left;
-      }
+      to { opacity: 1; }
     }
 
+    /* ── 手機調整 ── */
+    @media (max-width: 800px) {
+      .hero { padding-bottom: 10vh; }
+      .hero-social { gap: 1.5rem; }
+      .scroll-hint { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -400,146 +132,70 @@
     <div class="menu_mobile_inner">
       <ul class="menu_mobile_list">
         <li><a href="projects.html" class="menu_link">PROJECTS</a></li>
-        <li><a href="about.html" class="menu_link">ABOUT</a></li>
+        <li><a href="about.html"    class="menu_link">ABOUT</a></li>
       </ul>
-
-      <!-- 社群連結（手機選單內）-->
-      <div style="margin-top: 3rem; display: flex; flex-direction: column; gap: 1rem;">
-        <a href="https://www.instagram.com/pen_bit/" target="_blank" style="font-size:0.72rem; letter-spacing:1px; color:var(--muted); text-transform:uppercase;">Instagram</a>
-        <a href="/cdn-cgi/l/email-protection#5821372d2a183d35393134763b3735" style="font-size:0.72rem; letter-spacing:1px; color:var(--muted); text-transform:uppercase;">Email</a>
-        <a href="https://www.youtube.com/@pen_bit" target="_blank" style="font-size:0.72rem; letter-spacing:1px; color:var(--muted); text-transform:uppercase;">YouTube</a>
-        <a href="https://linktr.ee/penbit" target="_blank" style="font-size:0.72rem; letter-spacing:1px; color:var(--muted); text-transform:uppercase;">Linktree</a>
+      <div class="menu_mobile_social">
+        <a href="https://www.instagram.com/pen_bit/" target="_blank" rel="noreferrer">Instagram</a>
+        <a href="mailto:k591238@gmail.com">Email</a>
+        <a href="https://www.youtube.com/@pen_bit" target="_blank" rel="noreferrer">YouTube</a>
+        <a href="https://linktr.ee/penbit" target="_blank" rel="noreferrer">Linktree</a>
       </div>
     </div>
   </div>
 
   <!-- ══ 頂部 BAR ══ -->
-  <div class="bar">
+  <header class="bar">
     <a href="index.html" class="title">WU CHENG-RU</a>
-
-    <!-- 桌面選單 -->
-    <ul class="menu">
-      <li><a href="projects.html" class="menu_link">PROJECTS</a></li>
-      <li><a href="about.html" class="menu_link">ABOUT</a></li>
-    </ul>
-
-    <!-- 漢堡按鈕（手機）-->
+    <nav>
+      <ul class="menu">
+        <li><a href="projects.html" class="menu_link">PROJECTS</a></li>
+        <li><a href="about.html"    class="menu_link">ABOUT</a></li>
+      </ul>
+    </nav>
     <button class="menu_icon" id="menu_open" aria-label="open menu">
-      <svg viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 28 20" fill="none">
         <rect y="0"  width="28" height="2" fill="#e8e8e8"/>
         <rect y="9"  width="28" height="2" fill="#e8e8e8"/>
         <rect y="18" width="28" height="2" fill="#e8e8e8"/>
       </svg>
     </button>
-  </div>
+  </header>
 
-  <!-- ══ MAIN ══ -->
+  <!-- ══ HERO ══ -->
   <main>
-    <div class="clearfix">
+    <section class="hero">
+      <div class="hero-content">
+        <h1 class="hero-name">
+          <span>WU</span>
+          <span>CHENG-RU</span>
+        </h1>
+        <p class="hero-sub">Creative Coder &nbsp;·&nbsp; Visual Artist &nbsp;·&nbsp; Designer</p>
 
-      <!-- ── 左側 sidebar（桌面）── -->
-      <aside class="sidebar">
-        <div class="contact">
-          <!-- Instagram -->
+        <div class="hero-social">
           <a href="https://www.instagram.com/pen_bit/" target="_blank" rel="noreferrer">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
             Instagram
           </a>
-          <!-- Email -->
-          <a href="/cdn-cgi/l/email-protection#d2abbda7a092b7bfb3bbbefcb1bdbf">
+          <a href="mailto:k591238@gmail.com">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
             Email
           </a>
-          <!-- YouTube -->
           <a href="https://www.youtube.com/@pen_bit" target="_blank" rel="noreferrer">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
             YouTube
           </a>
-          <!-- Linktree -->
           <a href="https://linktr.ee/penbit" target="_blank" rel="noreferrer">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.511 5.853l4.005-4.117 2.317 2.317-4.15 4.005h5.872v3.306h-5.921l4.199 4.004-2.317 2.317-5.504-5.54-5.504 5.54-2.317-2.317 4.199-4.004H2.44V8.058h5.872L4.162 4.053l2.317-2.317 4.005 4.117V0h3.027v5.853zM10.485 24v-8.548h3.027V24h-3.027z"/></svg>
             Linktree
           </a>
         </div>
-        <div class="copyright">WU CHENG-RU © 2025</div>
-      </aside>
-
-      <!-- ── 作品展示區 ── -->
-      <div class="work_main">
-        <div class="works_grid">
-
-          <!-- ┌───────────────────────────────────────────────────┐
-               │  作品卡片範本                                      │
-               │  複製這個 <div class="work"> 區塊來新增作品        │
-               │  修改：                                           │
-               │  - href → 連到作品詳細頁                          │
-               │  - work_img_placeholder → 換成 <img> 有圖片時     │
-               │  - work_inf → 作品名稱                            │
-               │  - work_inf2 → 年份 / 類型                        │
-               └───────────────────────────────────────────────── ┘ -->
-
-          <div class="work" onclick="location.href='projects/project1/'">
-            <!-- 有圖片時換成：<img class="work_img" src="assets/images/projects/p1.jpg" alt="作品一"> -->
-            <div class="work_img_placeholder">[ 封面圖 ]</div>
-            <span class="work_inf_mobile">作品名稱一</span>
-            <span class="work_inf2_mobile">2025 · Interactive</span>
-            <div class="work_inf">作品名稱一</div>
-            <div class="work_inf2">2025 · Interactive</div>
-          </div>
-
-          <div class="work" onclick="location.href='projects/project2/'">
-            <div class="work_img_placeholder">[ 封面圖 ]</div>
-            <span class="work_inf_mobile">作品名稱二</span>
-            <span class="work_inf2_mobile">2025 · Video</span>
-            <div class="work_inf">作品名稱二</div>
-            <div class="work_inf2">2025 · Video</div>
-          </div>
-
-          <div class="work" onclick="location.href='projects/project3/'">
-            <div class="work_img_placeholder">[ 封面圖 ]</div>
-            <span class="work_inf_mobile">作品名稱三</span>
-            <span class="work_inf2_mobile">2024 · p5.js</span>
-            <div class="work_inf">作品名稱三</div>
-            <div class="work_inf2">2024 · p5.js</div>
-          </div>
-
-          <div class="work" onclick="location.href='projects/project4/'">
-            <div class="work_img_placeholder">[ 封面圖 ]</div>
-            <span class="work_inf_mobile">作品名稱四</span>
-            <span class="work_inf2_mobile">2024 · Design</span>
-            <div class="work_inf">作品名稱四</div>
-            <div class="work_inf2">2024 · Design</div>
-          </div>
-
-        </div><!-- end works_grid -->
-      </div><!-- end work_main -->
-
-    </div><!-- end clearfix -->
-
-    <!-- 手機版社群連結 -->
-    <div class="contact_mobile">
-      <a href="https://www.instagram.com/pen_bit/" target="_blank">Instagram</a>
-      <a href="/cdn-cgi/l/email-protection#7e07110b0c3e1b131f1712501d1113">Email</a>
-      <a href="https://www.youtube.com/@pen_bit" target="_blank">YouTube</a>
-      <a href="https://linktr.ee/penbit" target="_blank">Linktree</a>
-    </div>
-
+      </div>
+      <span class="scroll-hint">Scroll</span>
+    </section>
   </main>
 
-  <!-- ══ 頁尾 ══ -->
-  <footer class="footer">
-    WU CHENG-RU © 2025
-  </footer>
+  <footer class="footer">WU CHENG-RU © 2025</footer>
 
-  <!-- ══ JavaScript：漢堡選單 ══ -->
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-    // 開啟選單
-    document.getElementById('menu_open').addEventListener('click', () => {
-      document.getElementById('menu_mobile').classList.add('open');
-    });
-    // 關閉選單
-    document.getElementById('menu_close').addEventListener('click', () => {
-      document.getElementById('menu_mobile').classList.remove('open');
-    });
-    // 點選單連結也關閉
-    documen
+  <script src="js/nav.js"></script>
+</body>
+</html>

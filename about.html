@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About — WU CHENG-RU</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@300;400;700&family=Noto+Sans+TC:wght@300;400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/global.css"/>
+  <style>
+
+    /* ── 版面 ── */
+    main { padding-top: 60px; }
+    @media (min-width: 800px) {
+      main { padding-top: 0; width: 80%; margin: 0 auto; }
+    }
+
+    .about_wrap {
+      padding: 2.5rem 5% 5rem;
+    }
+    @media (min-width: 800px) {
+      .about_wrap {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 0 60px;
+        padding: 40px 0 80px;
+        align-items: start;
+      }
+    }
+
+    /* ══ 左欄 ══ */
+    .about_photo {
+      width: 100%;
+      max-width: 180px;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.62rem;
+      letter-spacing: 1px;
+      color: #2a2a2a;
+      margin-bottom: 1.8rem;
+    }
+    /* 有照片時直接用 img tag，這個 placeholder div 刪掉 */
+
+    .contact { display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1.5rem; }
+    .contact a {
+      display: flex; align-items: center; gap: 0.55rem;
+      font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase;
+      color: var(--muted); transition: color 0.2s;
+    }
+    .contact a:hover { color: var(--accent); }
+    .contact a svg { width: 13px; height: 13px; opacity: 0.4; transition: opacity 0.2s; flex-shrink: 0; }
+    .contact a:hover svg { opacity: 1; }
+    .copyright { font-size: 0.58rem; color: #3a3a3a; letter-spacing: 1px; }
+
+    @media (max-width: 799px) {
+      .about_photo { max-width: 110px; margin-bottom: 1.2rem; }
+      .contact, .copyright { display: none; }
+    }
+
+    /* ══ 右欄 ══ */
+    .about_right { margin-top: 2.5rem; }
+    @media (min-width: 800px) { .about_right { margin-top: 0; } }
+
+    .about_name {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 700; letter-spacing: -0.01em; line-height: 1.1;
+      color: var(--accent); margin-bottom: 0.35rem;
+    }
+    .about_role {
+      font-size: 0.65rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 2.5rem;
+    }
+
+    /* ══ Tab 切換：BIO / CV ══ */
+    .tab_nav {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    .tab_btn {
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font); font-size: 0.62rem;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--muted); padding: 0.6rem 1.4rem 0.6rem 0;
+      position: relative; transition: color 0.2s;
+    }
+    .tab_btn::after {
+      content: '';
+      position: absolute; bottom: -1px; left: 0;
+      width: 0; height: 1px;
+      background: var(--accent);
+      transition: width 0.25s ease;
+    }
+    .tab_btn.active { color: var(--accent); }
+    .tab_btn.active::after { width: calc(100% - 1.4rem); }
+
+    /* Tab 內容 */
+    .tab_panel { display: none; }
+    .tab_panel.active { display: block; }
+
+    /* ══ BIO 面板 ══ */
+    .bio_lang_switch {
+      display: flex; gap: 1rem; margin-bottom: 1.5rem;
+    }
+    .lang_btn {
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font); font-size: 0.6rem;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: #444; padding: 0; transition: color 0.2s;
+    }
+    .lang_btn.active { color: var(--accent); }
+
+    .bio_text { display: none; }
+    .bio_text.active { display: block; }
+
+    .bio_text p {
+      font-size: 0.85rem; line-height: 1.95;
+      color: #aaa; margin-bottom: 1.1em;
+    }
+    .bio_text.zh p { font-family: 'Noto Sans TC', sans-serif; font-size: 0.82rem; }
+
+    /* ══ CV 面板 ══ */
+    .cv_lang_switch {
+      display: flex; gap: 1rem; margin-bottom: 2rem;
+    }
+
+    .cv_content { display: none; }
+    .cv_content.active { display: block; }
+
+    /* CV 下載按鈕 */
+    .cv_download {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--muted); border: 1px solid #252525;
+      padding: 0.55rem 1.1rem; transition: all 0.2s;
+      margin-bottom: 2.5rem;
+    }
+    .cv_download:hover { color: var(--accent); border-color: #444; }
+
+    /* CV section 標題 */
+    .cv_section {
+      margin-bottom: 2.5rem;
+    }
+    .cv_section_title {
+      font-size: 0.58rem; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem; margin-bottom: 1.2rem;
+    }
+
+    /* CV 每一行 */
+    .cv_row {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 0 1rem;
+      margin-bottom: 0.75rem;
+      align-items: baseline;
+    }
+    .cv_year {
+      font-size: 0.6rem; color: #444;
+      letter-spacing: 0.05em; padding-top: 0.05rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .cv_detail {
+      font-size: 0.75rem; color: #999; line-height: 1.55;
+    }
+    .cv_detail.zh { font-family: 'Noto Sans TC', sans-serif; font-size: 0.72rem; }
+    .cv_title_bold { color: var(--text); font-weight: 400; }
+    .cv_sub { color: #555; font-size: 0.68rem; }
+
+    /* 學歷（單行）*/
+    .cv_edu {
+      font-size: 0.75rem; color: #999; line-height: 1.55; margin-bottom: 0.5rem;
+    }
+    .cv_edu.zh { font-family: 'Noto Sans TC', sans-serif; font-size: 0.72rem; }
+
+    /* ══ 手機版社群 ══ */
+    .contact_mobile {
+      display: flex; gap: 1.5rem; flex-wrap: wrap;
+      padding: 2rem 5% 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .contact_mobile a {
+      font-size: 0.64rem; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--muted); transition: color 0.2s;
+    }
+    .contact_mobile a:hover { color: var(--accent); }
+    @media (min-width: 800px) { .contact_mobile { display: none; } }
+
+    /* 載入動畫 */
+    .about_right > * {
+      opacity: 0; transform: translateY(14px);
+      animation: fadeUp 0.55s ease forwards;
+    }
+    .about_right > *:nth-child(1) { animation-delay: 0.05s; }
+    .about_right > *:nth-child(2) { animation-delay: 0.12s; }
+    .about_right > *:nth-child(3) { animation-delay: 0.19s; }
+    .about_right > *:nth-child(4) { animation-delay: 0.26s; }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+  </style>
+</head>
+<body>
+
+  <!-- ══ 手機選單 ══ -->
+  <div class="menu_mobile" id="menu_mobile">
+    <button class="menu_close" id="menu_close">✕</button>
+    <div class="menu_mobile_inner">
+      <ul class="menu_mobile_list">
+        <li><a href="index.html"    class="menu_link">HOME</a></li>
+        <li><a href="projects.html" class="menu_link">PROJECTS</a></li>
+        <li><a href="about.html"    class="menu_link active">ABOUT</a></li>
+      </ul>
+      <div class="menu_mobile_social">
+        <a href="https://www.instagram.com/pen_bit/" target="_blank" rel="noreferrer">Instagram</a>
+        <a href="mailto:k591238@gmail.com">Email</a>
+        <a href="https://www.youtube.com/@pen_bit" target="_blank" rel="noreferrer">YouTube</a>
+        <a href="https://linktr.ee/penbit" target="_blank" rel="noreferrer">Linktree</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ BAR ══ -->
+  <header class="bar">
+    <a href="index.html" class="title">WU CHENG-RU</a>
+    <nav>
+      <ul class="menu">
+        <li><a href="projects.html" class="menu_link">PROJECTS</a></li>
+        <li><a href="about.html"    class="menu_link active">ABOUT</a></li>
+      </ul>
+    </nav>
+    <button class="menu_icon" id="menu_open" aria-label="open menu">
+      <svg viewBox="0 0 28 20" fill="none">
+        <rect y="0"  width="28" height="2" fill="#e8e8e8"/>
+        <rect y="9"  width="28" height="2" fill="#e8e8e8"/>
+        <rect y="18" width="28" height="2" fill="#e8e8e8"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- ══ MAIN ══ -->
+  <main>
+    <div class="about_wrap">
+
+      <!-- 左欄 -->
+      <div class="about_left">
+        <!--
+          ★ 有照片後把這個 div 換成：
+          <img class="about_photo" src="assets/images/profile.jpg" alt="WU CHENG-RU">
+        -->
+        <div class="about_photo">[ 照片 ]</div>
+
+        <div class="contact">
+          <a href="https://www.instagram.com/pen_bit/" target="_blank" rel="noreferrer">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            Instagram
+          </a>
+          <a href="mailto:k591238@gmail.com">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            Email
+          </a>
+          <a href="https://www.youtube.com/@pen_bit" target="_blank" rel="noreferrer">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            YouTube
+          </a>
+          <a href="https://linktr.ee/penbit" target="_blank" rel="noreferrer">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.511 5.853l4.005-4.117 2.317 2.317-4.15 4.005h5.872v3.306h-5.921l4.199 4.004-2.317 2.317-5.504-5.54-5.504 5.54-2.317-2.317 4.199-4.004H2.44V8.058h5.872L4.162 4.053l2.317-2.317 4.005 4.117V0h3.027v5.853zM10.485 24v-8.548h3.027V24h-3.027z"/></svg>
+            Linktree
+          </a>
+        </div>
+        <div class="copyright">WU CHENG-RU © 2025</div>
+      </div>
+
+      <!-- 右欄 -->
+      <div class="about_right">
+        <h1 class="about_name">WU CHENG-RU</h1>
+        <p class="about_role">New Media Artist &nbsp;·&nbsp; Creative Coder &nbsp;·&nbsp; AV Performer</p>
+
+        <!-- ── Tab 切換 ── -->
+        <div class="tab_nav">
+          <button class="tab_btn active" data-tab="bio">Bio</button>
+          <button class="tab_btn"        data-tab="cv">CV</button>
+        </div>
+
+        <!-- ════ BIO 面板 ════ -->
+        <div class="tab_panel active" id="panel-bio">
+          <div class="bio_lang_switch">
+            <button class="lang_btn active" data-lang="en">EN</button>
+            <button class="lang_btn"        data-lang="zh">中文</button>
+          </div>
+
+          <!-- 英文 -->
+          <div class="bio_text en active">
+            <p>Born in Chiayi, Taiwan, a new media artist whose work primarily involves interdisciplinary art and audiovisual performances. His practice centers on sound experimentation, real-time image generation, and digital signal integration. His work focuses on human relationships, exploring the cognitive differences in mutual understanding through distortions in digital signal transmission.</p>
+            <p>He has been actively engaged in a wide range of creative fields, including interdisciplinary art, theater, dance, and sound installations, continually expanding the innovative possibilities of new media art.</p>
+          </div>
+
+          <!-- 中文 -->
+          <div class="bio_text zh">
+            <p>來自嘉義，科技藝術創作者，創作探討各種媒材之間的關係美學，透過訊號失真的傳遞，思考關係中的認知差異。作品跨足音像演出、聲音裝置、科技劇場，由各種媒材中探索創作上的可能性。</p>
+            <p>曾參與白晝之夜作品《鹹淡適中》Glub Glub、C-Lab Dome 計畫《未來視覺派對 FUTURE VISION LAB》、關渡光藝術節，等作品展演計畫。</p>
+          </div>
+        </div>
+
+        <!-- ════ CV 面板 ════ -->
+        <div class="tab_panel" id="panel-cv">
+          <div class="cv_lang_switch">
+            <button class="lang_btn active" data-cv-lang="en">EN</button>
+            <button class="lang_btn"        data-cv-lang="zh">中文</button>
+          </div>
+
+          <!-- CV 下載（有 PDF 後改路徑）-->
+          <a class="cv_download" href="assets/cv.pdf" target="_blank">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            Download CV
+          </a>
+
+          <!-- ── 英文 CV ── -->
+          <div class="cv_content en active">
+
+            <div class="cv_section">
+              <p class="cv_section_title">Education</p>
+              <p class="cv_edu">Taipei National University of Arts — Department of New Media Art</p>
+            </div>
+
+            <div class="cv_section">
+              <p class="cv_section_title">Selected Works</p>
+
+              <div class="cv_row">
+                <span class="cv_year">2025</span>
+                <span class="cv_detail"><span class="cv_title_bold">Tech &amp; Design</span> — <em>Kindom</em>, Sweat Hong Kong International Dance Workshop Festival <span class="cv_sub">· Technical Director (Hong Kong)</span></span>
+              </div>
+              <div class="cv_row">
+                <span class="cv_year">2025</span>
+                <span class="cv_detail"><span class="cv_title_bold">Workshop Instructor</span> — Live VJ Lab Workshop, BLND Academy × Perspectives Audio-Visual Art</span>
+              </div>
+              <div class="cv_row">
+                <span class="cv_year">2025</span>
+                <span class="cv_detail"><span class="cv_title_bold">Performance</span> — <em>Perspectives: Audio-Visual Art</em>, Taipei Music Center - Live House D <span class="cv_sub">· Audio-Visual (Taipei)</span></span>
+              </div>
+              <div class="cv_row">
+                <span class="cv_year">2025</span>
+                <span class="cv_detail"><span class="cv_title_bold">Performance</span> — Kuan Du Light Art Festival <span class="cv_sub">· Audio-Visual (Taipei)</span></span>
+              </div>
+              <div class="cv_row">
+                <span class="cv_year">2024</span>
+                <span class="cv_detail"><span class="cv_title_bold">Performance</span> — <em>Oblivion Circuit</em>, Theater Guild DAIKANYAMA <span class="cv_sub">· Audio-Visual (Tokyo)</span></span>
+              </div>
+              <div class="cv_row">
+                <span class="cv_year">2024</span>
+                <span class="cv_detail"><span class="cv_title_bold">Performance</span> — <em>Dream Percept</em>, FUTURE VISION LAB <span class="cv_sub">· Director (Taipei)</span></span>
+              </div>
+              <div class="cv_row">
+                <span class="cv_year">2024</span>
+                <span class="cv_detail"><span class="cv_title_bold">Visual Effect</span> — Proyector Festival de Videoarte, <em>The Zone</em> <span class="cv_sub">· Programming Effects (Madrid)</span></span>
+              </div>
+              <div class="cv_row">
+                <span class="cv_year">2024</span>
+                <span class="cv_detail"><span class="cv_title_bold">Tech &amp; Design</span> — 2024 Taipei Fringe Festival, <em>The Archeology of Wonderland</em> <span class="cv_sub">· Technical Director &amp; AI Image Design (Taipei)</span></span>
+              </div>
+              <div class="cv_row">
+                <span class="cv_year">2024</span>
+                <span class="cv_detail"><span class="cv_title_bold">Exhibition</span> — 2024 Kuan Du Light Art Festival, <em>Wisper</em> <span class="cv_sub">· Sound Installation (Taipei)</span></span>
+              </div>
+              <div class="cv_row">
+                <span class="cv_year">2024</span>
+                <span class="cv_detail"><span class="cv_title_bold">Performance</span> — <em>VIVIDO: re-Action</em> Sandy's Trace <span class="cv_sub">· VJ (Taipei)</span></span>
+              </div>
+              <div class="cv_row">
+                <span class="cv_year">2024</span>
+                <span class="cv_detail"><span class="cv_title_bold">Design</span> — Taipei Art Awards: Lin Zhe-Zhi <em>A Kind of Geo-imagination Without Gravity</em> <span class="cv_sub">· AI Design (Taipei)</span></span>
+              </div>
+              <div class="cv_row">
+                <span class="cv_year">2023</span>
+                <span class="cv_detail"><span class="cv_title_bold">Performance</span> — <em>Future Vision Party</em>, FUTURE VISION LAB <span class="cv_sub">· Audio-Visual (Taipei)</span></span>
+              </div>
+              <div class="cv_row">
+                <span class="cv_year">2023</span>
+                <span class="cv_detail"><span class="cv_title_bold">Technician</span> — 2023 C-Lab Diversonics, <em>Current</em> <span class="cv_sub">· Signal Integration &amp; Execution (Taipei)</span></span>
+              </div>
+              <div class="cv_row">
+                <span class="cv_year">2023</span>
+                <span class="cv_detail"><span class="cv_title_bold">Performance</span> — <em>Visual Cognition</em> <span class="cv_sub">· Audio-Visual (Taipei)</span></span>
+              </div>
+              <div class="cv_row">
+                <span class="cv_year">2023</span>
+                <span class="cv_detail"><span class="cv_title_bold">Performance</span> — <em>sensation.remix</em> <span class="cv_sub">· Audio-Visual (Yilan)</span></span>
+              </div>
+              <div class="cv_row">
+                <span class="cv_year">2022</span>
+                <span class="cv_detail"><span class="cv_title_bold">Exhibition</span> — <em>Digital Corporeality</em>, Anarchy Dance Theatre <span class="cv_sub">· Co-Creator (Taipei)</span></span>
+              </div>
+              <div class="cv_row">
+                <span class="cv_year">2022</span>
+                <span class="cv_detail"><span class="cv_title_bold">Performance</span> — <em>Liminal Space</em> <span class="cv_sub">· Audio-Visual (Taipei)</span></span>
+              </div>
+              <div class="cv_row">
+                <span class="cv_year">2021</span>
+                <span class="cv_detail"><span class="cv_title_bold">Design</span> — <em>Reincarnate Island</em>, FUTURE VISION LAB <span class="cv_sub">· Sound Design (Taipei)</span></span>
+              </div>
+              <div class="cv_row">
+                <span class="cv_year">2021</span>
+                <span class="cv_detail"><span class="cv_title_bold">Performance</span> — <em>ArtSushi</em> <span class="cv_sub">· Audio-Visual (Taipei)</span></span>
+              </div>
+            </div>
+
+          </div><!-- end cv_content.en -->
+
+          <!-- ── 中文 CV ── -->
+          <div class="cv_content zh">
+
+            <div class="cv_section">
+              <p class="cv_section_title">學歷</p>
+              <p class="cv_edu zh">2023 &ensp;國立臺北藝術大學 新媒體藝術學系 跨域組 學士</p>
+            </div>
+
+            <div class="cv_section">
+              <p class="cv_section_title">表演</p>
+              <div class="cv_row"><span class="cv_year">2025</span><span class="cv_detail zh"><span class="cv_title_bold">《視感認知 Mind Fluid》</span>｜透視:音像 Perspectives — 北流場｜音像演出（台北）</span></div>
+              <div class="cv_row"><span class="cv_year">2024</span><span class="cv_detail zh"><span class="cv_title_bold">《認夢 Dream Percept》</span>｜FUTURE VISION LAB｜DOME演出（台北）</span></div>
+              <div class="cv_row"><span class="cv_year">2024</span><span class="cv_detail zh"><span class="cv_title_bold">《忘却回路 — Oblivion Circuit》</span>｜音像演出（東京）</span></div>
+              <div class="cv_row"><span class="cv_year">2024</span><span class="cv_detail zh"><span class="cv_title_bold">《VIVIDO: re-Action》</span> Sandy's Trace｜音像演出（台北）</span></div>
+              <div class="cv_row"><span class="cv_year">2023</span><span class="cv_detail zh"><span class="cv_title_bold">《未來視覺派對 FUTURE VISION LAB》</span>｜音像演出（台北）</span></div>
+              <div class="cv_row"><span class="cv_year">2023</span><span class="cv_detail zh"><span class="cv_title_bold">《視感認知 Visual Cognition》</span> — 潛艇 Submarine｜音像演出（台北）</span></div>
+              <div class="cv_row"><span class="cv_year">2023</span><span class="cv_detail zh"><span class="cv_title_bold">《感覺重混 sensation.remix》</span>｜音像演出（宜蘭）</span></div>
+            </div>
+
+            <div class="cv_section">
+              <p class="cv_section_title">獲獎</p>
+              <div class="cv_row"><span class="cv_year">2023</span><span class="cv_detail zh">新媒系第十屆系展《Dolly Zoom 滑動變焦》<span class="cv_title_bold">優選</span>｜表演組</span></div>
+            </div>
+
+            <div class="cv_section">
+              <p class="cv_section_title">展覽</p>
+              <div class="cv_row"><span class="cv_year">2025</span><span class="cv_detail zh"><span class="cv_title_bold">《鹹淡適中》Glub Glub</span> — 白晝之夜 Nuit Blanche Taipei｜共同創作（台北）</span></div>
+              <div class="cv_row"><span class="cv_year">2024</span><span class="cv_detail zh"><span class="cv_title_bold">《聽說 Wisper》</span> 關渡光藝術節《燒聲》｜個人創作（台北）</span></div>
+              <div class="cv_row"><span class="cv_year">2022</span><span class="cv_detail zh"><span class="cv_title_bold">《無期遷徙 Liminal Space》</span>｜共同創作（台北）</span></div>
+              <div class="cv_row"><span class="cv_year">2021</span><span class="cv_detail zh">安娜琪舞蹈劇場<span class="cv_title_bold">《數位肉身性》</span>｜共同創作（台北）</span></div>
+              <div class="cv_row"><span class="cv_year">2020</span><span class="cv_detail zh"><span class="cv_title_bold">《塔》</span>輕量級 — 聯合工作營｜北藝新媒 × 實踐建築 × 台大土木（台北）</span></div>
+            </div>
+
+            <div class="cv_section">
+              <p class="cv_section_title">新媒體設計</p>
+              <div class="cv_row"><span class="cv_year">2025</span><span class="cv_detail zh"><span class="cv_title_bold">互動</span>｜《80之後》藝術科技演算創新計畫 — 2049媽祖遶月｜即時AI互動</span></div>
+              <div class="cv_row"><span class="cv_year">2025</span><span class="cv_detail zh"><span class="cv_title_bold">設計</span>｜2025科技跨藝實驗場《青春模擬器》｜即時AI互動設計</span></div>
+              <div class="cv_row"><span class="cv_year">2025</span><span class="cv_detail zh"><span class="cv_title_bold">技術</span>｜《Kindom 數位王國》— Sweat Hong Kong International Dance Workshop Festival｜技術統籌暨執行（香港）</span></div>
+              <div class="cv_row"><span class="cv_year">2025</span><span class="cv_detail zh"><span class="cv_title_bold">技術</span>｜《女誡扇綺譚》周曼農 × 莎妹工作室前期研發呈現｜裝置影像動態 Mapping</span></div>
+              <div class="cv_row"><span class="cv_year">2024</span><span class="cv_detail zh"><span class="cv_title_bold">設計&amp;技術</span>｜【2024臺北藝穗節】翼手龍摩天劇院｜技術統籌暨執行 &amp; AI影像設計</span></div>
+              <div class="cv_row"><span class="cv_year">2024</span><span class="cv_detail zh"><span class="cv_title_bold">技術</span>｜北美獎：林哲志 一種無重力的地緣想像｜AI設計</span></div>
+              <div class="cv_row"><span class="cv_year">2024</span><span class="cv_detail zh"><span class="cv_title_bold">技術</span>｜《體演算》陳乂 — 工研院｜雷射設計</span></div>
+              <div class="cv_row"><span class="cv_year">2024</span><span class="cv_detail zh"><span class="cv_title_bold">特效</span>｜西班牙「放映機錄像藝術節」「辣草莓合作社」《地帶》（The Zone）｜特效編程</span></div>
+              <div class="cv_row"><span class="cv_year">2024</span><span class="cv_detail zh"><span class="cv_title_bold">設計</span>｜《皇后與她的魔鏡》第三屆桃園科技表演藝術獎｜影像設計</span></div>
+              <div class="cv_row"><span class="cv_year">2023</span><span class="cv_detail zh"><span class="cv_title_bold">技術</span>｜《鎏/》陳乂 — C-LAB 聲響藝術節｜影音訊號整合與執行</span></div>
+            </div>
+
+          </div><!-- end cv_content.zh -->
+
+        </div><!-- end panel-cv -->
+
+      </div><!-- end about_right -->
+    </div><!-- end about_wrap -->
+
+    <!-- 手機社群 -->
+    <div class="contact_mobile">
+      <a href="https://www.instagram.com/pen_bit/" target="_blank">Instagram</a>
+      <a href="mailto:k591238@gmail.com">Email</a>
+      <a href="https://www.youtube.com/@pen_bit" target="_blank">YouTube</a>
+      <a href="https://linktr.ee/penbit" target="_blank">Linktree</a>
+    </div>
+  </main>
+
+  <footer class="footer">WU CHENG-RU © 2025</footer>
+
+  <script src="js/nav.js"></script>
+  <script>
+    /* ── Tab 切換（Bio / CV）── */
+    document.querySelectorAll('.tab_btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab_btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab_panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    /* ── Bio 語言切換 ── */
+    document.querySelectorAll('[data-lang]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('[data-lang]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.bio_text').forEach(t => t.classList.remove('active'));
+        document.querySelector('.bio_text.' + lang).classList.add('active');
+      });
+    });
+
+    /* ── CV 語言切換 ── */
+    document.querySelectorAll('[data-cv-lang]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.cvLang;
+        document.querySelectorAll('[data-cv-lang]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.cv_content').forEach(c => c.classList.remove('active'));
+        document.querySelector('.cv_content.' + lang).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
