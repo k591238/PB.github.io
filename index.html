@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>我的個人網站</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #0e0e0e; --surface: #161616; --accent: #c8a96e; --text: #e8e0d4; --muted: #888; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Noto Serif TC', serif; line-height: 1.8; }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 4rem; background: rgba(14,14,14,0.85); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(200,169,110,0.15); }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--accent); letter-spacing: 0.05em; }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; letter-spacing: 0.08em; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--accent); }
+    #hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 8rem 4rem 4rem; position: relative; overflow: hidden; }
+    #hero::before { content: ''; position: absolute; top: -20%; right: -10%; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(200,169,110,0.08) 0%, transparent 70%); pointer-events: none; }
+    .hero-eyebrow { font-size: 0.85rem; letter-spacing: 0.25em; color: var(--accent); text-transform: uppercase; margin-bottom: 1.5rem; opacity: 0; animation: fadeUp 0.8s 0.2s forwards; }
+    .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(3rem, 7vw, 6rem); line-height: 1.1; margin-bottom: 1.5rem; opacity: 0; animation: fadeUp 0.8s 0.4s forwards; }
+    .hero-title span { color: var(--accent); }
+    .hero-desc { max-width: 520px; color: var(--muted); font-size: 1.05rem; margin-bottom: 2.5rem; opacity: 0; animation: fadeUp 0.8s 0.6s forwards; }
+    .btn { display: inline-block; padding: 0.9rem 2.2rem; border: 1px solid var(--accent); color: var(--accent); text-decoration: none; font-size: 0.9rem; letter-spacing: 0.1em; transition: all 0.3s; opacity: 0; animation: fadeUp 0.8s 0.8s forwards; }
+    .btn:hover { background: var(--accent); color: var(--bg); }
+    #about { padding: 8rem 4rem; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; border-top: 1px solid rgba(255,255,255,0.06); }
+    .section-label { font-size: 0.8rem; letter-spacing: 0.25em; color: var(--accent); text-transform: uppercase; margin-bottom: 1.2rem; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: 2.8rem; line-height: 1.2; margin-bottom: 1.5rem; }
+    .about-text { color: var(--muted); font-size: 1rem; }
+    .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .skill-item { background: var(--surface); padding: 1.2rem 1.5rem; border-left: 2px solid var(--accent); font-size: 0.9rem; }
+    #projects { padding: 8rem 4rem; border-top: 1px solid rgba(255,255,255,0.06); }
+    #projects .section-header { margin-bottom: 3rem; }
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+    .project-card { background: var(--surface); padding: 2rem; border: 1px solid rgba(255,255,255,0.06); transition: border-color 0.3s, transform 0.3s; }
+    .project-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+    .project-tag { font-size: 0.75rem; letter-spacing: 0.15em; color: var(--accent); text-transform: uppercase; margin-bottom: 0.8rem; }
+    .project-name { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 0.8rem; }
+    .project-desc { color: var(--muted); font-size: 0.9rem; }
+    #contact { padding: 8rem 4rem; border-top: 1px solid rgba(255,255,255,0.06); text-align: center; }
+    #contact .section-title { font-size: 3rem; margin-bottom: 1rem; }
+    #contact p { color: var(--muted); margin-bottom: 2.5rem; }
+    .contact-links { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+    .contact-links a { color: var(--text); text-decoration: none; border-bottom: 1px solid var(--accent); padding-bottom: 2px; transition: color 0.3s; }
+    .contact-links a:hover { color: var(--accent); }
+    footer { text-align: center; padding: 2rem; color: var(--muted); font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.06); }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; } .nav-links { gap: 1.5rem; }
+      #hero, #about, #projects, #contact { padding: 5rem 1.5rem; }
+      #about { grid-template-columns: 1fr; gap: 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-logo">YourName</div>
+    <ul class="nav-links">
+      <li><a href="#about">關於</a></li>
+      <li><a href="#projects">作品</a></li>
+      <li><a href="#contact">聯絡</a></li>
+    </ul>
+  </nav>
+
+  <section id="hero">
+    <p class="hero-eyebrow">歡迎來到我的個人網站</p>
+    <h1 class="hero-title">你好，我是<br /><span>你的名字</span></h1>
+    <p class="hero-desc">一句話介紹自己，例如：前端工程師 / 設計師 / 學生。喜歡用程式解決問題，也喜歡探索新技術。</p>
+    <a href="#about" class="btn">了解更多</a>
+  </section>
+
+  <section id="about">
+    <div>
+      <p class="section-label">About Me</p>
+      <h2 class="section-title">關於我</h2>
+      <p class="about-text">在這裡寫幾段關於自己的介紹，可以說你的背景、學習歷程、對什麼技術有熱情，或是你的興趣愛好。讓來訪者快速認識你這個人！</p>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-item">HTML / CSS</div>
+      <div class="skill-item">JavaScript</div>
+      <div class="skill-item">React</div>
+      <div class="skill-item">Python</div>
+      <div class="skill-item">Git / GitHub</div>
+      <div class="skill-item">其他技能</div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="section-header">
+      <p class="section-label">Portfolio</p>
+      <h2 class="section-title">我的作品</h2>
+    </div>
+    <div class="projects-grid">
+      <div class="project-card">
+        <p class="project-tag">Web App</p>
+        <h3 class="project-name">專案名稱一</h3>
+        <p class="project-desc">簡單描述這個專案做了什麼，用了哪些技術，解決了什麼問題。</p>
+      </div>
+      <div class="project-card">
+        <p class="project-tag">Design</p>
+        <h3 class="project-name">專案名稱二</h3>
+        <p class="project-desc">簡單描述這個專案做了什麼，用了哪些技術，解決了什麼問題。</p>
+      </div>
+      <div class="project-card">
+        <p class="project-tag">Tool</p>
+        <h3 class="project-name">專案名稱三</h3>
+        <p class="project-desc">簡單描述這個專案做了什麼，用了哪些技術，解決了什麼問題。</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <p class="section-label">Contact</p>
+    <h2 class="section-title">聯絡我</h2>
+    <p>有任何合作機會或想法，歡迎與我聯絡！</p>
+    <div class="contact-links">
+      <a href="mailto:your@email.com">Email</a>
+      <a href="https://github.com/yourname" target="_blank">GitHub</a>
+      <a href="https://linkedin.com/in/yourname" target="_blank">LinkedIn</a>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 你的名字 · Built with GitHub Pages</p>
+  </footer>
+</body>
+</html>
