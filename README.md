@@ -12,18 +12,19 @@
 
 ### 技術棧
 - **純 HTML / CSS / JavaScript**（無框架）
-- **SPA 單頁應用** — 以 URL hash（`#home` / `#projects` / `#about`）做路由切換
+- **SPA 單頁應用** — 以 URL hash（`#home` / `#projects` / `#about` / `#project/id`）做路由切換
 - **RWD 響應式** — 斷點 800px，手機 / 桌面雙佈局
 - **Google Fonts** — Kumbh Sans + Noto Sans TC
 
 ### 頁面結構
 
 ```
-index.html（單檔 SPA）
+index.html（SPA 入口）
 ├── NAV BAR（fixed/sticky 導覽列）
 ├── Mobile Overlay Menu（漢堡選單，clip-path 動畫展開）
 ├── VIEW: Home（Hero 全螢幕，名字動畫 + 社群連結）
-├── VIEW: Projects（左側 Sidebar + 右側作品格線）
+├── VIEW: Projects（左側 Sidebar + 右側作品格線 + Filter）
+├── VIEW: Project Detail（作品內頁，YouTube 嵌入）
 ├── VIEW: About（照片 + Bio EN/ZH + CV EN/ZH + Tab 切換）
 └── Footer
 ```
@@ -32,50 +33,44 @@ index.html（單檔 SPA）
 
 ```
 PB.github.io/
-├── index.html          # 主頁面（含 inline CSS + JS）
-├── README.md           # 本文件
+├── index.html              # HTML 結構（不含 CSS/JS）
+├── README.md               # 本文件
 └── assets/
+    ├── css/
+    │   └── style.css       # 所有樣式
+    ├── js/
+    │   └── main.js         # SPA 路由、互動邏輯、作品資料
     └── images/
-        └── profile.jpg # About 頁大頭照
+        └── profile.jpg     # About 頁大頭照
 ```
 
 ### JS 功能模組
 | 模組 | 說明 |
 |------|------|
-| SPA Router | hash 導航 + `pushState` 歷史紀錄 |
+| SPA Router | hash 導航 + `pushState` 歷史紀錄 + deep-link |
 | Mobile Menu | 漢堡開關 + `clip-path` 圓形展開動畫 |
+| Project Filter | 四分類篩選（Performance / Exhibition / Case / Collaboration） |
+| Project Detail | 點擊作品卡片 → 展開內頁（YouTube 嵌入、瀏覽器返回支援） |
 | About Tabs | Bio / CV 分頁切換 |
-| Bio 語言切換 | EN ↔ 中文 |
-| CV 語言切換 | EN ↔ 中文 |
-| Work Cards | 作品卡片點擊（待實作 detail panel） |
+| Lang Switch | Bio & CV 的 EN ↔ 中文切換 |
 
 ---
 
 ## TODO
 
 ### 🔴 優先
-- [ ] **作品 Detail Panel** — 點擊作品卡片後的展開 / 內頁邏輯
-- [ ] **作品封面圖** — 替換 4 個佔位卡片為實際作品圖片與資訊
+- [ ] **作品真實內容** — 替換佔位卡片為實際作品圖片、名稱、YouTube 連結
 - [ ] **CV PDF** — 放入 `assets/cv.pdf` 實體檔案
 
 ### 🟡 建議優化
-- [ ] **CSS / JS 外拆** — 將 inline style 與 script 拆分為 `style.css` 和 `main.js`
-- [ ] **SVG Icon 去重** — 社群 icon 目前重複 4 次，改用 `<defs>` + `<use>` 或外部檔案
-- [ ] **SEO Meta** — 補上 `<meta name="description">`、Open Graph 標籤
+- [ ] **SVG Icon 去重** — 社群 icon 重複多次，改用 `<defs>` + `<use>` 或外部檔案
 - [ ] **Favicon** — 加入網站圖示
-- [ ] **Footer 年份動態化** — 改用 JS `new Date().getFullYear()`
+- [ ] **Open Graph 標籤** — 社群分享卡片
 
 ### 🟢 加分項
 - [ ] 首頁背景微動態（grain / 粒子效果）
-- [ ] 作品卡片 hover 動畫強化（圖片微放大、底色浮現）
+- [ ] 作品卡片 hover 動畫強化
 - [ ] 頁面轉場動畫優化
-
----
-
-## 開發筆記
-
-- 設計走 **暗色極簡風**（`--bg: #0d0d0d`），適合新媒體藝術家作品集調性
-- 目前為單檔 SPA，後續若作品量增加，可考慮拆為多檔或引入輕量打包工具
 
 ---
 
