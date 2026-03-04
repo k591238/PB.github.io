@@ -42,6 +42,9 @@ function navigateTo(id, pushState = true) {
     target.classList.remove('entered');
     void target.offsetWidth;
     target.classList.add('entered');
+    if (window.ParticleField) window.ParticleField.start();
+  } else {
+    if (window.ParticleField) window.ParticleField.stop();
   }
 
   document.querySelectorAll('[data-view]').forEach(el => {
