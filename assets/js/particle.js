@@ -32,7 +32,7 @@
         aliRadius: 85,
         cohRadius: 85,
         // Camera
-        fov: 350,    // perspective focal length (px)
+        fov: 250,    // perspective focal length (px)
         camSmooth: 0.015,  // lerp speed of camera toward mouse target
         camMaxX: 0.65,   // max pitch (rad)
         camMaxY: Math.PI,// max yaw (rad, full 360 possible)
@@ -305,11 +305,7 @@
         return [x, y, z];
     }
 
-    function setMag3(x, y, z, mag) {
-        const m = len3(x, y, z) || 1;
-        return [x * m / m * mag / m * m, y / m * mag, z / m * mag];
-        // simplified:
-    }
+
 
     // steer toward direction in 3D
     function steer3(b, tx, ty, tz) {

@@ -305,6 +305,18 @@ button {
 .hero-content {
   position: relative;
   z-index: 1;
+  transform: translate(-25px, 25px);
+}
+
+.hero-copy {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.56rem;
+  color: var(--accent);
+  letter-spacing: 1px;
+  z-index: 1;
 }
 
 .hero-name {
@@ -998,31 +1010,5 @@ button {
 @media (min-width: 800px) {
   #view-project-detail {
     padding: 2rem 10% 6rem;
-  }
-}
-
-/* ════════════════════════════════════════════════════
-   FOOTER
-════════════════════════════════════════════════════ */
-.footer {
-  padding: 1.5rem 5%;
-  font-size: 0.56rem;
-  letter-spacing: 1px;
-  color: #2a2a2a;
-  text-align: center;
-  border-top: 1px solid var(--border);
-}
-
-/* 漢堡選單出現時（< 800px）隱藏 footer */
-@media (max-width: 799px) {
-  .footer {
-    display: none;
-  }
-}
-
-@media (min-width: 800px) {
-  .footer {
-    padding: 1.5rem 10%;
-    text-align: left;
   }
 }

@@ -190,5 +190,3 @@ document.querySelector('.btn-back').addEventListener('click', () => {
   navigateTo('projects');
 });
 
-// Dynamic footer year
-document.querySelector('.footer').textContent = `WU CHENG-RU © ${new Date().getFullYear()}`;

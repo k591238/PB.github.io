@@ -143,6 +143,11 @@ PB.github.io/
 - [ ] **Open Graph 標籤** — 社群分享卡片預覽
 - [ ] **CV PDF** — 放入 `assets/cv.pdf`
 
+### 🟢 最新優化與清理 (2026/03)
+- 移除了未使用的 `footer` 元素，並同步清理了 `style.css` 與 `main.js` 中的對應程式碼，避免頁面載入時發生 Javascript 錯誤。
+- 清理了 `particle.js` 中未被呼叫的向量數學函式 (`setMag3`)，精簡程式碼。
+- 調整首頁標題及社群連結位置，並將版權宣告移至畫面置中。
+
 ---
 
-© 2025 WU CHENG-RU
+© 2026 WU CHENG-RU
