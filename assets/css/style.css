@@ -10,7 +10,7 @@
   --accent: #d9ff82ec;
   --font: 'Kumbh Sans', sans-serif;
   --font-tc: 'Noto Sans TC', sans-serif;
-  --nav-h: 60px;
+  --nav-h: 44px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -85,7 +85,7 @@ button {
 @media (min-width: 800px) {
   .bar {
     position: sticky;
-    height: 90px;
+    height: 56px;
     padding: 0 10%;
     background: var(--bg);
     backdrop-filter: none;
@@ -162,6 +162,8 @@ button {
   clip-path: circle(0% at calc(100% - 10%) 30px);
   transition: clip-path 0.5s var(--ease);
   pointer-events: none;
+  display: flex;
+  flex-direction: column;
 }
 
 .menu_mobile.open {
@@ -170,7 +172,16 @@ button {
 }
 
 .menu_mobile_inner {
-  padding: 90px 8% 0;
+  flex: 1;
+  padding: 70px 8% 0;
+}
+
+.menu_mobile_copy {
+  padding: 1.2rem 8%;
+  font-size: 0.5rem;
+  letter-spacing: 1px;
+  color: var(--muted);
+  text-align: center;
 }
 
 .menu_close {
@@ -273,7 +284,7 @@ button {
 @media (min-width: 800px) {
   #view-home {
     /* 桌面 navbar 是 sticky 佔版面，需要扣除 */
-    height: calc(100dvh - 90px);
+    height: calc(100dvh - 56px);
     padding: 0 5% 8vh;
   }
 }
@@ -487,7 +498,7 @@ button {
 
 @media (min-width: 800px) {
   .proj-filter {
-    top: 90px;
+    top: 56px;
   }
 }
 
