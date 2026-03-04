@@ -351,7 +351,7 @@
         const r = CFG.blobRadius;
         let minX = Infinity, maxX = -Infinity;
         let minY = Infinity, maxY = -Infinity;
-        let count = 0;
+        const captured = [];
 
         for (const b of boids) {
             if (!b.proj) continue;
@@ -361,9 +361,10 @@
                 if (b.proj.sx > maxX) maxX = b.proj.sx;
                 if (b.proj.sy < minY) minY = b.proj.sy;
                 if (b.proj.sy > maxY) maxY = b.proj.sy;
-                count++;
+                captured.push(b);
             }
         }
+        const count = captured.length;
 
         ctx.setLineDash([5, 5]);
         ctx.lineDashOffset = -(Date.now() / 55) % 20;
@@ -406,7 +407,6 @@
             ctx.font = '9px "Kumbh Sans", monospace';
             ctx.fillStyle = CFG.hudColor;
             ctx.textAlign = 'left';
-            ctx.fillText(`n:${count}`, bx + 2, by2 - 4);
         }
 
         ctx.setLineDash([]);
@@ -468,6 +468,91 @@
         ctx.lineWidth = 0.8;
         ctx.stroke();
     }
+    /* ── 3D World Grid (XZ plane at y=worldR*0.85) ── */
+    function drawGrid() {
+        const r = CFG.worldR;
+        const ext = r * 2.2;
+        const y = r * 0.85;
+        const step = r / 8; // 密度提高 (原 r / 4)
+
+        ctx.lineWidth = 0.5;
+
+        // 將長線拆解為網格短線段，分別判斷深度，避免一端在鏡頭後方導致整條線破圖消失
+        for (let x = -ext; x <= ext + 0.01; x += step) {
+            for (let z = -ext; z < ext - 0.01; z += step) {
+                const p1 = project(x, y, z);
+                const p2 = project(x, y, z + step);
+                if (p1.depth > 0.05 && p2.depth > 0.05) {
+                    // 提高基礎亮度與最大亮度
+                    const alpha = Math.min(0.4, 0.1 + 0.15 * (p1.depth + p2.depth));
+                    ctx.beginPath();
+                    ctx.moveTo(p1.sx, p1.sy);
+                    ctx.lineTo(p2.sx, p2.sy);
+                    ctx.strokeStyle = `rgba(217,255,130,${alpha.toFixed(2)})`;
+                    ctx.stroke();
+                }
+            }
+        }
+        for (let z = -ext; z <= ext + 0.01; z += step) {
+            for (let x = -ext; x < ext - 0.01; x += step) {
+                const p1 = project(x, y, z);
+                const p2 = project(x + step, y, z);
+                if (p1.depth > 0.05 && p2.depth > 0.05) {
+                    const alpha = Math.min(0.4, 0.1 + 0.15 * (p1.depth + p2.depth));
+                    ctx.beginPath();
+                    ctx.moveTo(p1.sx, p1.sy);
+                    ctx.lineTo(p2.sx, p2.sy);
+                    ctx.strokeStyle = `rgba(217,255,130,${alpha.toFixed(2)})`;
+                    ctx.stroke();
+                }
+            }
+        }
+
+        /* ── Y Axis (green line piercing through grid) ── */
+        ctx.lineWidth = 1.0;
+        const yExt = r * 5; // 貫穿上下
+        const yStep = r / 4;
+        for (let iy = -yExt; iy < yExt; iy += yStep) {
+            const p1 = project(0, y + iy, 0);
+            const p2 = project(0, y + iy + yStep, 0);
+            if (p1.depth > 0.05 && p2.depth > 0.05) {
+                const alpha = Math.min(0.7, 0.2 + 0.2 * (p1.depth + p2.depth));
+                ctx.beginPath();
+                ctx.moveTo(p1.sx, p1.sy);
+                ctx.lineTo(p2.sx, p2.sy);
+                ctx.strokeStyle = `rgba(80,255,120,${alpha.toFixed(2)})`;
+                ctx.stroke();
+            }
+        }
+
+        /* ── X Axis (red line piercing through grid) ── */
+        for (let ix = -yExt; ix < yExt; ix += yStep) {
+            const p1 = project(ix, y, 0);
+            const p2 = project(ix + yStep, y, 0);
+            if (p1.depth > 0.05 && p2.depth > 0.05) {
+                const alpha = Math.min(0.7, 0.2 + 0.2 * (p1.depth + p2.depth));
+                ctx.beginPath();
+                ctx.moveTo(p1.sx, p1.sy);
+                ctx.lineTo(p2.sx, p2.sy);
+                ctx.strokeStyle = `rgba(255,80,80,${alpha.toFixed(2)})`;
+                ctx.stroke();
+            }
+        }
+
+        /* ── Z Axis (blue line piercing through grid) ── */
+        for (let iz = -yExt; iz < yExt; iz += yStep) {
+            const p1 = project(0, y, iz);
+            const p2 = project(0, y, iz + yStep);
+            if (p1.depth > 0.05 && p2.depth > 0.05) {
+                const alpha = Math.min(0.7, 0.2 + 0.2 * (p1.depth + p2.depth));
+                ctx.beginPath();
+                ctx.moveTo(p1.sx, p1.sy);
+                ctx.lineTo(p2.sx, p2.sy);
+                ctx.strokeStyle = `rgba(80,140,255,${alpha.toFixed(2)})`;
+                ctx.stroke();
+            }
+        }
+    }
 
     /* ────────────────────────────────────────────
        MAIN LOOP
@@ -480,6 +565,8 @@
         updateCamera();
         updateBoids();
         sortBoids();
+
+        drawGrid();
 
         for (const b of boids) drawTrail(b);
         for (const b of boids) drawBird(b);

@@ -795,7 +795,7 @@ button {
 .bio-text p {
   font-size: 0.83rem;
   line-height: 1.95;
-  color: #aaa;
+  color: var(--muted);
   margin-bottom: 1.1em;
 }
 
@@ -839,14 +839,14 @@ button {
 
 .cv-year {
   font-size: 0.58rem;
-  color: #3a3a3a;
+  color: rgba(217, 255, 130, 0.22);
   letter-spacing: 0.04em;
   font-variant-numeric: tabular-nums;
 }
 
 .cv-detail {
   font-size: 0.72rem;
-  color: #888;
+  color: var(--muted);
   line-height: 1.55;
 }
 
@@ -861,13 +861,14 @@ button {
 }
 
 .cv-sub {
-  color: #484848;
+  color: var(--muted);
   font-size: 0.65rem;
+  opacity: 0.6;
 }
 
 .cv-edu {
   font-size: 0.72rem;
-  color: #888;
+  color: var(--muted);
   line-height: 1.6;
   margin-bottom: 0.4rem;
 }
