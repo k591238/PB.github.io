@@ -6,7 +6,7 @@
   --surface: #1f1f42;
   --border: rgba(255, 252, 188, 0.247);
   --text: #d9ff82ec;
-  --muted: #d2fc9c6b;
+  --muted: #dafc9cc0;
   --accent: #d9ff82ec;
   --font: 'Kumbh Sans', sans-serif;
   --font-tc: 'Noto Sans TC', sans-serif;
@@ -259,13 +259,23 @@ button {
    VIEW: HOME — 全螢幕 Hero
 ════════════════════════════════════════════════════ */
 #view-home {
-  min-height: calc(100vh - 90px);
+  /* 手機 navbar 是 fixed 不佔版面，所以直接 100dvh 滿版 */
+  height: 100vh;
+  height: 100dvh;
   display: none;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 0 5% 8vh;
+  padding: var(--nav-h) 5% 4vh;
   position: relative;
   overflow: hidden;
+}
+
+@media (min-width: 800px) {
+  #view-home {
+    /* 桌面 navbar 是 sticky 佔版面，需要扣除 */
+    height: calc(100dvh - 90px);
+    padding: 0 5% 8vh;
+  }
 }
 
 #view-home.active {
@@ -990,6 +1000,13 @@ button {
   color: #2a2a2a;
   text-align: center;
   border-top: 1px solid var(--border);
+}
+
+/* 漢堡選單出現時（< 800px）隱藏 footer */
+@media (max-width: 799px) {
+  .footer {
+    display: none;
+  }
 }
 
 @media (min-width: 800px) {

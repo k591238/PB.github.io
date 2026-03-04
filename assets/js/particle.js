@@ -42,12 +42,12 @@
         // Trail
         trailLen: 20,
         // Colors
-        birdColor: '#d9ff82',
-        trailColor: 'rgba(217,255,130,0.22)',
-        blobBg: 'rgba(217,255,130,0.08)',
-        blobBorder: 'rgba(217,255,130,0.55)',
-        hudColor: 'rgba(217,255,130,0.75)',
-        hudBg: 'rgba(10,14,8,0.75)',
+        birdColor: '#8be4ff5d',
+        trailColor: 'rgba(130, 205, 255, 0.22)',
+        blobBg: 'rgba(130, 205, 255, 0.08)',
+        blobBorder: 'rgba(130, 184, 255, 0.55)',
+        hudColor: 'rgba(130, 188, 255, 0.75)',
+        hudBg: 'rgba(35, 52, 77, 0.24)',
         // Wing
         wingSpan: isMobile ? 5 : 7,
         wingAngle: 0.52,
@@ -197,17 +197,22 @@
                 const x = Math.cos(theta) * r;
                 const z = Math.sin(theta) * r;
 
-                // Offscreen scale caching
+                // Offscreen canvas — 動態測量文字寬度避免裁切
                 const text = strings[i % strings.length];
                 const labelCanvas = document.createElement('canvas');
                 const lCtx = labelCanvas.getContext('2d');
-                labelCanvas.width = 460;   // 增加寬度避免文字被切掉
-                labelCanvas.height = 64;   // 增加高度避免 G,p,q 等下沉字母被切斷
-                lCtx.font = `24px "Kumbh Sans", "Noto Sans TC", sans-serif`;
-                lCtx.fillStyle = '#d9ff82';
+                const fontSize = 24;
+                // 先量尺寸再設定 canvas 大小
+                lCtx.font = `${fontSize}px "Kumbh Sans", "Noto Sans TC", sans-serif`;
+                const textW = Math.ceil(lCtx.measureText(text).width);
+                labelCanvas.width = textW + 24;  // padding
+                labelCanvas.height = fontSize + 16;
+                // canvas resize 後 context state 被清除，須重設 font
+                lCtx.font = `${fontSize}px "Kumbh Sans", "Noto Sans TC", sans-serif`;
+                lCtx.fillStyle = '#7debff83';
                 lCtx.textAlign = 'center';
                 lCtx.textBaseline = 'middle';
-                lCtx.fillText(text, 230, 32);
+                lCtx.fillText(text, labelCanvas.width / 2, labelCanvas.height / 2);
 
                 this.points.push({
                     ox: x * this.radius,
@@ -237,7 +242,12 @@
 
                 const proj = projectFunc(rx, ry, rz);
                 if (proj && proj.depth > 0) {
-                    renderedPoints.push({ ...proj, canvas: p.canvas });
+                    renderedPoints.push({
+                        ...proj,
+                        canvas: p.canvas,
+                        cw: p.canvas.width,
+                        ch: p.canvas.height
+                    });
                 }
             }
 
@@ -265,7 +275,7 @@
                 ctx.save();
                 ctx.translate(rp.sx, rp.sy);
                 ctx.scale(scale, scale);
-                ctx.drawImage(rp.canvas, -230, -32);  // 對齊文字中心 (width/2, height/2)
+                ctx.drawImage(rp.canvas, -rp.cw / 2, -rp.ch / 2);
                 ctx.restore();
             }
             ctx.globalAlpha = 1.0;
@@ -530,6 +540,7 @@
 
     /* ── HUD ── */
     function drawHUD() {
+        if (window.innerWidth < 800) return; // 漢堡選單出現時（< 800px）隱藏 HUD
         // nearest projected bird to screen centre
         let best = boids[0];
         if (mouseInside && boids.length > 0) {
