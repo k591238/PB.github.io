@@ -98,6 +98,10 @@
     let camRotX = 0.18, camRotY = 0.0;     // current camera angles (rad)
     let tgtRotX = 0.18, tgtRotY = 0.0;     // target (driven by mouse)
 
+    // Cached trig functions for projection (Huge performance boost)
+    let camCy = Math.cos(0), camSy = Math.sin(0);
+    let camCx = Math.cos(0.18), camSx = Math.sin(0.18);
+
     function updateCamera() {
         if (mouseInside) {
             tgtRotY = normX * CFG.camMaxY;
@@ -105,18 +109,22 @@
         }
         camRotX += (tgtRotX - camRotX) * CFG.camSmooth;
         camRotY += (tgtRotY - camRotY) * CFG.camSmooth;
+
+        // Cache trigonometric values once per frame!
+        camCy = Math.cos(camRotY);
+        camSy = Math.sin(camRotY);
+        camCx = Math.cos(camRotX);
+        camSx = Math.sin(camRotX);
     }
 
     /* 3-D → screen projection */
     function project(x3, y3, z3) {
         // rotate Y (yaw)
-        const cy = Math.cos(camRotY), sy = Math.sin(camRotY);
-        const rx = x3 * cy + z3 * sy;
-        const rz = -x3 * sy + z3 * cy;
+        const rx = x3 * camCy + z3 * camSy;
+        const rz = -x3 * camSy + z3 * camCy;
         // rotate X (pitch)
-        const cx2 = Math.cos(camRotX), sx2 = Math.sin(camRotX);
-        const ry = y3 * cx2 - rz * sx2;
-        const rz2 = y3 * sx2 + rz * cx2;
+        const ry = y3 * camCx - rz * camSx;
+        const rz2 = y3 * camSx + rz * camCx;
         // perspective
         const depth = CFG.fov / (CFG.fov + rz2 + CFG.worldR * 0.6);
         return {
@@ -161,6 +169,110 @@
     }
 
     /* ────────────────────────────────────────────
+       3D TEXT SPHERE (CV Marquee)
+    ──────────────────────────────────────────── */
+    const TextSphere = {
+        points: [],
+        radius: 0,
+        rotationY: 0,
+        rotationX: 0,
+        init() {
+            this.points = [];
+            this.radius = CFG.worldR * 1; // 放大球體
+
+            // Extract CV strings from DOM
+            const cvNodes = document.querySelectorAll('.cv-detail.zh');
+            let strings = Array.from(cvNodes).map(n => n.textContent.trim().replace(/\s+/g, ' '));
+            if (strings.length === 0) {
+                strings = ["Visual Effect", "Sound Installation", "Audio-Visual", "Tech & Design", "Exhibition", "Performance", "New Media Art"];
+            }
+
+            const n = Math.min(Math.max(strings.length, 12), 24);
+            const phi = Math.PI * (3 - Math.sqrt(5));
+            for (let i = 0; i < n; i++) {
+                const y = 1 - (i / (n - 1)) * 2;
+                const r = Math.sqrt(1 - y * y);
+                const theta = phi * i;
+
+                const x = Math.cos(theta) * r;
+                const z = Math.sin(theta) * r;
+
+                // Offscreen scale caching
+                const text = strings[i % strings.length];
+                const labelCanvas = document.createElement('canvas');
+                const lCtx = labelCanvas.getContext('2d');
+                labelCanvas.width = 460;   // 增加寬度避免文字被切掉
+                labelCanvas.height = 64;   // 增加高度避免 G,p,q 等下沉字母被切斷
+                lCtx.font = `24px "Kumbh Sans", "Noto Sans TC", sans-serif`;
+                lCtx.fillStyle = '#d9ff82';
+                lCtx.textAlign = 'center';
+                lCtx.textBaseline = 'middle';
+                lCtx.fillText(text, 230, 32);
+
+                this.points.push({
+                    ox: x * this.radius,
+                    oy: y * this.radius,
+                    oz: z * this.radius,
+                    canvas: labelCanvas,
+                    text: text
+                });
+            }
+        },
+
+        updateAndDraw(ctx, projectFunc, isMouseIn, mx, my) {
+            const time = Date.now() * 0.001;
+            this.rotationY = time * 0.2; // 轉慢一點配合變大的球體
+            this.rotationX = Math.sin(time * 0.05) * 0.15;
+
+            const cy = Math.cos(this.rotationY), sy = Math.sin(this.rotationY);
+            const cx = Math.cos(this.rotationX), sx = Math.sin(this.rotationX);
+
+            const renderedPoints = [];
+
+            for (let p of this.points) {
+                let ry = p.oy * cx - p.oz * sx;
+                let rz = p.oy * sx + p.oz * cx;
+                let rx = p.ox * cy + rz * sy;
+                rz = -p.ox * sy + rz * cy;
+
+                const proj = projectFunc(rx, ry, rz);
+                if (proj && proj.depth > 0) {
+                    renderedPoints.push({ ...proj, canvas: p.canvas });
+                }
+            }
+
+            // painters algorithm: back to front
+            renderedPoints.sort((a, b) => a.depth - b.depth);
+
+            for (let rp of renderedPoints) {
+                let alpha = Math.min(0.85, 0.1 + 0.45 * rp.depth);
+                let scale = Math.max(0.1, rp.depth * 0.35);
+
+                // Hover check
+                if (isMouseIn) {
+                    const dx = mx - rp.sx;
+                    const dy = my - rp.sy;
+                    const d = Math.sqrt(dx * dx + dy * dy);
+                    const hoverRadius = 60 * rp.depth;
+                    if (d < hoverRadius) {
+                        const factor = 1 - (d / hoverRadius);
+                        scale += factor * 0.8;
+                        alpha = Math.min(1.0, alpha + factor);
+                    }
+                }
+
+                ctx.globalAlpha = alpha;
+                ctx.save();
+                ctx.translate(rp.sx, rp.sy);
+                ctx.scale(scale, scale);
+                ctx.drawImage(rp.canvas, -230, -32);  // 對齊文字中心 (width/2, height/2)
+                ctx.restore();
+            }
+            ctx.globalAlpha = 1.0;
+        }
+    };
+
+    /* ────────────────────────────────────────────
        FLOCK STATE
     ──────────────────────────────────────────── */
     let W = 0, H = 0;
@@ -169,6 +281,9 @@
     function initBoids() {
         boids = [];
         for (let i = 0; i < CFG.count; i++) boids.push(new Boid());
+
+        // Init CV Text Sphere
+        setTimeout(() => TextSphere.init(), 100); // 延遲確保 DOM 載入
     }
 
     /* ── vector helpers ── */
@@ -430,6 +545,7 @@
 
         const p = best.proj;
         const lines = [
+            `FPS  ${fps.toString().padStart(7)}`,
             `POS  ${best.x.toFixed(1).padStart(7)} , ${best.y.toFixed(1).padStart(7)} , ${best.z.toFixed(1).padStart(7)}`,
             `VEL  ${best.vx.toFixed(3).padStart(7)} , ${best.vy.toFixed(3).padStart(7)} , ${best.vz.toFixed(3).padStart(7)}`,
             `SPD  ${best.speed().toFixed(3).padStart(7)}`,
@@ -473,39 +589,47 @@
         const r = CFG.worldR;
         const ext = r * 2.2;
         const y = r * 0.85;
-        const step = r / 8; // 密度提高 (原 r / 4)
+        const step = r / 5; // 適度平衡密度與效能 (原 r/8 切太碎導致幾千條線)
 
         ctx.lineWidth = 0.5;
 
-        // 將長線拆解為網格短線段，分別判斷深度，避免一端在鏡頭後方導致整條線破圖消失
+        // Path Batching: instead of thousands of stroke() calls, bucket by alpha
+        const buckets = new Map();
+
+        function addLine(x1, z1, x2, z2) {
+            const p1 = project(x1, y, z1);
+            const p2 = project(x2, y, z2);
+            if (p1.depth > 0.05 && p2.depth > 0.05) {
+                const alpha = Math.min(0.4, 0.1 + 0.15 * (p1.depth + p2.depth));
+                // 15 levels of transparency is visually smooth but reduces draw calls
+                const key = Math.round(alpha * 30);
+                if (!buckets.has(key)) buckets.set(key, { alpha, lines: [] });
+                buckets.get(key).lines.push(p1.sx, p1.sy, p2.sx, p2.sy);
+            }
+        }
+
+        // 收集線段
         for (let x = -ext; x <= ext + 0.01; x += step) {
             for (let z = -ext; z < ext - 0.01; z += step) {
-                const p1 = project(x, y, z);
-                const p2 = project(x, y, z + step);
-                if (p1.depth > 0.05 && p2.depth > 0.05) {
-                    // 提高基礎亮度與最大亮度
-                    const alpha = Math.min(0.4, 0.1 + 0.15 * (p1.depth + p2.depth));
-                    ctx.beginPath();
-                    ctx.moveTo(p1.sx, p1.sy);
-                    ctx.lineTo(p2.sx, p2.sy);
-                    ctx.strokeStyle = `rgba(217,255,130,${alpha.toFixed(2)})`;
-                    ctx.stroke();
-                }
+                addLine(x, z, x, z + step);
             }
         }
         for (let z = -ext; z <= ext + 0.01; z += step) {
             for (let x = -ext; x < ext - 0.01; x += step) {
-                const p1 = project(x, y, z);
-                const p2 = project(x + step, y, z);
-                if (p1.depth > 0.05 && p2.depth > 0.05) {
-                    const alpha = Math.min(0.4, 0.1 + 0.15 * (p1.depth + p2.depth));
-                    ctx.beginPath();
-                    ctx.moveTo(p1.sx, p1.sy);
-                    ctx.lineTo(p2.sx, p2.sy);
-                    ctx.strokeStyle = `rgba(217,255,130,${alpha.toFixed(2)})`;
-                    ctx.stroke();
-                }
+                addLine(x, z, x + step, z);
             }
+        }
+
+        // 批次繪製 (減低 Canvas overhead 95%)
+        for (const bucket of buckets.values()) {
+            ctx.beginPath();
+            const arr = bucket.lines;
+            for (let i = 0; i < arr.length; i += 4) {
+                ctx.moveTo(arr[i], arr[i + 1]);
+                ctx.lineTo(arr[i + 2], arr[i + 3]);
+            }
+            ctx.strokeStyle = `rgba(217,255,130,${bucket.alpha.toFixed(2)})`;
+            ctx.stroke();
         }
 
         /* ── Y Axis (green line piercing through grid) ── */
@@ -558,8 +682,17 @@
        MAIN LOOP
     ──────────────────────────────────────────── */
     let rafId = null, running = false;
+    let fps = 0, frames = 0, lastFpsTime = 0;
 
     function draw() {
+        const now = performance.now();
+        frames++;
+        if (now - lastFpsTime >= 1000) {
+            fps = Math.round((frames * 1000) / (now - lastFpsTime));
+            frames = 0;
+            lastFpsTime = now;
+        }
+
         ctx.clearRect(0, 0, W, H);
 
         updateCamera();
@@ -567,6 +700,9 @@
         sortBoids();
 
         drawGrid();
+
+        // 畫文字球 (置中)，帶入滑鼠參數
+        TextSphere.updateAndDraw(ctx, project, mouseInside, screenMX, screenMY);
 
         for (const b of boids) drawTrail(b);
         for (const b of boids) drawBird(b);
