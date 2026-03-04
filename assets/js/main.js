@@ -2,18 +2,18 @@
    DATA
 ──────────────────────────────────────── */
 const projectsData = [
-  { id: 'p1', title: 'Performance 1', year: 2025, meta: 'Performance', category: 'performance', thumb: '', youtubeId: 'dQw4w9WgXcQ' },
-  { id: 'p2', title: 'Performance 2', year: 2025, meta: 'Performance', category: 'performance', thumb: '', youtubeId: 'dQw4w9WgXcQ' },
-  { id: 'p3', title: 'Performance 3', year: 2025, meta: 'Performance', category: 'performance', thumb: '', youtubeId: 'dQw4w9WgXcQ' },
-  { id: 'e1', title: 'Exhibition 1', year: 2024, meta: 'Exhibition', category: 'exhibition', thumb: '', youtubeId: 'dQw4w9WgXcQ' },
-  { id: 'e2', title: 'Exhibition 2', year: 2024, meta: 'Exhibition', category: 'exhibition', thumb: '', youtubeId: 'dQw4w9WgXcQ' },
-  { id: 'e3', title: 'Exhibition 3', year: 2024, meta: 'Exhibition', category: 'exhibition', thumb: '', youtubeId: 'dQw4w9WgXcQ' },
-  { id: 'c1', title: 'Case Study 1', year: 2023, meta: 'Case', category: 'case', thumb: '', youtubeId: 'dQw4w9WgXcQ' },
-  { id: 'c2', title: 'Case Study 2', year: 2023, meta: 'Case', category: 'case', thumb: '', youtubeId: 'dQw4w9WgXcQ' },
-  { id: 'c3', title: 'Case Study 3', year: 2023, meta: 'Case', category: 'case', thumb: '', youtubeId: 'dQw4w9WgXcQ' },
-  { id: 'co1', title: 'Collaboration 1', year: 2022, meta: 'Collaboration', category: 'collaboration', thumb: '', youtubeId: 'dQw4w9WgXcQ' },
-  { id: 'co2', title: 'Collaboration 2', year: 2022, meta: 'Collaboration', category: 'collaboration', thumb: '', youtubeId: 'dQw4w9WgXcQ' },
-  { id: 'co3', title: 'Collaboration 3', year: 2022, meta: 'Collaboration', category: 'collaboration', thumb: '', youtubeId: 'dQw4w9WgXcQ' },
+  { id: 'p1', title: 'Performance 1', year: 2025, meta: 'Performance', category: 'performance', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
+  { id: 'p2', title: 'Performance 2', year: 2025, meta: 'Performance', category: 'performance', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
+  { id: 'p3', title: 'Performance 3', year: 2025, meta: 'Performance', category: 'performance', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
+  { id: 'e1', title: 'Exhibition 1', year: 2024, meta: 'Exhibition', category: 'exhibition', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
+  { id: 'e2', title: 'Exhibition 2', year: 2024, meta: 'Exhibition', category: 'exhibition', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
+  { id: 'e3', title: 'Exhibition 3', year: 2024, meta: 'Exhibition', category: 'exhibition', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
+  { id: 'c1', title: 'Case Study 1', year: 2023, meta: 'Case', category: 'case', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
+  { id: 'c2', title: 'Case Study 2', year: 2023, meta: 'Case', category: 'case', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
+  { id: 'c3', title: 'Case Study 3', year: 2023, meta: 'Case', category: 'case', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
+  { id: 'co1', title: 'Collaboration 1', year: 2022, meta: 'Collaboration', category: 'collaboration', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
+  { id: 'co2', title: 'Collaboration 2', year: 2022, meta: 'Collaboration', category: 'collaboration', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
+  { id: 'co3', title: 'Collaboration 3', year: 2022, meta: 'Collaboration', category: 'collaboration', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
 ];
 
 /* ────────────────────────────────────────
