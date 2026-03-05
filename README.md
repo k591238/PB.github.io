@@ -41,7 +41,7 @@ PB.github.io/
 | Project Filter | 四分類篩選（Performance / Exhibition / Case / Collaboration） |
 | Project Detail | 點擊作品卡片 → 展開內頁（YouTube 嵌入、瀏覽器返回支援） |
 | About Tabs | Bio / CV 分頁切換 |
-| Lang Switch | Bio & CV 的 EN ↔ 中文切換 |
+| Lang Switch | Bio & CV 的 EN / CN 中英文雙語切換 |
 | **Bird Fluid** | 3D Boid 群飛動畫，滑鼠相機旋轉 + Blob tracking |
 
 ---
@@ -144,8 +144,10 @@ PB.github.io/
 - [ ] **CV PDF** — 放入 `assets/cv.pdf`
 
 ### 🟢 最新優化與清理 (2026/03)
+- 調整 CV 區塊的語言切換設計，將英文（EN）與中文（CN）按鈕整合至與 Bio、CV 導覽列同行的右側，並將選項字體放大。
+- 更新中英文版簡歷（CV）內容並確保左右語系資料一致，包含加上過去相關工作坊與展演等相關外部連結。
 - 移除了未使用的 `footer` 元素，並同步清理了 `style.css` 與 `main.js` 中的對應程式碼，避免頁面載入時發生 Javascript 錯誤。
-- 清理了 `particle.js` 中未被呼叫的向量數學函式 (`setMag3`)，精簡程式碼。
+- 清理了 `particle.js` 中的部分閒置程式碼，精簡程式碼結構。
 - 調整首頁標題及社群連結位置，並將版權宣告移至畫面置中。
 
 ---

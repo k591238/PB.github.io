@@ -147,6 +147,11 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     tabGroup.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+
+    // Toggle lang switchers
+    document.querySelectorAll('.lang-switch').forEach(ls => ls.classList.remove('active'));
+    const activeLangSwitch = document.getElementById('lang-switch-' + btn.dataset.tab);
+    if (activeLangSwitch) activeLangSwitch.classList.add('active');
   });
 });
 
@@ -155,13 +160,14 @@ document.querySelectorAll('[data-bio-lang], [data-cv-lang]').forEach(btn => {
   btn.addEventListener('click', () => {
     const isBio = btn.hasAttribute('data-bio-lang');
     const lang = isBio ? btn.dataset.bioLang : btn.dataset.cvLang;
-    const container = btn.closest(isBio ? '#tab-bio' : '#tab-cv');
+    const panel = document.getElementById(isBio ? 'tab-bio' : 'tab-cv');
+    const langSwitch = document.getElementById(isBio ? 'lang-switch-bio' : 'lang-switch-cv');
 
-    container.querySelectorAll(isBio ? '[data-bio-lang]' : '[data-cv-lang]').forEach(b => b.classList.remove('active'));
+    langSwitch.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
 
-    container.querySelectorAll(isBio ? '.bio-text' : '.cv-content').forEach(t => t.classList.remove('active'));
-    container.querySelector(isBio ? `.bio-text.${lang}` : `.cv-content.${lang}`).classList.add('active');
+    panel.querySelectorAll(isBio ? '.bio-text' : '.cv-content').forEach(t => t.classList.remove('active'));
+    panel.querySelector(isBio ? `.bio-text.${lang}` : `.cv-content.${lang}`).classList.add('active');
   });
 });
 

@@ -181,7 +181,7 @@
             this.radius = CFG.worldR * 1; // 放大球體
 
             // Extract CV strings from DOM
-            const cvNodes = document.querySelectorAll('.cv-detail.zh');
+            const cvNodes = document.querySelectorAll('.cv-content.en .cv-detail');
             let strings = Array.from(cvNodes).map(n => n.textContent.trim().replace(/\s+/g, ' '));
             if (strings.length === 0) {
                 strings = ["Visual Effect", "Sound Installation", "Audio-Visual", "Tech & Design", "Exhibition", "Performance", "New Media Art"];
@@ -304,8 +304,6 @@
         if (m > max && m > 0) { const s = max / m; return [x * s, y * s, z * s]; }
         return [x, y, z];
     }
-
-
 
     // steer toward direction in 3D
     function steer3(b, tx, ty, tz) {

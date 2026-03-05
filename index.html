@@ -342,16 +342,24 @@
 
       <!-- Tab nav -->
       <div class="tab-nav">
-        <button class="tab-btn active" data-tab="bio">Bio</button>
-        <button class="tab-btn" data-tab="cv">CV</button>
+        <div class="tab-buttons">
+          <button class="tab-btn active" data-tab="bio">Bio</button>
+          <button class="tab-btn" data-tab="cv">CV</button>
+        </div>
+        <div class="lang-switches">
+          <div class="lang-switch active" id="lang-switch-bio">
+            <button class="lang-btn active" data-bio-lang="en">EN</button>
+            <button class="lang-btn" data-bio-lang="zh">CN</button>
+          </div>
+          <div class="lang-switch" id="lang-switch-cv">
+            <button class="lang-btn active" data-cv-lang="en">EN</button>
+            <button class="lang-btn" data-cv-lang="zh">CN</button>
+          </div>
+        </div>
       </div>
 
       <!-- ── BIO ── -->
       <div class="tab-panel active" id="tab-bio">
-        <div class="lang-switch">
-          <button class="lang-btn active" data-bio-lang="en">EN</button>
-          <button class="lang-btn" data-bio-lang="zh">CN</button>
-        </div>
         <div class="bio-text en active">
           <p>Born in Chiayi, Taiwan, a new media artist whose work primarily involves interdisciplinary art and
             audiovisual performances. His practice centers on sound experimentation, real-time image generation, and
@@ -368,11 +376,6 @@
 
       <!-- ── CV ── -->
       <div class="tab-panel" id="tab-cv">
-        <div class="lang-switch">
-          <button class="lang-btn active" data-cv-lang="en">EN</button>
-          <button class="lang-btn" data-cv-lang="zh">CN</button>
-        </div>
-
 
         <!-- EN CV -->
         <div class="cv-content en active">
@@ -383,48 +386,67 @@
           <div class="cv-section">
             <p class="cv-section-title">Selected Works</p>
             <div class="cv-row"><span class="cv-year">2025</span><span class="cv-detail"><span class="cv-bold">Tech
-                  &amp; Design</span> — <em>Kindom</em>, Sweat HK Dance Festival <span class="cv-sub">· Technical
+                  &amp; Design</span> — <a href="https://www.accupass.com/event/2509091417411288292435" target="_blank"
+                  class="text-link"><em>Kindom</em></a>, Sweat HK Dance Festival <span class="cv-sub">· Technical
                   Director (Hong Kong)</span></span></div>
             <div class="cv-row"><span class="cv-year">2025</span><span class="cv-detail"><span
                   class="cv-bold">Workshop</span> — Live VJ Lab, BLND Academy × Perspectives AV Art</span></div>
             <div class="cv-row"><span class="cv-year">2025</span><span class="cv-detail"><span
-                  class="cv-bold">Performance</span> — <em>Perspectives: AV Art</em>, Taipei Music Center <span
+                  class="cv-bold">Performance</span> — <a href="https://www.youtube.com/watch?v=zfsF6ZuGfx0&t=1248s"
+                  target="_blank" class="text-link"><em>Perspectives: AV Art</em></a>, Taipei Music Center <span
                   class="cv-sub">· Audio-Visual (Taipei)</span></span></div>
             <div class="cv-row"><span class="cv-year">2025</span><span class="cv-detail"><span
-                  class="cv-bold">Performance</span> — Kuan Du Light Art Festival <span class="cv-sub">· Audio-Visual
+                  class="cv-bold">Performance</span> — <a href="https://kdlaf.tnua.edu.tw/2025/performance.html"
+                  target="_blank" class="text-link">Kuan Du Light Art Festival</a> <span class="cv-sub">· Audio-Visual
                   (Taipei)</span></span></div>
             <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail"><span
-                  class="cv-bold">Performance</span> — <em>Oblivion Circuit</em>, Theater Guild DAIKANYAMA <span
+                  class="cv-bold">Performance</span> — <a href="https://www.youtube.com/watch?v=QZoCx-jaL60"
+                  target="_blank" class="text-link"><em>Oblivion Circuit</em></a>, Theater Guild DAIKANYAMA <span
                   class="cv-sub">· Audio-Visual (Tokyo)</span></span></div>
             <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail"><span
-                  class="cv-bold">Performance</span> — <em>Dream Percept</em>, FUTURE VISION LAB <span class="cv-sub">·
+                  class="cv-bold">Performance</span> — <a href="https://www.youtube.com/watch?v=VWdl_gF3HBw"
+                  target="_blank" class="text-link"><em>Dream Percept</em></a>, FUTURE VISION LAB <span class="cv-sub">·
                   Director (Taipei)</span></span></div>
             <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail"><span class="cv-bold">Visual
-                  Effect</span> — Proyector Festival, <em>The Zone</em> <span class="cv-sub">· Programming Effects
+                  Effect</span> — Proyector Festival, <a
+                  href="https://www.universe.com/events/videoperformance-interactiva-the-zone-tickets-ZGN03F"
+                  target="_blank" class="text-link"><em>The Zone</em></a> <span class="cv-sub">· Programming Effects
                   (Madrid)</span></span></div>
             <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail"><span class="cv-bold">Tech
-                  &amp; Design</span> — Taipei Fringe Festival, <em>The Archeology of Wonderland</em> <span
-                  class="cv-sub">· Technical Director &amp; AI Image Design</span></span></div>
+                  &amp; Design</span> — Taipei Fringe Festival, <a
+                  href="https://www.opentix.life/event/1806000591116406785" target="_blank" class="text-link"><em>The
+                    Archeology of Wonderland</em></a> <span class="cv-sub">· Technical Director &amp; AI Image
+                  Design</span></span></div>
             <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail"><span
-                  class="cv-bold">Exhibition</span> — Kuan Du Light Art Festival, <em>Wisper</em> <span class="cv-sub">·
+                  class="cv-bold">Exhibition</span> — Kuan Du Light Art Festival, <a
+                  href="https://www.youtube.com/watch?v=3zMIU6YjPEk" target="_blank"
+                  class="text-link"><em>Wisper</em></a> <span class="cv-sub">·
                   Sound Installation (Taipei)</span></span></div>
             <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail"><span
-                  class="cv-bold">Performance</span> — <em>VIVIDO: re-Action</em> Sandy's Trace <span class="cv-sub">·
+                  class="cv-bold">Performance</span> — <a href="https://dac.taipei/project/vivido-re-action"
+                  target="_blank" class="text-link"><em>VIVIDO: re-Action</em></a> Sandy's Trace <span class="cv-sub">·
                   VJ (Taipei)</span></span></div>
             <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail"><span
-                  class="cv-bold">Design</span> — Taipei Art Awards: Lin Zhe-Zhi <em>A Kind of Geo-imagination Without
-                  Gravity</em> <span class="cv-sub">· AI Design</span></span></div>
+                  class="cv-bold">Design</span> — Taipei Art Awards: <a
+                  href="https://www.instagram.com/p/DDwXzuACpf4/?img_index=4" target="_blank" class="text-link">Lin
+                  Zhe-Zhi <em>A Kind of Geo-imagination Without
+                    Gravity</em></a> <span class="cv-sub">· AI Design</span></span></div>
             <div class="cv-row"><span class="cv-year">2023</span><span class="cv-detail"><span
-                  class="cv-bold">Performance</span> — <em>Future Vision Party</em>, FUTURE VISION LAB <span
+                  class="cv-bold">Performance</span> — <a href="https://www.youtube.com/watch?v=oS-5e2SRLRQ"
+                  target="_blank" class="text-link"><em>Future Vision Party</em></a>, FUTURE VISION LAB <span
                   class="cv-sub">· Audio-Visual (Taipei)</span></span></div>
             <div class="cv-row"><span class="cv-year">2023</span><span class="cv-detail"><span
-                  class="cv-bold">Technician</span> — C-Lab Diversonics, <em>Current</em> <span class="cv-sub">· Signal
+                  class="cv-bold">Technician</span> — C-Lab Diversonics, <a
+                  href="https://www.youtube.com/watch?v=aJ76WJr-W3g" target="_blank"
+                  class="text-link"><em>Current</em></a> <span class="cv-sub">· Signal
                   Integration (Taipei)</span></span></div>
             <div class="cv-row"><span class="cv-year">2023</span><span class="cv-detail"><span
-                  class="cv-bold">Performance</span> — <em>Visual Cognition</em> <span class="cv-sub">· Audio-Visual
+                  class="cv-bold">Performance</span> — <a href="https://www.youtube.com/watch?v=tTYg5yXMvb8"
+                  target="_blank" class="text-link"><em>Visual Cognition</em></a> <span class="cv-sub">· Audio-Visual
                   (Taipei)</span></span></div>
             <div class="cv-row"><span class="cv-year">2023</span><span class="cv-detail"><span
-                  class="cv-bold">Performance</span> — <em>sensation.remix</em> <span class="cv-sub">· Audio-Visual
+                  class="cv-bold">Performance</span> — <a href="https://www.youtube.com/watch?v=t-WZhnldw4o"
+                  target="_blank" class="text-link"><em>sensation.remix</em></a> <span class="cv-sub">· Audio-Visual
                   (Yilan)</span></span></div>
             <div class="cv-row"><span class="cv-year">2022</span><span class="cv-detail"><span
                   class="cv-bold">Exhibition</span> — <em>Digital Corporeality</em>, Anarchy Dance Theatre <span
@@ -447,63 +469,183 @@
             <p class="cv-section-title">學歷</p>
             <p class="cv-edu zh">2023 &ensp;國立臺北藝術大學 新媒體藝術學系 跨域組 學士</p>
           </div>
+
+          <div class="cv-section">
+            <p class="cv-section-title">工作與教學</p>
+            <div class="cv-row"><span class="cv-year">2025</span><span class="cv-detail zh"><span
+                  class="cv-bold">講師</span>｜Live VJ Lab 即時影像演出工作營｜BLND Academy × 透視音像 Perspectives Audio-Visual
+                Art</span></div>
+            <div class="cv-row"><span class="cv-year">2023-2024</span><span class="cv-detail zh"><span
+                  class="cv-bold">約聘</span>｜C-lab 臺灣當代文化實驗場 科技媒體實驗平台｜研發企劃組－工程師</span></div>
+            <div class="cv-row"><span class="cv-year">2022</span><span class="cv-detail zh"><span
+                  class="cv-bold">實習</span>｜夢想動畫 Unreal Engine 春季培訓｜實習生 (台北)</span></div>
+          </div>
+
           <div class="cv-section">
             <p class="cv-section-title">表演</p>
-            <div class="cv-row"><span class="cv-year">2025</span><span class="cv-detail zh"><span class="cv-bold">《視感認知
-                  Mind Fluid》</span>｜透視:音像 Perspectives — 北流場｜音像演出（台北）</span></div>
-            <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail zh"><span class="cv-bold">《認夢
-                  Dream Percept》</span>｜FUTURE VISION LAB｜DOME 演出（台北）</span></div>
-            <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail zh"><span class="cv-bold">《忘却回路
-                  — Oblivion Circuit》</span>｜音像演出（東京）</span></div>
-            <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail zh"><span
-                  class="cv-bold">《VIVIDO: re-Action》</span> Sandy's Trace｜音像演出（台北）</span></div>
-            <div class="cv-row"><span class="cv-year">2023</span><span class="cv-detail zh"><span
-                  class="cv-bold">《未來視覺派對 FUTURE VISION LAB》</span>｜音像演出（台北）</span></div>
-            <div class="cv-row"><span class="cv-year">2023</span><span class="cv-detail zh"><span class="cv-bold">《視感認知
-                  Visual Cognition》</span> — 潛艇 Submarine｜音像演出（台北）</span></div>
-            <div class="cv-row"><span class="cv-year">2023</span><span class="cv-detail zh"><span class="cv-bold">《感覺重混
-                  sensation.remix》</span>｜音像演出（宜蘭）</span></div>
+            <div class="cv-row"><span class="cv-year">2025</span><span class="cv-detail zh"><a
+                  href="https://www.youtube.com/watch?v=zfsF6ZuGfx0&t=1248s" target="_blank"
+                  class="cv-bold text-link">《視感認知
+                  Mind Fluid》</a>｜透視:音像 Perspectives — 北流場｜音像演出（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2025</span><span class="cv-detail zh"><a
+                  href="https://kdlaf.tnua.edu.tw/2025/performance.html" target="_blank"
+                  class="cv-bold text-link">關渡光藝術節《幻響 Illusonic》</a>｜音像演出（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail zh"><a
+                  href="https://www.youtube.com/watch?v=VWdl_gF3HBw" target="_blank" class="cv-bold text-link">《認夢
+                  Dream Percept》</a>｜FUTURE VISION LAB｜DOME 演出（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail zh"><a
+                  href="https://www.youtube.com/watch?v=QZoCx-jaL60" target="_blank" class="cv-bold text-link">《忘却回路
+                  — Oblivion Circuit》</a>｜音像演出（東京）</span></div>
+            <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail zh"><a
+                  href="https://www.youtube.com/watch?v=yVgmxr7AM_U" target="_blank" class="cv-bold text-link">《Internal
+                  Echo》Ep.1</a>｜音像演出（新北）</span></div>
+            <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail zh"><a
+                  href="https://dac.taipei/project/vivido-re-action" target="_blank" class="cv-bold text-link">《VIVIDO:
+                  re-Action》</a> Sandy's Trace｜音像演出（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2023</span><span class="cv-detail zh"><a
+                  href="https://www.youtube.com/watch?v=oS-5e2SRLRQ" target="_blank" class="cv-bold text-link">《未來視覺派對
+                  FUTURE VISION LAB》</a>｜音像演出（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2023</span><span class="cv-detail zh"><a
+                  href="https://www.youtube.com/watch?v=tTYg5yXMvb8" target="_blank" class="cv-bold text-link">《視感認知
+                  Visual Cognition》</a> — 潛艇 Submarine｜音像演出（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2023</span><span class="cv-detail zh"><a
+                  href="https://www.youtube.com/watch?v=t-WZhnldw4o" target="_blank" class="cv-bold text-link">《感覺重混
+                  sensation.remix》</a>｜音像演出（宜蘭）</span></div>
+            <div class="cv-row"><span class="cv-year">2023</span><span class="cv-detail zh">《後知後覺後
+                Post-Perception》｜音像演出（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2023</span><span class="cv-detail zh">《Dolly Zoom
+                滑動變焦》｜音像演出（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2022</span><span class="cv-detail zh"><span class="cv-bold">《無期遷徙
+                  Liminal Space》</span>｜音像演出（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2021</span><span class="cv-detail zh">《ArtSushi
+                速食代》｜音像演出（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2021</span><span
+                class="cv-detail zh">《新媒體藝術學系第八屆系展》｜音像演出（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2020</span><span class="cv-detail zh">《枯窟 — 市集活動》｜聲響表演（台北）</span>
+            </div>
           </div>
+
           <div class="cv-section">
             <p class="cv-section-title">獲獎</p>
-            <div class="cv-row"><span class="cv-year">2023</span><span class="cv-detail zh">新媒系第十屆系展《Dolly Zoom
-                滑動變焦》<span class="cv-bold">優選</span>｜表演組</span></div>
+            <div class="cv-row"><span class="cv-year">2023</span><span class="cv-detail zh"><a
+                  href="https://nma.tnua.edu.tw/0000/zh-tw/achievement/award/NpfSRykzDv" target="_blank"
+                  class="text-link">新媒系第十屆系展《Dolly Zoom 滑動變焦》</a><span class="cv-bold">優選</span>｜表演組</span></div>
           </div>
+
           <div class="cv-section">
             <p class="cv-section-title">展覽</p>
-            <div class="cv-row"><span class="cv-year">2025</span><span class="cv-detail zh"><span
-                  class="cv-bold">《鹹淡適中》Glub Glub</span> — 白晝之夜 Nuit Blanche Taipei｜共同創作（台北）</span></div>
-            <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail zh"><span class="cv-bold">《聽說
-                  Wisper》</span> 關渡光藝術節《燒聲》｜個人創作（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2025</span><span class="cv-detail zh"><a
+                  href="https://www.nuitblanche.taipei/work/__trashed-6/" target="_blank"
+                  class="cv-bold text-link">《鹹淡適中》Glub Glub</a> — 白晝之夜 Nuit Blanche Taipei｜共同創作（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail zh"><a
+                  href="https://www.youtube.com/watch?v=3zMIU6YjPEk" target="_blank" class="cv-bold text-link">《聽說
+                  Wisper》</a> 關渡光藝術節《燒聲》｜個人創作（台北）</span></div>
             <div class="cv-row"><span class="cv-year">2022</span><span class="cv-detail zh"><span class="cv-bold">《無期遷徙
-                  Liminal Space》</span>｜共同創作（台北）</span></div>
+                  Liminal Space》</span>｜畢業製作（台北）</span></div>
             <div class="cv-row"><span class="cv-year">2021</span><span class="cv-detail zh">安娜琪舞蹈劇場<span
                   class="cv-bold">《數位肉身性》</span>｜共同創作（台北）</span></div>
             <div class="cv-row"><span class="cv-year">2020</span><span class="cv-detail zh"><span
                   class="cv-bold">《塔》</span>輕量級 — 北藝新媒 × 實踐建築 × 台大土木（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2019</span><span
+                class="cv-detail zh">GenieLab妖山混血盃跨域創意實驗室《夾鬼夾怪》｜共同創作（台北）</span></div>
           </div>
+
           <div class="cv-section">
             <p class="cv-section-title">新媒體設計</p>
             <div class="cv-row"><span class="cv-year">2025</span><span class="cv-detail zh"><span
-                  class="cv-bold">互動</span>｜《80之後》2049媽祖遶月｜即時 AI 互動</span></div>
+                  class="cv-bold">互動</span>｜<a href="https://2049-mazu.space/#" target="_blank"
+                  class="text-link">《80之後》2049媽祖遶月</a>｜即時 AI 互動</span></div>
             <div class="cv-row"><span class="cv-year">2025</span><span class="cv-detail zh"><span
-                  class="cv-bold">設計</span>｜2025科技跨藝實驗場《青春模擬器》｜即時 AI 互動設計</span></div>
+                  class="cv-bold">設計</span>｜<a href="https://www.opentix.life/event/1961258986897911809" target="_blank"
+                  class="text-link">2025科技跨藝實驗場《青春模擬器》</a>｜即時 AI 互動設計</span></div>
             <div class="cv-row"><span class="cv-year">2025</span><span class="cv-detail zh"><span
-                  class="cv-bold">技術</span>｜《Kindom 數位王國》Sweat HK Dance Festival｜技術統籌暨執行（香港）</span></div>
+                  class="cv-bold">技術</span>｜<a href="https://www.accupass.com/event/2509091417411288292435"
+                  target="_blank" class="text-link">《Kindom 數位王國》</a>Sweat HK Dance Festival｜技術統籌暨執行（香港）</span></div>
             <div class="cv-row"><span class="cv-year">2025</span><span class="cv-detail zh"><span
                   class="cv-bold">技術</span>｜《女誡扇綺譚》周曼農 × 莎妹工作室｜裝置影像動態 Mapping</span></div>
+            <div class="cv-row"><span class="cv-year">2025</span><span class="cv-detail zh"><span
+                  class="cv-bold">特效</span>｜<a href="https://www.youtube.com/watch?v=-4dOBD_0Feo" target="_blank"
+                  class="text-link">《春天．分子．社會學》</a>｜特效剪輯</span></div>
             <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail zh"><span
-                  class="cv-bold">設計&amp;技術</span>｜臺北藝穗節《翼手龍摩天劇院》｜技術統籌 &amp; AI 影像設計</span></div>
+                  class="cv-bold">設計&amp;技術</span>｜<a href="https://www.opentix.life/event/1806000591116406785"
+                  target="_blank" class="text-link">臺北藝穗節《翼手龍摩天劇院》</a>｜技術統籌 &amp; AI 影像設計</span></div>
             <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail zh"><span
-                  class="cv-bold">技術</span>｜北美獎：林哲志 一種無重力的地緣想像｜AI 設計</span></div>
+                  class="cv-bold">特效</span>｜<a
+                  href="https://www.universe.com/events/videoperformance-interactiva-the-zone-tickets-ZGN03F"
+                  target="_blank" class="text-link">放映機錄像藝術節《地帶》（The Zone）</a>｜特效編程（馬德里）</span></div>
             <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail zh"><span
-                  class="cv-bold">技術</span>｜《體演算》陳乂 — 工研院｜雷射設計</span></div>
+                  class="cv-bold">設計</span>｜<a
+                  href="https://www.afmc.gov.tw/Activity_detail/cf938a1f94f94175ab9118ebbd7cf021?c3=hall1&start=2024%2F03%2F12&end=2024%2F09%2F29&page=4&c5=performance1"
+                  target="_blank" class="text-link">《皇后與她的魔鏡》第三屆桃園科技表演藝術獎</a>｜影像設計</span></div>
             <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail zh"><span
-                  class="cv-bold">特效</span>｜放映機錄像藝術節《地帶》（The Zone）｜特效編程（馬德里）</span></div>
+                  class="cv-bold">技術</span>｜<a href="https://clab.org.tw/news/algorithmic-harmony/" target="_blank"
+                  class="text-link">《體演算》陳乂 — 工研院</a>｜雷射設計</span></div>
             <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail zh"><span
-                  class="cv-bold">設計</span>｜《皇后與她的魔鏡》第三屆桃園科技表演藝術獎｜影像設計</span></div>
+                  class="cv-bold">設計</span>｜<a href="https://www.youtube.com/watch?v=JcJVcbXjTm4" target="_blank"
+                  class="text-link">【灼日】黃靖芳多媒體新音樂作品發表會</a>｜影像設計</span></div>
+            <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail zh"><span
+                  class="cv-bold">技術</span>｜<a href="https://www.instagram.com/p/DDwXzuACpf4/?img_index=4"
+                  target="_blank" class="text-link">北美獎：林哲志 一種無重力的地緣想像</a>｜AI 設計（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2024</span><span class="cv-detail zh"><span
+                  class="cv-bold">設計</span>｜<a href="https://www.instagram.com/reel/C5vUdmkPaU4/" target="_blank"
+                  class="text-link">《異態現象-女性、身體與自然的再敘述》</a>- 第三屆桃園科技表演藝術獎｜影像設計</span></div>
             <div class="cv-row"><span class="cv-year">2023</span><span class="cv-detail zh"><span
-                  class="cv-bold">技術</span>｜《鎏/》陳乂 — C-LAB 聲響藝術節｜影音訊號整合與執行</span></div>
+                  class="cv-bold">技術</span>｜《勾勾手合作社-趙亭婷》- 第三屆2023【思塾Think School】｜VR 影音技術整合</span></div>
+            <div class="cv-row"><span class="cv-year">2023</span><span class="cv-detail zh"><span
+                  class="cv-bold">技術</span>｜<a href="https://www.youtube.com/watch?v=aJ76WJr-W3g" target="_blank"
+                  class="text-link">《鎏/》陳乂 — C-LAB 聲響藝術節</a>｜影音訊號整合與執行</span></div>
+            <div class="cv-row"><span class="cv-year">2023</span><span class="cv-detail zh"><span
+                  class="cv-bold">技術</span>｜《許芳宜 - SOLO 身體影像藝術展》｜互動影像技術編程</span></div>
+            <div class="cv-row"><span class="cv-year">2023</span><span class="cv-detail zh"><span
+                  class="cv-bold">技術</span>｜《離群》- 2023兩廳院新點子實驗劇場 R&D 計畫入選階段呈現｜影像技術</span></div>
+            <div class="cv-row"><span class="cv-year">2023</span><span class="cv-detail zh"><span
+                  class="cv-bold">設計</span>｜《規則是：請輕輕踩》- 舞蹈製作｜影像設計</span></div>
+            <div class="cv-row"><span class="cv-year">2023</span><span class="cv-detail zh"><span
+                  class="cv-bold">設計</span>｜《變形記》- 舞蹈製作｜聲音設計</span></div>
+            <div class="cv-row"><span class="cv-year">2023</span><span class="cv-detail zh"><span
+                  class="cv-bold">設計</span>｜《2023焦點舞團》- 宣傳片｜聲音設計</span></div>
+            <div class="cv-row"><span class="cv-year">2023</span><span class="cv-detail zh"><span
+                  class="cv-bold">技術</span>｜《荒野俱樂部》- 世紀當代舞團｜投影編程</span></div>
+            <div class="cv-row"><span class="cv-year">2022</span><span class="cv-detail zh"><span
+                  class="cv-bold">派對</span>｜《Meeting of sounds》- 派對演出｜雷射設計（新北）</span></div>
+            <div class="cv-row"><span class="cv-year">2022</span><span class="cv-detail zh"><span
+                  class="cv-bold">展覽</span>｜《Metabody in Kinesphere 動勢身形》｜聲音設計（台中）</span></div>
+            <div class="cv-row"><span class="cv-year">2022</span><span class="cv-detail zh"><span
+                  class="cv-bold">設計</span>｜《Metabody in Kinesphere/動勢身形》- 安娜琪舞蹈劇場｜聲音設計（台中）</span></div>
+            <div class="cv-row"><span class="cv-year">2021</span><span class="cv-detail zh"><span
+                  class="cv-bold">設計</span>｜《Reincarnate Island》- FUTURE VISION LAB｜聲音設計（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2021</span><span class="cv-detail zh"><span
+                  class="cv-bold">設計</span>｜《新細明創作體 XXM Theatre》展演｜影像設計（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2021</span><span class="cv-detail zh"><span
+                  class="cv-bold">設計</span>｜《後花園II-聲光對位》｜影像設計（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2021</span><span class="cv-detail zh"><span
+                  class="cv-bold">設計</span>｜《XTRUX : NACRE》｜特效設計（台北）</span></div>
+          </div>
+
+          <div class="cv-section">
+            <p class="cv-section-title">其他</p>
+            <div class="cv-row"><span class="cv-year">2025</span><span class="cv-detail zh">佈展｜「聲響藝術節」｜影音佈展（台北）</span>
+            </div>
+            <div class="cv-row"><span class="cv-year">2025</span><span class="cv-detail zh">佈展｜藝術博覽會 —
+                《張徐展-白蟻餵食秀》｜佈展執行（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2025</span><span class="cv-detail zh">佈展｜國家美術館 —
+                《時代印記：國美典藏常設展》｜佈展執行（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2025</span><span class="cv-detail zh">協力｜世壯運 —
+                《豪華朗機工》｜裝置組裝協力（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2020</span><span class="cv-detail zh">編程｜「關渡光藝術節
+                —《量子糾纏》」｜藝術家助手（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2020</span><span class="cv-detail zh">執行｜「新媒體藝術系-第七屆
+                CA2.1」｜場佈執行（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2020</span><span class="cv-detail zh">燈控｜《壞到媒藥咿》｜燈光編程（台北）</span>
+            </div>
+            <div class="cv-row"><span class="cv-year">2020</span><span class="cv-detail zh">執行｜《塑象》｜燈光裝置執行（新北）</span>
+            </div>
+            <div class="cv-row"><span class="cv-year">2019</span><span class="cv-detail zh">活動｜《雜草重生
+                WeedsReborn》｜場控（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2019</span><span class="cv-detail zh">參與｜「關渡光藝術節
+                —《壞運動》」｜製作協力（台北）</span></div>
+            <div class="cv-row"><span class="cv-year">2018</span><span
+                class="cv-detail zh">協力｜《車過枋寮》余光中音樂劇新媒系與音樂系合作呈現｜製作協力（台北）</span></div>
           </div>
         </div>
 
