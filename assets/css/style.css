@@ -412,6 +412,10 @@ button {
     padding-bottom: 12vh;
   }
 
+  .hero-content {
+    transform: translate(0, 0);
+  }
+
   .hero-social {
     gap: 1.4rem;
   }
