@@ -2,7 +2,32 @@
    DATA
 ──────────────────────────────────────── */
 const projectsData = [
-  { id: 'p1', title: 'Performance 1', year: 2025, meta: 'Performance', category: 'performance', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
+  {
+    id: 'p1',
+    title: 'Perspectives: AV Art',
+    year: 2025,
+    meta: 'Performance',
+    category: 'performance',
+    thumb: 'assets/images/projects/p1/pic_15.webp',
+    gallery: [
+      'assets/images/projects/p1/pic_01.webp',
+      'assets/images/projects/p1/pic_02.webp',
+      'assets/images/projects/p1/pic_03.webp',
+      'assets/images/projects/p1/pic_04.webp',
+      'assets/images/projects/p1/pic_05.webp',
+      'assets/images/projects/p1/pic_07.webp',
+      'assets/images/projects/p1/pic_08.webp',
+      'assets/images/projects/p1/pic_09.webp',
+      'assets/images/projects/p1/pic_11.webp',
+      'assets/images/projects/p1/pic_12.webp',
+      'assets/images/projects/p1/pic_15.webp',
+      'assets/images/projects/p1/pic_17.webp',
+      'assets/images/projects/p1/pic_18.webp',
+      'assets/images/projects/p1/pic_19.webp',
+      'assets/images/projects/p1/pic_20.webp'
+    ],
+    youtubeId: 'zfsF6ZuGfx0'
+  },
   { id: 'p2', title: 'Performance 2', year: 2025, meta: 'Performance', category: 'performance', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
   { id: 'p3', title: 'Performance 3', year: 2025, meta: 'Performance', category: 'performance', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
   { id: 'e1', title: 'Exhibition 1', year: 2024, meta: 'Exhibition', category: 'exhibition', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
@@ -64,32 +89,70 @@ function openProjectDetail(projectId, pushState = true) {
   if (!project) return;
 
   const detailView = document.getElementById('view-project-detail');
+  const contentContainer = document.getElementById('project-detail-content');
+  if (!contentContainer) return;
 
-  // Title & meta
-  detailView.querySelector('.detail-title').textContent = project.title;
-  detailView.querySelector('.detail-meta').textContent = `${project.year} · ${project.meta}`;
+  // Clear previous content
+  contentContainer.innerHTML = '';
 
-  // Thumbnail — use project.thumb directly, hide if empty
-  const thumbImg = detailView.querySelector('.detail-thumb');
-  if (project.thumb) {
-    thumbImg.src = project.thumb;
-    thumbImg.alt = project.title;
-    thumbImg.style.display = '';
+  // Check if a specific template exists for this project
+  const template = document.getElementById(`template-${projectId}`);
+
+  if (template) {
+    // === CUSTOM LAYOUT MODE ===
+    // Clone the template content and append it
+    const clone = template.content.cloneNode(true);
+    contentContainer.appendChild(clone);
   } else {
-    thumbImg.src = '';
-    thumbImg.alt = '';
-    thumbImg.style.display = 'none';
-  }
+    // === GENERIC LAYOUT MODE ===
+    // Build the generic HTML structure
+    const titleEl = document.createElement('h1');
+    titleEl.className = 'detail-title';
+    titleEl.textContent = project.title;
 
-  // YouTube video — only load if youtubeId exists
-  const videoContainer = detailView.querySelector('.detail-video');
-  const iframe = videoContainer.querySelector('iframe');
-  if (project.youtubeId) {
-    iframe.src = `https://www.youtube.com/embed/${project.youtubeId}`;
-    videoContainer.style.display = '';
-  } else {
-    iframe.src = '';
-    videoContainer.style.display = 'none';
+    const thumbImg = document.createElement('img');
+    thumbImg.className = 'detail-thumb';
+    if (project.thumb) {
+      thumbImg.src = project.thumb;
+      thumbImg.alt = project.title;
+    } else {
+      thumbImg.style.display = 'none';
+    }
+
+    const metaEl = document.createElement('div');
+    metaEl.className = 'detail-meta';
+    metaEl.textContent = `${project.year} · ${project.meta}`;
+
+    contentContainer.appendChild(titleEl);
+    contentContainer.appendChild(thumbImg);
+    contentContainer.appendChild(metaEl);
+
+    // YouTube video
+    if (project.youtubeId) {
+      const videoContainer = document.createElement('div');
+      videoContainer.className = 'detail-video';
+      const iframe = document.createElement('iframe');
+      iframe.title = 'YouTube video player';
+      iframe.frameBorder = '0';
+      iframe.allowFullscreen = true;
+      iframe.src = `https://www.youtube.com/embed/${project.youtubeId}`;
+      videoContainer.appendChild(iframe);
+      contentContainer.appendChild(videoContainer);
+    }
+
+    // Gallery
+    if (project.gallery && project.gallery.length > 0) {
+      const galleryContainer = document.createElement('div');
+      galleryContainer.className = 'detail-gallery';
+      project.gallery.forEach(imgSrc => {
+        const img = document.createElement('img');
+        img.src = imgSrc;
+        img.alt = `${project.title} gallery image`;
+        img.loading = 'lazy';
+        galleryContainer.appendChild(img);
+      });
+      contentContainer.appendChild(galleryContainer);
+    }
   }
 
   // Push state for browser back support
@@ -192,7 +255,9 @@ document.querySelectorAll('.work').forEach(card => {
 
 // Project detail back button
 document.querySelector('.btn-back').addEventListener('click', () => {
-  document.querySelector('#view-project-detail .detail-video iframe').src = '';
+  // Clear generic iframe if it exists to stop audio
+  const iframes = document.querySelectorAll('#view-project-detail iframe');
+  iframes.forEach(iframe => iframe.src = '');
   navigateTo('projects');
 });
 

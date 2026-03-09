@@ -440,19 +440,7 @@ button {
   }
 }
 
-/* Sidebar（桌面）*/
-.proj-sidebar {
-  display: none;
-}
-
-@media (min-width: 800px) {
-  .proj-sidebar {
-    display: block;
-    padding-top: 36px;
-    position: sticky;
-    top: 100px;
-  }
-}
+/* Sidebar（桌面已移除）*/
 
 /* 社群連結（sidebar & about 共用）*/
 .social-list {
@@ -551,7 +539,7 @@ button {
   padding-top: 36px;
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 120px);
+  min-height: calc(100vh - 1200px);
   /* Fill available space roughly */
 }
 
@@ -1008,9 +996,17 @@ button {
    VIEW: PROJECT DETAIL
 ════════════════════════════════════════════════════ */
 #view-project-detail {
-  padding: 2rem 5% 5rem;
-  max-width: 900px;
+  padding: 2rem 0 0;
+  /* Remove horizontal padding on mobile */
+  max-width: 100%;
   margin: 0 auto;
+}
+
+.p-content,
+.project-header,
+.project-info {
+  padding-left: 5%;
+  padding-right: 5%;
 }
 
 .btn-back {
@@ -1021,6 +1017,7 @@ button {
   letter-spacing: 1px;
   text-transform: uppercase;
   margin-bottom: 2rem;
+  margin-left: 5%;
   transition: color 0.2s;
 }
 
@@ -1074,6 +1071,22 @@ button {
 
 @media (min-width: 800px) {
   #view-project-detail {
-    padding: 2rem 10% 6rem;
+    padding: 2rem 5% 0;
+    /* Add padding back on desktop */
+    max-width: 1400px;
+    /* Make it even wider than 1200px */
   }
+}
+
+.detail-gallery {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.detail-gallery img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
 }
