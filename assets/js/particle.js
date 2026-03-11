@@ -16,41 +16,28 @@
     const isMobile = /iPhone|iPod|Android/i.test(navigator.userAgent);
 
     const CFG = {
-        count: isMobile ? 60 : 100,
-        maxSpeed: isMobile ? 2.0 : 2.6,
-        maxForce: 0.055,
-        // world half-size (boids wrap in a cube)
-        worldR: isMobile ? 300 : 420,
-        // Boid weights
-        sepWeight: 1.7,
-        aliWeight: 1.0,
-        cohWeight: 0.85,
-        wanderWeight: 0.55,   // random wander power
-        wanderSpeed: 0.055,  // how fast wander angle drifts per frame
-        // Perception radii
-        sepRadius: 40,
-        aliRadius: 85,
-        cohRadius: 85,
-        // Camera
-        fov: 250,    // perspective focal length (px)
-        camSmooth: 0.015,  // lerp speed of camera toward mouse target
-        camMaxX: 0.65,   // max pitch (rad)
-        camMaxY: Math.PI,// max yaw (rad, full 360 possible)
-        // Mouse blob (screen-space)
-        blobRadius: isMobile ? 90 : 130,
-        blobRepelSS: 2.2,    // screen-space repulsion strength
-        // Trail
-        trailLen: 20,
-        // Colors
-        birdColor: '#8be4ff5d',
-        trailColor: 'rgba(130, 205, 255, 0.22)',
-        blobBg: 'rgba(130, 205, 255, 0.08)',
-        blobBorder: 'rgba(130, 184, 255, 0.55)',
-        hudColor: 'rgba(130, 188, 255, 0.75)',
-        hudBg: 'rgba(35, 52, 77, 0.24)',
-        // Wing
-        wingSpan: isMobile ? 5 : 7,
-        wingAngle: 0.52,
+        count: isMobile ? 35 : 80, // Reduced count for clarity
+        maxSpeed: isMobile ? 1.6 : 2.2,
+        maxForce: 0.04,
+        worldR: isMobile ? 300 : 450,
+        sepWeight: 2.0,
+        aliWeight: 0.8,
+        cohWeight: 0.5,
+        wanderWeight: 0.4,
+        wanderSpeed: 0.04,
+        sepRadius: 50,
+        aliRadius: 100,
+        cohRadius: 100,
+        fov: 300,
+        camSmooth: 0.015,
+        camMaxX: 1,    // Increased pitch range
+        camMaxY: 3.5,    // Increased yaw range
+        blobRadius: 100,
+        blobRepelSS: 1.5,
+        trailLen: 12,
+        birdColor: 'rgba(200, 238, 96, 0.5)', // Boosted visibility
+        trailColor: 'rgba(200, 238, 96, 0.25)',
+        wingSpan: isMobile ? 4 : 6,
     };
 
     /* ────────────────────────────────────────────
@@ -208,8 +195,8 @@
                 labelCanvas.width = textW + 24;  // padding
                 labelCanvas.height = fontSize + 16;
                 // canvas resize 後 context state 被清除，須重設 font
-                lCtx.font = `${fontSize}px "Kumbh Sans", "Noto Sans TC", sans-serif`;
-                lCtx.fillStyle = '#7debff83';
+                lCtx.font = `${fontSize}px "Space Grotesk", "Noto Sans TC", sans-serif`;
+                lCtx.fillStyle = 'rgba(255, 255, 255, 0.4)'; // Dimmer, more recessed white
                 lCtx.textAlign = 'center';
                 lCtx.textBaseline = 'middle';
                 lCtx.fillText(text, labelCanvas.width / 2, labelCanvas.height / 2);
@@ -255,8 +242,8 @@
             renderedPoints.sort((a, b) => a.depth - b.depth);
 
             for (let rp of renderedPoints) {
-                let alpha = Math.min(0.85, 0.1 + 0.45 * rp.depth);
-                let scale = Math.max(0.1, rp.depth * 0.35);
+                let alpha = Math.min(0.65, 0.05 + 0.35 * rp.depth);
+                let scale = Math.max(0.1, rp.depth * 0.3);
 
                 // Hover check
                 if (isMouseIn) {
@@ -384,19 +371,20 @@
             fz += wc * CFG.wanderWeight;
 
             /* ── mouse blob repulsion (screen space → 3D vector smash) ── */
-            if (mouseInside && b.proj) {
-                const dsx = b.proj.sx - screenMX;
-                const dsy = b.proj.sy - screenMY;
-                const d2s = dsx * dsx + dsy * dsy;
-                if (d2s < CFG.blobRadius * CFG.blobRadius && d2s > 0.1) {
-                    const ds = Math.sqrt(d2s);
-                    const f = CFG.blobRepelSS * (1 - ds / CFG.blobRadius);
-                    // push in screen direction, un-project roughly by dividing out depth
-                    const dep = b.proj.depth || 0.5;
-                    fx += (dsx / ds) * f / dep;
-                    fy += (dsy / ds) * f / dep;
-                }
-            }
+            // Removed mouse blob repulsion logic as per instruction
+            // if (mouseInside && b.proj) {
+            //     const dsx = b.proj.sx - screenMX;
+            //     const dsy = b.proj.sy - screenMY;
+            //     const d2s = dsx * dsx + dsy * dsy;
+            //     if (d2s < CFG.blobRadius * CFG.blobRadius && d2s > 0.1) {
+            //         const ds = Math.sqrt(d2s);
+            //         const f = CFG.blobRepelSS * (1 - ds / CFG.blobRadius);
+            //         // push in screen direction, un-project roughly by dividing out depth
+            //         const dep = b.proj.depth || 0.5;
+            //         fx += (dsx / ds) * f / dep;
+            //         fy += (dsy / ds) * f / dep;
+            //     }
+            // }
 
             /* ── integrate ── */
             b.vx += fx; b.vy += fy; b.vz += fz;
@@ -445,23 +433,24 @@
         );
         const ang = Math.atan2(aheadP.sy - p.sy, aheadP.sx - p.sx);
         const ws = CFG.wingSpan * p.depth * 1.8;
-        const wa = CFG.wingAngle;
+        const wa = 0.52; // Original wing angle
         const alpha = Math.min(1, p.depth * 1.4 + 0.3);
 
-        const lx = p.sx + Math.cos(ang + Math.PI - wa) * ws;
-        const ly = p.sy + Math.sin(ang + Math.PI - wa) * ws;
-        const rx = p.sx + Math.cos(ang + Math.PI + wa) * ws;
-        const ry = p.sy + Math.sin(ang + Math.PI + wa) * ws;
-
-        ctx.beginPath();
-        ctx.moveTo(lx, ly);
-        ctx.lineTo(p.sx, p.sy);
-        ctx.lineTo(rx, ry);
-        ctx.globalAlpha = alpha;
         ctx.strokeStyle = CFG.birdColor;
-        ctx.lineWidth = 1.2 * p.depth + 0.5;
+        ctx.globalAlpha = alpha;
+        ctx.lineWidth = 1.2;
+
+        // Original V-shape
+        ctx.save();
+        ctx.translate(p.sx, p.sy);
+        ctx.rotate(ang);
+        ctx.beginPath();
+        ctx.moveTo(-ws, -ws * Math.sin(wa));
+        ctx.lineTo(0, 0);
+        ctx.lineTo(-ws, ws * Math.sin(wa));
         ctx.stroke();
-        ctx.globalAlpha = 1;
+        ctx.restore();
+        ctx.globalAlpha = 1.0;
     }
 
     /* ── blob tracking (screen space) ── */
@@ -706,14 +695,11 @@
 
         drawGrid();
 
-        // 畫文字球 (置中)，帶入滑鼠參數
+        // TextSphere only
         TextSphere.updateAndDraw(ctx, project, mouseInside, screenMX, screenMY);
 
         for (const b of boids) drawTrail(b);
         for (const b of boids) drawBird(b);
-
-        drawBlob();
-        drawHUD();
 
         rafId = requestAnimationFrame(draw);
     }

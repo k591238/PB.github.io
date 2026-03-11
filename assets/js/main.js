@@ -52,36 +52,70 @@ function closeMenu() {
   document.body.style.overflow = '';
 }
 
+/* ────────────────────────────────────────
+   SCROLL-TRIGGERED REVEAL (IntersectionObserver)
+   — must be defined before navigateTo
+──────────────────────────────────────── */
+const scrollObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in-view');
+      scrollObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
 function navigateTo(id, pushState = true) {
   if (!VIEWS.includes(id)) id = 'home';
 
-  VIEWS.forEach(v => {
-    const el = document.getElementById('view-' + v);
-    if (el) el.classList.remove('active');
-  });
-
+  // Find current active view for exit animation
+  const currentView = document.querySelector('.view.active');
   const target = document.getElementById('view-' + id);
-  if (target) target.classList.add('active');
 
-  if (id === 'home') {
-    target.classList.remove('entered');
-    void target.offsetWidth;
-    target.classList.add('entered');
-    if (window.ParticleField) window.ParticleField.start();
+  function activate() {
+    VIEWS.forEach(v => {
+      const el = document.getElementById('view-' + v);
+      if (el) { el.classList.remove('active'); el.classList.remove('exiting'); }
+    });
+
+    if (target) target.classList.add('active');
+
+    if (id === 'home') {
+      target.classList.remove('entered');
+      void target.offsetWidth;
+      target.classList.add('entered');
+      if (window.ParticleField) window.ParticleField.start();
+    } else {
+      if (window.ParticleField) window.ParticleField.stop();
+    }
+
+    document.querySelectorAll('[data-view]').forEach(el => {
+      el.classList.toggle('active', el.dataset.view === id);
+    });
+
+    if (pushState) {
+      history.pushState({ view: id }, '', '#' + id);
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    closeMenu();
+
+    // Re-observe scroll-reveal elements in the new view
+    if (target) {
+      target.querySelectorAll('.work, .reveal').forEach(el => {
+        el.classList.remove('in-view');
+        scrollObserver.observe(el);
+      });
+    }
+  }
+
+  // Play exit animation if there's a current view and it differs
+  if (currentView && currentView !== target) {
+    currentView.classList.add('exiting');
+    setTimeout(activate, 300);
   } else {
-    if (window.ParticleField) window.ParticleField.stop();
+    activate();
   }
-
-  document.querySelectorAll('[data-view]').forEach(el => {
-    el.classList.toggle('active', el.dataset.view === id);
-  });
-
-  if (pushState) {
-    history.pushState({ view: id }, '', '#' + id);
-  }
-
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  closeMenu();
 }
 
 function openProjectDetail(projectId, pushState = true) {
@@ -188,6 +222,9 @@ window.addEventListener('popstate', e => {
   } else {
     navigateTo(hash || 'home', false);
   }
+  // Restore scrolling after JS resolves the initial view
+  // (body overflow-y: hidden prevents the flash of scrollbar on page load)
+  document.body.style.overflowY = '';
 })();
 
 // Main navigation buttons
@@ -261,3 +298,64 @@ document.querySelector('.btn-back').addEventListener('click', () => {
   navigateTo('projects');
 });
 
+/* ────────────────────────────────────────
+   NAV SCROLL STATE
+──────────────────────────────────────── */
+const bar = document.querySelector('.bar');
+if (bar) {
+  let lastScrollY = 0;
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    bar.classList.toggle('scrolled', y > 40);
+    lastScrollY = y;
+  }, { passive: true });
+}
+
+/* ────────────────────────────────────────
+   INITIAL SCROLL-REVEAL REGISTRATION
+──────────────────────────────────────── */
+document.querySelectorAll('.work').forEach(el => scrollObserver.observe(el));
+document.querySelectorAll('.reveal').forEach(el => scrollObserver.observe(el));
+
+/* ────────────────────────────────────────
+   CUSTOM CURSOR
+──────────────────────────────────────── */
+if (window.matchMedia('(pointer: fine)').matches) {
+  const dot = document.getElementById('cursor-dot');
+  const ring = document.getElementById('cursor-ring');
+
+  if (dot && ring) {
+    // Both follow instantly in the same mousemove
+    document.addEventListener('mousemove', e => {
+      const x = e.clientX, y = e.clientY;
+      const pos = `translate(calc(${x}px - 50%), calc(${y}px - 50%))`;
+      dot.style.transform = pos;
+      ring.style.transform = pos;
+    });
+
+    // Hover detection
+    const INTERACTIVE = 'a, button, [data-project], .proj-filter-btn, .work, .menu_link, .tab-btn, .lang-btn, .scroll-top';
+    document.addEventListener('mouseover', e => {
+      if (e.target.closest(INTERACTIVE)) {
+        dot.classList.add('hovering');
+        ring.classList.add('hovering');
+      }
+    });
+    document.addEventListener('mouseout', e => {
+      if (e.target.closest(INTERACTIVE)) {
+        dot.classList.remove('hovering');
+        ring.classList.remove('hovering');
+      }
+    });
+
+    // Hide when leaving window
+    document.addEventListener('mouseleave', () => {
+      dot.style.opacity = '0';
+      ring.style.opacity = '0';
+    });
+    document.addEventListener('mouseenter', () => {
+      dot.style.opacity = '1';
+      ring.style.opacity = '1';
+    });
+  }
+}
