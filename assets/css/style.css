@@ -360,11 +360,6 @@ button {
 
 .view.exiting {
   display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  overflow: hidden;
   pointer-events: none;
   animation: viewOut 0.3s var(--ease) forwards;
 }
@@ -588,13 +583,13 @@ button {
    VIEW: PROJECTS
 ════════════════════════════════════════════════════ */
 #view-projects {
-  padding: 0 6% 2rem;
+  padding: var(--nav-h) 6% 2rem;
 }
 
 @media (min-width: 800px) {
   #view-projects {
     display: none;
-    padding: 0 8% 3rem;
+    padding: 60px 8% 3rem;
   }
 
   #view-projects.active {
@@ -908,12 +903,12 @@ button {
    VIEW: ABOUT
 ════════════════════════════════════════════════════ */
 #view-about {
-  padding: var(--space-md) 6% var(--space-lg);
+  padding: calc(var(--nav-h) + var(--space-md)) 6% var(--space-lg);
 }
 
 @media (min-width: 800px) {
   #view-about {
-    padding: var(--space-md) 8% var(--space-lg);
+    padding: calc(60px + var(--space-md)) 8% var(--space-lg);
     display: none;
   }
 
@@ -1217,7 +1212,7 @@ button {
    VIEW: PROJECT DETAIL
 ════════════════════════════════════════════════════ */
 #view-project-detail {
-  padding: var(--space-md) 0 0;
+  padding: calc(var(--nav-h) + var(--space-sm)) 0 0;
   max-width: 100%;
   margin: 0 auto;
 }
@@ -1425,7 +1420,7 @@ button {
 
 @media (min-width: 800px) {
   #view-project-detail {
-    padding: var(--space-md) 5% 0;
+    padding: calc(60px + var(--space-sm)) 5% 0;
     max-width: 1400px;
   }
 

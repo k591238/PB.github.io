@@ -131,7 +131,7 @@
     <!-- 桌面 Sidebar (已移除，移至底部) -->
 
     <!-- 作品主區 -->
-    <div class="proj-main" style="width: 100%;">
+    <div class="proj-main">
       <div class="proj-filter">
         <button class="proj-filter-btn active" data-filter="all">All</button>
         <button class="proj-filter-btn" data-filter="performance">Performance</button>
@@ -272,9 +272,8 @@
       </div>
 
       <!-- 頁腳版權聲明 -->
-      <div class="proj-footer"
-        style="display: flex; justify-content: center; padding: 2rem 0; font-size: 0.75rem; color: var(--muted); border-top: 1px solid rgba(255,255,255,0.1);">
-        <p class="proj-footer-copy" style="margin: 0;">&copy; 2026 WU CHENG-RU</p>
+      <div class="proj-footer">
+        <p class="proj-footer-copy">&copy; 2026 WU CHENG-RU</p>
       </div>
     </div>
 
@@ -673,11 +672,10 @@
     </div>
 
     <!-- 橫向大圖 -->
-    <img src="assets/images/projects/p1/banner.webp" alt="視感認知 Mind Fluid" loading="lazy"
-      style="display: block; width: 100%; margin-top: 5px; background: var(--surface);">
+    <img src="assets/images/projects/p1/banner.webp" alt="視感認知 Mind Fluid" loading="lazy" class="detail-banner">
 
     <!-- 影片 -->
-    <div class="yt-wrapper detail-video" style="margin-top:5px;">
+    <div class="yt-wrapper detail-video-wrap">
       <iframe title="YouTube video player" frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         referrerpolicy="strict-origin-when-cross-origin" allowfullscreen
@@ -780,16 +778,14 @@
     </div>
 
     <!-- 版權聲明與回到頂部 -->
-    <div
-      style="position: relative; display: flex; justify-content: center; align-items: center; margin-top: 2rem; margin-bottom: 2rem;">
-      <p style="font-size: 0.75rem; color: var(--muted); margin: 0;">&copy; 2026 WU CHENG-RU</p>
-      <div class="scroll-top-wrapper" style="position: absolute; right: 0;">
-        <a href="#" class="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"
-          style="display: inline-flex; padding: 10px; color: var(--muted);"><svg width="20" height="20"
-            viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-            stroke-linejoin="round">
+    <div class="detail-footer">
+      <p>&copy; 2026 WU CHENG-RU</p>
+      <div class="scroll-top-wrapper">
+        <a href="#" class="scroll-top" onclick="window.scrollTo(0,0);return false;">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="4,13 10,7 16,13" />
-          </svg></a>
+          </svg>
+        </a>
       </div>
     </div>
   </template>

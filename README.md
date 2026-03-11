@@ -144,6 +144,10 @@ PB.github.io/
 - [ ] **CV PDF** — 放入 `assets/cv.pdf`
 
 ### 🟢 最新優化與清理 (2026/03)
+- **架構與效能優化 (Awwwards Level)**：
+  - 移除了 HTML 結構中非必要的 Inline styles（如 `proj-main`、`proj-footer` 以及專案內文模板），並統一收斂至 `style.css` 透過 Class 進行管理，提升程式碼可讀性與日後維護性。
+  - 針對 `main.js` 的全域捲動事件（Scroll Event）引入 `requestAnimationFrame` 進行節流（Throttle）處理，避免過度計算造成渲染效能消耗與佈局重繪（Layout Thrashing），顯著提升網頁捲動時的流暢度。
+  - 修復 SPA 視圖切換（View Exit）時，因原先使用 `position: absolute` 導致排版與高度坍塌的閃爍與捲動亂跳問題，並將路由捲動回頂部的方式優化為無動畫瞬間置頂，提升 UX 流暢度。
 - 調整 CV 區塊的語言切換設計，將英文（EN）與中文（CN）按鈕整合至與 Bio、CV 導覽列同行的右側，並將選項字體放大。
 - 更新中英文版簡歷（CV）內容並確保左右語系資料一致，包含加上過去相關工作坊與展演等相關外部連結。
 - 移除了未使用的 `footer` 元素，並同步清理了 `style.css` 與 `main.js` 中的對應程式碼，避免頁面載入時發生 Javascript 錯誤。

@@ -97,7 +97,7 @@ function navigateTo(id, pushState = true) {
       history.pushState({ view: id }, '', '#' + id);
     }
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo(0, 0);
     closeMenu();
 
     // Re-observe scroll-reveal elements in the new view
@@ -299,15 +299,19 @@ document.querySelector('.btn-back').addEventListener('click', () => {
 });
 
 /* ────────────────────────────────────────
-   NAV SCROLL STATE
+   NAV SCROLL STATE (Optimized with RAF)
 ──────────────────────────────────────── */
 const bar = document.querySelector('.bar');
 if (bar) {
-  let lastScrollY = 0;
+  let ticking = false;
   window.addEventListener('scroll', () => {
-    const y = window.scrollY;
-    bar.classList.toggle('scrolled', y > 40);
-    lastScrollY = y;
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        bar.classList.toggle('scrolled', window.scrollY > 40);
+        ticking = false;
+      });
+      ticking = true;
+    }
   }, { passive: true });
 }
 
