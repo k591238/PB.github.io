@@ -413,7 +413,7 @@ if (window.matchMedia('(pointer: fine)').matches) {
     });
 
     // Hover detection
-    const INTERACTIVE = 'a, button, [data-project], .proj-filter-btn, .work, .menu_link, .tab-btn, .lang-btn, .scroll-top, .scroll-to-top';
+    const INTERACTIVE = 'a, button, [data-project], .proj-filter-btn, .work, .menu_link, .tab-btn, .lang-btn, .scroll-to-top';
     document.addEventListener('mouseover', e => {
       if (e.target.tagName === 'IFRAME' || e.target.closest('iframe')) {
         document.body.classList.add('hide-custom-cursor');
