@@ -38,7 +38,24 @@ const projectsData = [
   { id: 'c3', title: '離水山：再臨 Shuishan: Returnings', year: 2025, meta: 'Case', category: 'case', thumb: 'assets/images/projects/c3/work_01.webp', youtubeId: '' },
   { id: 'co1', title: 'Collaboration 1', year: 2022, meta: 'Collaboration', category: 'collaboration', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
   { id: 'co2', title: 'Collaboration 2', year: 2022, meta: 'Collaboration', category: 'collaboration', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
-  { id: 'co3', title: 'Collaboration 3', year: 2022, meta: 'Collaboration', category: 'collaboration', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
+  {
+    id: 'co3',
+    title: '樓頂《自動販賣機》',
+    year: 2026,
+    meta: 'Collaboration',
+    category: 'collaboration',
+    thumb: 'assets/images/projects/co3/thumb.webp',
+    gallery: [
+      'assets/images/projects/co3/work_01.webp',
+      'assets/images/projects/co3/work_02.webp',
+      'assets/images/projects/co3/work_03.webp',
+      'assets/images/projects/co3/work_04.webp',
+      'assets/images/projects/co3/work_05.webp',
+      'assets/images/projects/co3/work_06.webp',
+      'assets/images/projects/co3/work_07.webp'
+    ],
+    youtubeId: ''
+  },
 ];
 
 /* ────────────────────────────────────────
