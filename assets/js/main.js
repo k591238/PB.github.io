@@ -284,14 +284,34 @@ document.querySelectorAll('[data-bio-lang], [data-cv-lang]').forEach(btn => {
   btn.addEventListener('click', () => {
     const isBio = btn.hasAttribute('data-bio-lang');
     const lang = isBio ? btn.dataset.bioLang : btn.dataset.cvLang;
-    const panel = document.getElementById(isBio ? 'tab-bio' : 'tab-cv');
-    const langSwitch = document.getElementById(isBio ? 'lang-switch-bio' : 'lang-switch-cv');
 
-    langSwitch.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    // 1. 同步 Bio 切換按鈕與內容
+    const bioSwitch = document.getElementById('lang-switch-bio');
+    if (bioSwitch) {
+      bioSwitch.querySelectorAll('.lang-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.bioLang === lang);
+      });
+    }
+    const bioPanel = document.getElementById('tab-bio');
+    if (bioPanel) {
+      bioPanel.querySelectorAll('.bio-text').forEach(t => {
+        t.classList.toggle('active', t.classList.contains(lang));
+      });
+    }
 
-    panel.querySelectorAll(isBio ? '.bio-text' : '.cv-content').forEach(t => t.classList.remove('active'));
-    panel.querySelector(isBio ? `.bio-text.${lang}` : `.cv-content.${lang}`).classList.add('active');
+    // 2. 同步 CV 切換按鈕與內容
+    const cvSwitch = document.getElementById('lang-switch-cv');
+    if (cvSwitch) {
+      cvSwitch.querySelectorAll('.lang-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.cvLang === lang);
+      });
+    }
+    const cvPanel = document.getElementById('tab-cv');
+    if (cvPanel) {
+      cvPanel.querySelectorAll('.cv-content').forEach(t => {
+        t.classList.toggle('active', t.classList.contains(lang));
+      });
+    }
   });
 });
 
@@ -301,9 +321,30 @@ document.querySelectorAll('.proj-filter-btn').forEach(btn => {
     const filter = btn.dataset.filter;
     document.querySelectorAll('.proj-filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    document.querySelectorAll('.work').forEach(item => {
-      item.classList.toggle('hidden', !(filter === 'all' || item.dataset.category === filter));
+    
+    const allWorks = document.querySelectorAll('.work');
+    
+    // 1. 先讓所有卡片淡出
+    allWorks.forEach(item => {
+      item.classList.add('fade-out');
     });
+    
+    // 2. 在淡出過渡完成後，在透明狀態下完成重排
+    setTimeout(() => {
+      allWorks.forEach(item => {
+        const isMatch = filter === 'all' || item.dataset.category === filter;
+        if (isMatch) {
+          item.classList.remove('hidden');
+          // 3. 在下一幀中移除 fade-out 觸發 transition 淡入，並確保加上 in-view
+          requestAnimationFrame(() => {
+            item.classList.remove('fade-out');
+            item.classList.add('in-view');
+          });
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+    }, 150);
   });
 });
 
@@ -326,17 +367,27 @@ document.querySelector('.btn-back').addEventListener('click', () => {
    NAV SCROLL STATE (Optimized with RAF)
 ──────────────────────────────────────── */
 const bar = document.querySelector('.bar');
-if (bar) {
-  let ticking = false;
-  window.addEventListener('scroll', () => {
-    if (!ticking) {
-      window.requestAnimationFrame(() => {
-        bar.classList.toggle('scrolled', window.scrollY > 40);
-        ticking = false;
-      });
-      ticking = true;
-    }
-  }, { passive: true });
+const scrollToTopBtn = document.getElementById('scroll-to-top');
+let ticking = false;
+
+window.addEventListener('scroll', () => {
+  if (!ticking) {
+    window.requestAnimationFrame(() => {
+      if (bar) bar.classList.toggle('scrolled', window.scrollY > 40);
+      if (scrollToTopBtn) scrollToTopBtn.classList.toggle('visible', window.scrollY > 300);
+      ticking = false;
+    });
+    ticking = true;
+  }
+}, { passive: true });
+
+if (scrollToTopBtn) {
+  scrollToTopBtn.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
 }
 
 /* ────────────────────────────────────────
@@ -362,7 +413,7 @@ if (window.matchMedia('(pointer: fine)').matches) {
     });
 
     // Hover detection
-    const INTERACTIVE = 'a, button, [data-project], .proj-filter-btn, .work, .menu_link, .tab-btn, .lang-btn, .scroll-top';
+    const INTERACTIVE = 'a, button, [data-project], .proj-filter-btn, .work, .menu_link, .tab-btn, .lang-btn, .scroll-top, .scroll-to-top';
     document.addEventListener('mouseover', e => {
       if (e.target.tagName === 'IFRAME' || e.target.closest('iframe')) {
         document.body.classList.add('hide-custom-cursor');

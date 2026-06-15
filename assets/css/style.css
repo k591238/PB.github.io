@@ -169,7 +169,10 @@ button {
 
 @media (min-width: 800px) {
   .bar {
-    position: sticky;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 60px;
     padding: 0 8%;
     background: var(--bg);
@@ -618,7 +621,7 @@ button {
   font-size: var(--text-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--text-secondary); /* 調亮：原本為 var(--muted) */
   transition: color 0.25s;
 }
 
@@ -640,7 +643,8 @@ button {
 
 .sidebar-copy {
   font-size: var(--text-xs);
-  color: #2a2a2a;
+  color: var(--text-secondary); /* 調亮：原本為 #2a2a2a */
+  opacity: 0.5; /* 半透明維持低調 */
   letter-spacing: 0.08em;
 }
 
@@ -718,6 +722,8 @@ button {
   column-count: 1;
   column-gap: 1.5%;
   display: block;
+  min-height: 65vh; /* 防止分類切換時高度坍塌與抖動 */
+  transition: min-height 0.3s;
 }
 
 .work {
@@ -725,18 +731,23 @@ button {
   display: inline-block;
   margin-bottom: 4%;
   cursor: pointer;
-  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease), max-height 0.4s ease, margin 0.4s ease;
+  transition: opacity 0.45s var(--ease), transform 0.45s var(--ease);
   box-sizing: border-box;
   transform-origin: top center;
-  max-height: 2000px;
   /* scroll-reveal: start hidden */
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(20px);
 }
 
 .work.in-view {
   opacity: 1;
   transform: translateY(0);
+}
+
+.work.fade-out {
+  opacity: 0 !important;
+  transform: translateY(10px) scale(0.98);
+  transition: opacity 0.15s ease, transform 0.15s ease;
 }
 
 /* stagger per card position in masonry column */
@@ -749,14 +760,7 @@ button {
 }
 
 .work.hidden {
-  opacity: 0;
-  transform: scale(0.8);
-  max-height: 0;
-  margin-bottom: 0;
-  padding-top: 0;
-  padding-bottom: 0;
-  pointer-events: none;
-  overflow: hidden;
+  display: none !important;
 }
 
 @media (min-width: 800px) {
@@ -1066,7 +1070,7 @@ button {
   font-size: var(--text-xs);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #333;
+  color: var(--muted); /* 調亮：原本為 #333 */
   transition: color 0.25s;
   font-weight: 500;
 }
@@ -1831,6 +1835,66 @@ button {
 .music-footer-copy {
   font-size: var(--text-xs);
   color: var(--text-secondary);
+}
+
+/* ────────────────────────────────────────
+   SCROLL TO TOP BUTTON
+──────────────────────────────────────── */
+.scroll-to-top {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(16, 17, 22, 0.85);
+  border: 1px solid var(--border);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 90;
+  cursor: none;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(15px);
+  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease), background 0.3s, border-color 0.3s, color 0.3s;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.scroll-to-top.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.scroll-to-top svg {
+  transition: transform 0.3s var(--ease);
+}
+
+.scroll-to-top:hover {
+  background: var(--surface);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.scroll-to-top:hover svg {
+  transform: translateY(-2px);
+}
+
+.scroll-to-top:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+  .scroll-to-top {
+    bottom: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+  }
 }
 
 /* ════════════════════════════════════════════════════
