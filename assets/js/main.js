@@ -44,7 +44,7 @@ const projectsData = [
 /* ────────────────────────────────────────
    CORE FUNCTIONS
 ──────────────────────────────────────── */
-const VIEWS = ['home', 'projects', 'about', 'project-detail'];
+const VIEWS = ['home', 'projects', 'music', 'about', 'project-detail'];
 const menuContainer = document.getElementById('menu_mobile');
 
 function closeMenu() {
@@ -67,6 +67,13 @@ const scrollObserver = new IntersectionObserver((entries) => {
 
 function navigateTo(id, pushState = true) {
   if (!VIEWS.includes(id)) id = 'home';
+
+  // Pause music if leaving music page
+  if (id !== 'music' && window.musicWidgets) {
+    Object.values(window.musicWidgets).forEach(widget => {
+      try { widget.pause(); } catch(e) {}
+    });
+  }
 
   // Find current active view for exit animation
   const currentView = document.querySelector('.view.active');
@@ -363,3 +370,106 @@ if (window.matchMedia('(pointer: fine)').matches) {
     });
   }
 }
+
+/* ────────────────────────────────────────
+   MUSIC PLAYER CONTROLLER (SoundCloud API)
+   ──────────────────────────────────────── */
+(function initMusicPlayer() {
+  // Wait for SC to be defined (loaded via script tag in index.html)
+  function setup() {
+    if (typeof SC === 'undefined') {
+      setTimeout(setup, 100);
+      return;
+    }
+
+    const whisperIframe = document.getElementById('sc-iframe-whisper');
+    const electricIframe = document.getElementById('sc-iframe-electric');
+    const generateIframe = document.getElementById('sc-iframe-generate');
+
+    if (!whisperIframe || !electricIframe || !generateIframe) return;
+
+    const widgets = {
+      whisper: SC.Widget(whisperIframe),
+      electric: SC.Widget(electricIframe),
+      generate: SC.Widget(generateIframe)
+    };
+
+    window.musicWidgets = widgets;
+
+    // Helper to stop all other tracks
+    function stopOthers(currentKey) {
+      Object.keys(widgets).forEach(key => {
+        if (key !== currentKey) {
+          try {
+            widgets[key].pause();
+          } catch(e) {}
+        }
+      });
+    }
+
+    // Set up events for each track
+    Object.keys(widgets).forEach(key => {
+      const widget = widgets[key];
+      const card = document.getElementById(`music-card-${key}`);
+      if (!card) return;
+
+      const playBtn = card.querySelector('.music-play-btn');
+      const playIcon = playBtn ? playBtn.querySelector('.play-icon') : null;
+      const pauseIcon = playBtn ? playBtn.querySelector('.pause-icon') : null;
+
+      widget.bind(SC.Widget.Events.PLAY, () => {
+        stopOthers(key);
+        card.classList.add('playing');
+        if (playIcon) playIcon.style.display = 'none';
+        if (pauseIcon) pauseIcon.style.display = 'inline';
+      });
+
+      widget.bind(SC.Widget.Events.PAUSE, () => {
+        card.classList.remove('playing');
+        if (playIcon) playIcon.style.display = 'inline';
+        if (pauseIcon) pauseIcon.style.display = 'none';
+      });
+
+      widget.bind(SC.Widget.Events.FINISH, () => {
+        card.classList.remove('playing');
+        if (playIcon) playIcon.style.display = 'inline';
+        if (pauseIcon) pauseIcon.style.display = 'none';
+      });
+
+      // Handle custom play button click
+      if (playBtn) {
+        playBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          widget.isPaused((paused) => {
+            if (paused) {
+              widget.play();
+            } else {
+              widget.pause();
+            }
+          });
+        });
+      }
+      
+      // Also make the whole sleeve clickable
+      const sleeve = card.querySelector('.vinyl-sleeve');
+      if (sleeve) {
+        sleeve.addEventListener('click', () => {
+          widget.isPaused((paused) => {
+            if (paused) {
+              widget.play();
+            } else {
+              widget.pause();
+            }
+          });
+        });
+      }
+    });
+  }
+
+  // Run setup when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setup);
+  } else {
+    setup();
+  }
+})();

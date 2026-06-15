@@ -1531,6 +1531,303 @@ button {
   transition-delay: 0.77s;
 }
 
+
+/* ════════════════════════════════════════════════════
+   VIEW: MUSIC STYLES
+   ════════════════════════════════════════════════════ */
+#view-music {
+  display: none;
+  width: 100%;
+  min-height: calc(100vh - var(--nav-h));
+  padding: 60px 6% var(--space-lg);
+}
+
+#view-music.active {
+  display: block;
+}
+
+@media (min-width: 800px) {
+  #view-music {
+    min-height: calc(100vh - 60px);
+    padding: 80px 8% var(--space-lg);
+  }
+}
+
+.music-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.music-header {
+  margin-bottom: var(--space-lg);
+  text-align: left;
+}
+
+.music-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text);
+  margin-bottom: var(--space-xs);
+}
+
+.music-subtitle {
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+}
+
+/* Music grid layout */
+.music-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  width: 100%;
+  margin-bottom: var(--space-lg);
+}
+
+@media (min-width: 768px) {
+  .music-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px 30px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .music-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 50px 40px;
+  }
+}
+
+/* Music card styling */
+.music-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.3s, transform 0.3s var(--ease);
+  position: relative;
+}
+
+.music-card:hover {
+  border-color: rgba(200, 238, 96, 0.2);
+  transform: translateY(-4px);
+}
+
+/* Vinyl envelope wrapper */
+.vinyl-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: visible; /* To allow the vinyl to slide out */
+}
+
+/* Disc Sleeve */
+.vinyl-sleeve {
+  width: 82%;
+  height: 82%;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  border-radius: 4px;
+  overflow: hidden;
+  background: #000;
+  transition: transform 0.3s var(--ease);
+}
+
+.sleeve-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: filter 0.3s;
+}
+
+/* Hover overlay play button */
+.music-play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  font-size: 1.2rem;
+  opacity: 0;
+  transition: opacity 0.3s var(--ease), transform 0.2s var(--ease);
+  z-index: 3;
+}
+
+.vinyl-sleeve:hover .music-play-btn {
+  opacity: 1;
+}
+
+.music-play-btn:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+  background: #fff;
+}
+
+.vinyl-sleeve:hover .sleeve-img {
+  filter: brightness(0.4);
+}
+
+/* Play state active: button stays visible but translucent */
+.music-card.playing .music-play-btn {
+  opacity: 0.8;
+  background: var(--accent);
+}
+.music-card.playing .vinyl-sleeve:hover .music-play-btn {
+  opacity: 1;
+}
+
+/* Vinyl Disc */
+.vinyl-disc {
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  z-index: 1;
+  background: radial-gradient(circle, 
+    #18181c 0%, 
+    #09090b 25%, 
+    #1d1d23 35%, 
+    #09090b 45%, 
+    #25252b 55%, 
+    #09090b 65%, 
+    #131317 75%, 
+    #000 100%
+  );
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8), 0 5px 15px rgba(0, 0, 0, 0.3);
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Circular groove textures */
+.vinyl-grooves {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  pointer-events: none;
+}
+.vinyl-grooves::before, .vinyl-grooves::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  top: 10px; left: 10px; right: 10px; bottom: 10px;
+}
+.vinyl-grooves::after {
+  top: 25px; left: 25px; right: 25px; bottom: 25px;
+}
+
+/* Center vinyl label */
+.vinyl-label {
+  width: 32%;
+  height: 32%;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  border: 2px solid #000;
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+/* Spindle hole */
+.vinyl-label::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+/* Sliding actions */
+.vinyl-wrapper:hover .vinyl-disc {
+  transform: translate(18%, 0);
+}
+
+.music-card.playing .vinyl-disc {
+  transform: translate(22%, 0);
+  animation: spin 4s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: translate(22%, 0) rotate(0deg);
+  }
+  to {
+    transform: translate(22%, 0) rotate(360deg);
+  }
+}
+
+/* Track info metadata */
+.track-info {
+  margin-bottom: 15px;
+}
+
+.track-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.track-year {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* Sliding player drawer container */
+.sc-player-container {
+  width: 100%;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.4s var(--ease), opacity 0.4s var(--ease), margin-top 0.4s var(--ease);
+  border-radius: 8px;
+}
+
+.music-card.playing .sc-player-container {
+  max-height: 125px;
+  opacity: 1;
+  margin-top: 10px;
+}
+
+.music-footer {
+  margin-top: var(--space-lg);
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+}
+
+.music-footer-copy {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
 /* ════════════════════════════════════════════════════
    ACCESSIBILITY: REDUCED MOTION
 ════════════════════════════════════════════════════ */

@@ -296,3 +296,7 @@ source/2025_BLND/conten.md
 scripts/convert_c2.py
 scripts/crop_c2_thumb.py
 scripts/crop_c2_images.py
+source/music.md
+scripts/resolve_music_links.py
+scripts/search_views.py
+scripts/test_links.py

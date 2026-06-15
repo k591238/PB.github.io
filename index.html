@@ -55,6 +55,7 @@
       <ul class="menu_mobile_list">
         <li><button class="menu_link" data-view="home">HOME</button></li>
         <li><button class="menu_link" data-view="projects">PROJECTS</button></li>
+        <li><button class="menu_link" data-view="music">MUSIC</button></li>
         <li><button class="menu_link" data-view="about">ABOUT</button></li>
       </ul>
       <div class="menu_mobile_social">
@@ -76,6 +77,7 @@
     <nav>
       <ul class="menu">
         <li><button class="menu_link" data-view="projects">PROJECTS</button></li>
+        <li><button class="menu_link" data-view="music">MUSIC</button></li>
         <li><button class="menu_link" data-view="about">ABOUT</button></li>
       </ul>
     </nav>
@@ -285,6 +287,102 @@
       </div>
     </div>
 
+  </section>
+
+  <!-- ══════════════════════════════════════
+       VIEW: MUSIC
+  ══════════════════════════════════════ -->
+  <section class="view" id="view-music">
+    <div class="music-container">
+      <div class="music-header reveal">
+        <h1 class="music-title">MUSIC</h1>
+        <p class="music-subtitle">Audiovisual Soundscapes & Experimental Noise</p>
+      </div>
+      
+      <div class="music-grid">
+        <!-- Whisper -->
+        <div class="music-card reveal" id="music-card-whisper">
+          <div class="vinyl-wrapper">
+            <div class="vinyl-sleeve">
+              <img class="sleeve-img" src="https://i1.sndcdn.com/artworks-WHwAUF3PszchJ44R-9XStoQ-t500x500.png" alt="Whisper Album Cover">
+              <button class="music-play-btn" data-track="whisper" aria-label="Play Whisper">
+                <span class="play-icon">▶</span>
+                <span class="pause-icon" style="display:none;">▮▮</span>
+              </button>
+            </div>
+            <div class="vinyl-disc">
+              <div class="vinyl-grooves"></div>
+              <div class="vinyl-label" style="background-image: url('https://i1.sndcdn.com/artworks-WHwAUF3PszchJ44R-9XStoQ-t500x500.png')"></div>
+            </div>
+          </div>
+          <div class="track-info">
+            <h2 class="track-title">Whisper</h2>
+            <p class="track-year">2025 · Experimental / Ambient</p>
+          </div>
+          <div class="sc-player-container">
+            <iframe id="sc-iframe-whisper" width="100%" height="120" scrolling="no" frameborder="no" allow="autoplay" 
+              src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/2082984747&color=%23c8ee60&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&visual=false">
+            </iframe>
+          </div>
+        </div>
+
+        <!-- Electric -->
+        <div class="music-card reveal" id="music-card-electric">
+          <div class="vinyl-wrapper">
+            <div class="vinyl-sleeve">
+              <img class="sleeve-img" src="https://i1.sndcdn.com/artworks-0AZs9TUrrlZoCo2f-SEiflg-t500x500.png" alt="Electric Album Cover">
+              <button class="music-play-btn" data-track="electric" aria-label="Play Electric">
+                <span class="play-icon">▶</span>
+                <span class="pause-icon" style="display:none;">▮▮</span>
+              </button>
+            </div>
+            <div class="vinyl-disc">
+              <div class="vinyl-grooves"></div>
+              <div class="vinyl-label" style="background-image: url('https://i1.sndcdn.com/artworks-0AZs9TUrrlZoCo2f-SEiflg-t500x500.png')"></div>
+            </div>
+          </div>
+          <div class="track-info">
+            <h2 class="track-title">Electric</h2>
+            <p class="track-year">2025 · Audio-Visual Noise</p>
+          </div>
+          <div class="sc-player-container">
+            <iframe id="sc-iframe-electric" width="100%" height="120" scrolling="no" frameborder="no" allow="autoplay" 
+              src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/2082984099&color=%23c8ee60&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&visual=false">
+            </iframe>
+          </div>
+        </div>
+
+        <!-- Generate -->
+        <div class="music-card reveal" id="music-card-generate">
+          <div class="vinyl-wrapper">
+            <div class="vinyl-sleeve">
+              <img class="sleeve-img" src="https://i1.sndcdn.com/artworks-nswln9UloHAYZQz2-5e6v7w-t500x500.png" alt="Generate Album Cover">
+              <button class="music-play-btn" data-track="generate" aria-label="Play Generate">
+                <span class="play-icon">▶</span>
+                <span class="pause-icon" style="display:none;">▮▮</span>
+              </button>
+            </div>
+            <div class="vinyl-disc">
+              <div class="vinyl-grooves"></div>
+              <div class="vinyl-label" style="background-image: url('https://i1.sndcdn.com/artworks-nswln9UloHAYZQz2-5e6v7w-t500x500.png')"></div>
+            </div>
+          </div>
+          <div class="track-info">
+            <h2 class="track-title">Generate</h2>
+            <p class="track-year">2025 · Generative Beats / Soundscape</p>
+          </div>
+          <div class="sc-player-container">
+            <iframe id="sc-iframe-generate" width="100%" height="120" scrolling="no" frameborder="no" allow="autoplay" 
+              src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/2082983352&color=%23c8ee60&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&visual=false">
+            </iframe>
+          </div>
+        </div>
+      </div>
+      
+      <div class="music-footer">
+        <p class="music-footer-copy">&copy; 2026 WU CHENG-RU</p>
+      </div>
+    </div>
   </section>
 
   <!-- ══════════════════════════════════════
@@ -2096,6 +2194,7 @@
     </div>
   </template>
 
+  <script src="https://w.soundcloud.com/player/api.js"></script>
   <script src="assets/js/particle.js"></script>
   <script src="assets/js/main.js"></script>
 </body>
