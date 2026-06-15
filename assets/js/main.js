@@ -364,13 +364,21 @@ if (window.matchMedia('(pointer: fine)').matches) {
     // Hover detection
     const INTERACTIVE = 'a, button, [data-project], .proj-filter-btn, .work, .menu_link, .tab-btn, .lang-btn, .scroll-top';
     document.addEventListener('mouseover', e => {
-      if (e.target.closest(INTERACTIVE)) {
+      if (e.target.tagName === 'IFRAME' || e.target.closest('iframe')) {
+        document.body.classList.add('hide-custom-cursor');
+        dot.style.opacity = '0';
+        ring.style.opacity = '0';
+      } else if (e.target.closest(INTERACTIVE)) {
         dot.classList.add('hovering');
         ring.classList.add('hovering');
       }
     });
     document.addEventListener('mouseout', e => {
-      if (e.target.closest(INTERACTIVE)) {
+      if (e.target.tagName === 'IFRAME' || e.target.closest('iframe')) {
+        document.body.classList.remove('hide-custom-cursor');
+        dot.style.opacity = '1';
+        ring.style.opacity = '1';
+      } else if (e.target.closest(INTERACTIVE)) {
         dot.classList.remove('hovering');
         ring.classList.remove('hovering');
       }

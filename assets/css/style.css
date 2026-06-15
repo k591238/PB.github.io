@@ -56,6 +56,11 @@
     cursor: none !important;
   }
 
+  body.hide-custom-cursor,
+  body.hide-custom-cursor * {
+    cursor: auto !important;
+  }
+
   .cursor-dot {
     position: fixed;
     top: 0;
