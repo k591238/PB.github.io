@@ -310,3 +310,4 @@ source/2026桃科_自動販賣機/20260327-桃園科技藝術節-科藝獎競賽
 source/2026桃科_自動販賣機/contnet.md
 scripts/convert_co3.py
 scripts/search_templates.py
+scripts/clean_workspace.py
