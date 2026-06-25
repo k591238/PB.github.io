@@ -26,7 +26,7 @@ const projectsData = [
       'assets/images/projects/p1/pic_19.webp',
       'assets/images/projects/p1/pic_20.webp'
     ],
-    youtubeId: 'zfsF6ZuGfx0'
+    youtubeId: 'MoqFfofD9oY'
   },
   { id: 'p2', title: 'Performance 2', year: 2025, meta: 'Performance', category: 'performance', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
   { id: 'p3', title: 'Performance 3', year: 2025, meta: 'Performance', category: 'performance', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
