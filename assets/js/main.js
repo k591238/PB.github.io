@@ -458,13 +458,15 @@ if (window.matchMedia('(pointer: fine)').matches) {
       return;
     }
 
+    const syncIframe = document.getElementById('sc-iframe-sync');
     const whisperIframe = document.getElementById('sc-iframe-whisper');
     const electricIframe = document.getElementById('sc-iframe-electric');
     const generateIframe = document.getElementById('sc-iframe-generate');
 
-    if (!whisperIframe || !electricIframe || !generateIframe) return;
+    if (!syncIframe || !whisperIframe || !electricIframe || !generateIframe) return;
 
     const widgets = {
+      sync: SC.Widget(syncIframe),
       whisper: SC.Widget(whisperIframe),
       electric: SC.Widget(electricIframe),
       generate: SC.Widget(generateIframe)
