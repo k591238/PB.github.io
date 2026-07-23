@@ -4,32 +4,31 @@
 const projectsData = [
   {
     id: 'p1',
-    title: 'Perspectives: AV Art',
+    title: '視感認知 Mind Fluid',
     year: 2025,
     meta: 'Performance',
     category: 'performance',
-    thumb: 'assets/images/projects/p1/pic_15.webp',
-    gallery: [
-      'assets/images/projects/p1/pic_01.webp',
-      'assets/images/projects/p1/pic_02.webp',
-      'assets/images/projects/p1/pic_03.webp',
-      'assets/images/projects/p1/pic_04.webp',
-      'assets/images/projects/p1/pic_05.webp',
-      'assets/images/projects/p1/pic_07.webp',
-      'assets/images/projects/p1/pic_08.webp',
-      'assets/images/projects/p1/pic_09.webp',
-      'assets/images/projects/p1/pic_11.webp',
-      'assets/images/projects/p1/pic_12.webp',
-      'assets/images/projects/p1/pic_15.webp',
-      'assets/images/projects/p1/pic_17.webp',
-      'assets/images/projects/p1/pic_18.webp',
-      'assets/images/projects/p1/pic_19.webp',
-      'assets/images/projects/p1/pic_20.webp'
-    ],
+    thumb: 'assets/images/projects/p1/banner.webp',
     youtubeId: 'MoqFfofD9oY'
   },
-  { id: 'p2', title: 'Performance 2', year: 2025, meta: 'Performance', category: 'performance', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
-  { id: 'p3', title: 'Performance 3', year: 2025, meta: 'Performance', category: 'performance', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
+  {
+    id: 'p2',
+    title: '認夢 Dream Percept',
+    year: 2024,
+    meta: 'Performance',
+    category: 'performance',
+    thumb: 'assets/images/projects/p2/thumb.webp',
+    youtubeId: 'VWdl_gF3HBw'
+  },
+  {
+    id: 'p3',
+    title: 'FUTURE VISION LAB 2023 《未來視覺派對》',
+    year: 2023,
+    meta: 'Performance',
+    category: 'performance',
+    thumb: 'assets/images/projects/p3/thumb.webp',
+    youtubeId: ''
+  },
   {
     id: 'p4',
     title: '光之曲幕 X DJ Friday Night《聲．光．域》',
@@ -37,22 +36,80 @@ const projectsData = [
     meta: 'Performance',
     category: 'performance',
     thumb: 'assets/images/projects/p4/thumb.webp',
-    gallery: [
-      'assets/images/projects/p4/work_01.webp', 'assets/images/projects/p4/work_02.webp', 'assets/images/projects/p4/work_03.webp',
-      'assets/images/projects/p4/work_04.webp', 'assets/images/projects/p4/work_05.webp', 'assets/images/projects/p4/work_06.webp',
-      'assets/images/projects/p4/work_07.webp', 'assets/images/projects/p4/work_08.webp', 'assets/images/projects/p4/work_09.webp',
-      'assets/images/projects/p4/work_10.webp', 'assets/images/projects/p4/work_11.webp', 'assets/images/projects/p4/work_12.webp'
-    ],
     youtubeId: 'TazR2qhRegI'
   },
-  { id: 'e1', title: 'Exhibition 1', year: 2024, meta: 'Exhibition', category: 'exhibition', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
-  { id: 'e2', title: 'Exhibition 2', year: 2024, meta: 'Exhibition', category: 'exhibition', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
-  { id: 'e3', title: 'Exhibition 3', year: 2024, meta: 'Exhibition', category: 'exhibition', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
-  { id: 'c1', title: 'Case Study 1', year: 2023, meta: 'Case', category: 'case', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
-  { id: 'c2', title: 'Case Study 2', year: 2023, meta: 'Case', category: 'case', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
-  { id: 'c3', title: '離水山：再臨 Shuishan: Returnings', year: 2025, meta: 'Case', category: 'case', thumb: 'assets/images/projects/c3/work_01.webp', youtubeId: '' },
-  { id: 'co1', title: 'Collaboration 1', year: 2022, meta: 'Collaboration', category: 'collaboration', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
-  { id: 'co2', title: 'Collaboration 2', year: 2022, meta: 'Collaboration', category: 'collaboration', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
+  {
+    id: 'e1',
+    title: '《 聽 說 Whisper 》',
+    year: 2024,
+    meta: 'Exhibition',
+    category: 'exhibition',
+    thumb: 'assets/images/projects/e1/thumb.webp',
+    youtubeId: '3zMIU6YjPEk'
+  },
+  {
+    id: 'e2',
+    title: '繫 Sync',
+    year: 2026,
+    meta: 'Exhibition',
+    category: 'exhibition',
+    thumb: 'assets/images/projects/e2/thumb.webp',
+    youtubeId: 'j6Q909i4HB0'
+  },
+  {
+    id: 'e3',
+    title: '鹹淡適中 Glub Glub',
+    year: 2025,
+    meta: 'Exhibition',
+    category: 'exhibition',
+    thumb: 'assets/images/projects/e3/thumb.webp',
+    youtubeId: ''
+  },
+  {
+    id: 'c1',
+    title: '101 手錶發表會商演',
+    year: 2026,
+    meta: 'Case',
+    category: 'case',
+    thumb: 'assets/images/projects/c1/thumb.webp',
+    youtubeId: ''
+  },
+  {
+    id: 'c2',
+    title: 'Live VJ Lab 即時影像演出工作營',
+    year: 2025,
+    meta: 'Case',
+    category: 'case',
+    thumb: 'assets/images/projects/c2/thumb.webp',
+    youtubeId: ''
+  },
+  {
+    id: 'c3',
+    title: '離水山：再臨 Shuishan: Returnings',
+    year: 2025,
+    meta: 'Case',
+    category: 'case',
+    thumb: 'assets/images/projects/c3/work_01.webp',
+    youtubeId: 'EtbHRLqTuyA'
+  },
+  {
+    id: 'co1',
+    title: '翼手龍摩天劇院 The Archaeology of Wonderland',
+    year: 2024,
+    meta: 'Collaboration',
+    category: 'collaboration',
+    thumb: 'assets/images/projects/co1/thumb.webp',
+    youtubeId: '1NetdkQiMT4'
+  },
+  {
+    id: 'co2',
+    title: 'VIVIDO: re-Action',
+    year: 2024,
+    meta: 'Collaboration',
+    category: 'collaboration',
+    thumb: 'assets/images/projects/co2/banner.webp',
+    youtubeId: 'K276uwK-u5A'
+  },
   {
     id: 'co3',
     title: '樓頂《自動販賣機》',
@@ -60,17 +117,8 @@ const projectsData = [
     meta: 'Collaboration',
     category: 'collaboration',
     thumb: 'assets/images/projects/co3/thumb.webp',
-    gallery: [
-      'assets/images/projects/co3/work_01.webp',
-      'assets/images/projects/co3/work_02.webp',
-      'assets/images/projects/co3/work_03.webp',
-      'assets/images/projects/co3/work_04.webp',
-      'assets/images/projects/co3/work_05.webp',
-      'assets/images/projects/co3/work_06.webp',
-      'assets/images/projects/co3/work_07.webp'
-    ],
     youtubeId: ''
-  },
+  }
 ];
 
 /* ────────────────────────────────────────
