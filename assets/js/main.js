@@ -30,6 +30,21 @@ const projectsData = [
   },
   { id: 'p2', title: 'Performance 2', year: 2025, meta: 'Performance', category: 'performance', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
   { id: 'p3', title: 'Performance 3', year: 2025, meta: 'Performance', category: 'performance', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
+  {
+    id: 'p4',
+    title: '光之曲幕 X DJ Friday Night《聲．光．域》',
+    year: 2026,
+    meta: 'Performance',
+    category: 'performance',
+    thumb: 'assets/images/projects/p4/thumb.webp',
+    gallery: [
+      'assets/images/projects/p4/work_01.webp', 'assets/images/projects/p4/work_02.webp', 'assets/images/projects/p4/work_03.webp',
+      'assets/images/projects/p4/work_04.webp', 'assets/images/projects/p4/work_05.webp', 'assets/images/projects/p4/work_06.webp',
+      'assets/images/projects/p4/work_07.webp', 'assets/images/projects/p4/work_08.webp', 'assets/images/projects/p4/work_09.webp',
+      'assets/images/projects/p4/work_10.webp', 'assets/images/projects/p4/work_11.webp', 'assets/images/projects/p4/work_12.webp'
+    ],
+    youtubeId: 'TazR2qhRegI'
+  },
   { id: 'e1', title: 'Exhibition 1', year: 2024, meta: 'Exhibition', category: 'exhibition', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
   { id: 'e2', title: 'Exhibition 2', year: 2024, meta: 'Exhibition', category: 'exhibition', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
   { id: 'e3', title: 'Exhibition 3', year: 2024, meta: 'Exhibition', category: 'exhibition', thumb: 'https://placehold.co/1920x1080/1f1f42/d9ff82?text=1920x1080', youtubeId: 'dQw4w9WgXcQ' },
