@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://k591238.github.io/sitemap.xml
+Sitemap: https://k591238.github.io/PB.github.io/sitemap.xml
