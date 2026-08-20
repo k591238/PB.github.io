@@ -2,7 +2,7 @@
 
 > **給下一位 AI Agent 的讀我文件**  
 > 本文件完整記錄專案架構、規範與開發狀態，閱讀後可直接接手繼續開發。  
-> 最後更新：2026-07-23
+> 最後更新：2026-08-20
 
 ---
 
@@ -13,7 +13,8 @@
 | **性質** | 個人作品集網站（Single Page Application） |
 | **技術棧** | 純 HTML + Vanilla CSS + Vanilla JS（無框架、無建置工具） |
 | **部署** | GitHub Pages（push 即生效，無需 build 流程） |
-| **主要檔案** | `index.html`（~2380行）、`assets/css/style.css`（~1980行）、`assets/js/main.js`（569行） |
+| **正式網址** | `https://k591238.github.io/PB.github.io/` — repo 名稱是 `PB.github.io`，帳號是 `k591238`，兩者不相符，所以這是 **Project site**，不是 User site，網址一定要帶 `/PB.github.io/` 路徑，**不可省略** |
+| **主要檔案** | `index.html`（~2440行）、`assets/css/style.css`（~1930行）、`assets/js/main.js`（624行） |
 | **語系** | 中英混排，介面部分英文，內容部分繁體中文 |
 
 ---
@@ -23,6 +24,9 @@
 ```
 PB.github.io/
 ├── index.html                    ← 整個 SPA 的唯一 HTML 入口，含所有 View 和 Template
+├── .nojekyll                      ← 告訴 GitHub 不要跑 Jekyll build（本專案未使用 Jekyll）
+├── robots.txt                     ← 搜尋引擎爬蟲規則（見下方「SEO / Search Console 設定」）
+├── sitemap.xml                    ← 網站地圖，提交給 Google Search Console 用
 ├── assets/
 │   ├── css/
 │   │   └── style.css             ← 所有樣式（Design Tokens + 全部元件 CSS）
@@ -55,6 +59,30 @@ PB.github.io/
     ├── convert_p4.py             ← 轉換 p4 原始照片 → webp
     └── convert_{id}.py ...       ← 各專案對應的轉換腳本
 ```
+
+---
+
+## 🔍 SEO / Search Console 設定
+
+### 網址驗證
+
+`index.html` `<head>` 有 Google Search Console 的驗證標記：
+```html
+<meta name="google-site-verification" content="I09JSeMzpK0wOkBSF_9H93B7DKekH41CyU5NfwdUOQY" />
+```
+不要刪除，刪除會導致 Search Console 失去所有權驗證。
+
+### Open Graph / Twitter Card / JSON-LD
+
+`index.html` `<head>` 內有社群分享預覽（og:*、twitter:*）與結構化資料（`application/ld+json`, `@type: Person`），全部指向正式網址 `https://k591238.github.io/PB.github.io/`。**修改網址、標題、簡介、大頭照時，這些標記要跟著同步更新**，否則社群分享卡片或 Google 的理解會跟實際內容不一致。
+
+### ⚠️ robots.txt 的已知限制
+
+`robots.txt` 依照協定規範**只在網域根目錄有效**（`https://k591238.github.io/robots.txt`）。因為本專案是 Project site，實際內容跑在 `/PB.github.io/` 路徑下，repo 裡的 `robots.txt` 只會被服務在 `https://k591238.github.io/PB.github.io/robots.txt`——**這不是搜尋引擎承認的正式位置，形同無效**。要讓它真正生效，必須另外建立一個名稱完全是 `k591238.github.io` 的新 repo 來佔用網域根目錄，目前尚未執行這一步。
+
+### sitemap.xml 的協定限制
+
+Sitemap 只能列出「跟自己同層或更深層」的網址，**不可以搬進子資料夾**（會因為列出的網址層級比 sitemap 本身高而判定無效）。必須維持在 repo 根目錄。
 
 ---
 
@@ -356,10 +384,20 @@ python scripts/convert_{id}.py   ← 執行轉換
 | `particle.js` | `assets/js/particle.js` | 首頁背景獨立模組 |
 | `window.musicWidgets` | `main.js` | 音樂播放器控制依賴 |
 | SoundCloud API `<script>` | `index.html` 尾部 | 外部依賴，與 music 頁強耦合 |
+| `google-site-verification` meta | `index.html` `<head>` | 刪除會讓 Search Console 失去網站擁有權驗證 |
+| contextmenu / dragstart 監聽 | `main.js` 尾部 | 右鍵與拖曳圖片防護，僅供基本防盜用，非安全機制 |
 
 ---
 
 ## 📅 開發歷程紀錄
+
+### 2026-08-20（Google 收錄 / SEO 設定）
+
+1. **Google Search Console 驗證**：改用 `<meta name="google-site-verification">` 標記（非上傳 HTML 檔案的方式）。
+2. **修正網址誤判**：確認本專案為 Project site（`k591238` ≠ `PB.github.io`），正確網址帶 `/PB.github.io/` 路徑，修正所有相關檔案內先前誤寫的根網域網址。
+3. **新增 SEO 基礎檔案**：`.nojekyll`、`robots.txt`、`sitemap.xml`（詳見「SEO / Search Console 設定」章節）。
+4. **新增 Open Graph / Twitter Card / JSON-LD**（`index.html` `<head>`），改善社群分享預覽與 AI/搜尋引擎對網站內容的辨識度。
+5. **右鍵與拖曳防護**：`main.js` 尾部新增 `contextmenu`、`dragstart` 監聽，防止作品圖片/影片被隨手另存（僅基本防護，非真正版權保護機制，repo 為 Public，原始檔案本來就可透過 git clone 取得）。
 
 ### 2026-07-23（Antigravity 作業完成）
 

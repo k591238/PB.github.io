@@ -614,3 +614,11 @@ if (window.matchMedia('(pointer: fine)').matches) {
     setup();
   }
 })();
+
+/* ────────────────────────────────────────
+   RIGHT-CLICK / DRAG PROTECTION
+   ──────────────────────────────────────── */
+document.addEventListener('contextmenu', (e) => e.preventDefault());
+document.addEventListener('dragstart', (e) => {
+  if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') e.preventDefault();
+});
