@@ -548,19 +548,18 @@ if (window.matchMedia('(pointer: fine)').matches) {
       return;
     }
 
-    const syncIframe = document.getElementById('sc-iframe-sync');
-    const whisperIframe = document.getElementById('sc-iframe-whisper');
-    const electricIframe = document.getElementById('sc-iframe-electric');
-    const generateIframe = document.getElementById('sc-iframe-generate');
+    // Driven by whatever .music-card elements exist in the DOM — add a new
+    // card (id="music-card-{key}" containing an iframe id="sc-iframe-{key}")
+    // and it's wired up automatically, no JS changes needed.
+    const cards = document.querySelectorAll('.music-card[id^="music-card-"]');
+    if (!cards.length) return;
 
-    if (!syncIframe || !whisperIframe || !electricIframe || !generateIframe) return;
-
-    const widgets = {
-      sync: SC.Widget(syncIframe),
-      whisper: SC.Widget(whisperIframe),
-      electric: SC.Widget(electricIframe),
-      generate: SC.Widget(generateIframe)
-    };
+    const widgets = {};
+    cards.forEach(card => {
+      const key = card.id.replace('music-card-', '');
+      const iframe = card.querySelector('iframe[id^="sc-iframe-"]');
+      if (iframe) widgets[key] = SC.Widget(iframe);
+    });
 
     window.musicWidgets = widgets;
 
