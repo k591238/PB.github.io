@@ -39,6 +39,24 @@ const projectsData = [
     youtubeId: 'TazR2qhRegI'
   },
   {
+    id: 'p5',
+    title: '《Thiann》聽',
+    year: 2026,
+    meta: 'Performance',
+    category: 'performance',
+    thumb: 'assets/images/projects/p5/thumb.webp',
+    youtubeId: ''
+  },
+  {
+    id: 'p6',
+    title: '視感認知 Visual Cognition',
+    year: 2026,
+    meta: 'Performance',
+    category: 'performance',
+    thumb: 'assets/images/projects/p6/thumb.webp',
+    youtubeId: ''
+  },
+  {
     id: 'e1',
     title: '《 聽 說 Whisper 》',
     year: 2024,
@@ -117,6 +135,15 @@ const projectsData = [
     meta: 'Collaboration',
     category: 'collaboration',
     thumb: 'assets/images/projects/co3/thumb.webp',
+    youtubeId: ''
+  },
+  {
+    id: 'ev1',
+    title: 'PXP 2026 藝術家短講暨工作坊助教',
+    year: 2026,
+    meta: 'Events',
+    category: 'events',
+    thumb: 'assets/images/projects/ev1/thumb.webp',
     youtubeId: ''
   }
 ];
