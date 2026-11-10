@@ -456,6 +456,27 @@ python scripts/convert_project.py --id px --source "source/{專案名}" \
 <img src="..." loading="lazy" style="aspect-ratio: 21/9;">
 ```
 
+### 作品頁影片（本機 mp4）
+
+**不要用 `autoplay`**，改用 `data-autoplay`：
+
+```html
+<video width="100%" data-autoplay preload="metadata" loop muted playsinline style="background: #000;">
+  <source src="assets/videos/projects/{id}/xxx.mp4" type="video/mp4">
+</video>
+```
+
+`main.js` 的 `videoObserver` 會在影片接近畫面（200px 內）時才播放、離開畫面就暫停；`openProjectDetail()` 載入作品頁後會自動掛上。寫成 `autoplay` 的話，打開作品頁就會同時下載所有影片（c1 改之前一打開就下載 30 MB）。
+
+**上傳前先壓縮**（ffmpeg，網頁上一律靜音所以拿掉聲音）：
+
+```bash
+ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
+  -c:v libx264 -preset slow -crf 27 -pix_fmt yuv420p -movflags +faststart 輸出.mp4
+```
+
+目標：循環片段 10～20 秒、每支 5 MB 以下；在 3 欄格線裡 540p 就夠，單欄大畫面可用 720p。`-movflags +faststart` 讓瀏覽器不用下載整支就能開始播。
+
 ### 嵌入 SoundCloud 音樂
 
 ```html
@@ -482,7 +503,7 @@ python scripts/convert_project.py --id px --source "source/{專案名}" \
 
 | 作業 | 說明 |
 |------|------|
-| 影片瘦身 | 作品頁打開時所有 `<video autoplay>` 會同時下載：c1 約 79 MB、p2 約 52 MB（`p2/ig02.mp4` 單支）、e3 14 MB。建議壓縮剪短、改成捲到畫面才播放（IntersectionObserver＋`preload="none"`），長片改 YouTube。repo 的 `.git` 已約 632 MB（GitHub Pages 建議 1 GB 內），大檔一旦 commit 會永久留在歷史 |
+| 影片瘦身（部分完成） | 2026-11-10 已完成：c1 六支壓縮剪短（79→21 MB）、p2 `ig02.mp4`（52→3.1 MB）、全站影片改成捲到畫面才播放（見「作品頁影片」）。**尚未處理**：e3 三支（約 27 MB，其中 `bg with animal.mp4` 12 MB）、p3 三支（約 7 MB）。repo 的 `.git` 約 632 MB（GitHub Pages 建議 1 GB 內），舊的大檔仍在歷史裡，之後新增影片務必先壓縮 |
 | 列表卡片自動產生 | `works-grid` 改由 `projectsData` 產生，新增作品從改三處變兩處，消除「漏加卡片」的 bug |
 | 照片格線共用 class | 80 多處 inline `display:grid` 改成 `gallery-2`／`gallery-3`／`gallery-portrait` 之類的 class，手機收欄的 `!important` 屬性選擇器可一併改乾淨 |
 | 作品獨立網址 | `#project/p4` 的 `#` 會被 Google 和社群平台忽略：分享單一作品時預覽卡片永遠是首頁，個別作品也幾乎搜不到。根本解法是每個作品做成獨立靜態頁（如 `projects/p4/`），屬大改版，等上面三項做完再規劃 |
@@ -504,7 +525,7 @@ python scripts/convert_project.py --id px --source "source/{專案名}" \
 | 項目 | 位置 | 原因 |
 |------|------|------|
 | `navigateTo()` | `main.js` L100–158 | SPA 路由核心，修改影響所有頁面切換 |
-| `openProjectDetail()` | `main.js` L160–229 | 作品詳細頁渲染邏輯 |
+| `openProjectDetail()` | `main.js` | 作品詳細頁渲染邏輯；清空內容前的 `videoObserver.disconnect()` 和最後掛上 `video[data-autoplay]` 的那行不可拿掉 |
 | `scrollObserver` | `main.js` L91–98 | 所有 scroll-reveal 動畫依賴 |
 | `.detail-grid-2` / `.detail-grid-3` CSS | `style.css` | `template-c3` 仍在使用，刪除會破版 |
 | `particle.js` | `assets/js/particle.js` | 首頁背景獨立模組 |
@@ -533,6 +554,8 @@ python scripts/convert_project.py --id px --source "source/{專案名}" \
 4. **sitemap.xml**：加入講義列表頁和雷射 POP 講義。
 5. **手機版作品頁格線自動收欄**：見「圖片格線」章節。16 個作品頁在 390／700／1280px 寬度都驗證過：手機全單欄、沒有圖片超出畫面，桌機版不變。
 6. 刪除根目錄未追蹤的舊講義副本 `laser-pop-handout.html`（跟 TD_Laser_POP@130dba1 版本相同，可從那邊歷史找回）。
+7. **影片瘦身**：c1 六支改 30fps／540p／去聲音，三支長片剪成 18 秒（L1040138 取 20–38 秒、L1040180 取 40–58 秒、L1040177 取前 18 秒），79→21 MB；p2 `ig02.mp4` 壓成 720×720 並改為自動循環（原本是要按播放鍵），52→3.1 MB。全站 12＋1 支影片改用 `data-autoplay`＋`videoObserver`，打開 c1 時的下載量從 30 MB 降到約 6 MB。
+8. **中文 Bio** 改為五段新版本。
 
 ### 2026-10-20（新增 3 個作品、Events 分類、通用轉換腳本、文件勘誤）
 

@@ -172,6 +172,14 @@ const scrollObserver = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
 
+// 作品頁影片只在接近畫面時才下載播放，離開畫面就暫停（避免一打開就同時下載所有影片）
+const videoObserver = new IntersectionObserver((entries) => {
+  entries.forEach(({ target, isIntersecting }) => {
+    if (isIntersecting) target.play().catch(() => {});
+    else target.pause();
+  });
+}, { rootMargin: '200px 0px' });
+
 function navigateTo(id, pushState = true) {
   if (!VIEWS.includes(id)) id = 'home';
 
@@ -241,6 +249,7 @@ function openProjectDetail(projectId, pushState = true) {
   if (!contentContainer) return;
 
   // Clear previous content
+  videoObserver.disconnect();
   contentContainer.innerHTML = '';
 
   // Check if a specific template exists for this project
@@ -302,6 +311,8 @@ function openProjectDetail(projectId, pushState = true) {
       contentContainer.appendChild(galleryContainer);
     }
   }
+
+  contentContainer.querySelectorAll('video[data-autoplay]').forEach(v => videoObserver.observe(v));
 
   // Push state for browser back support
   if (pushState) {
