@@ -100,8 +100,9 @@ Sitemap 只能列出「跟自己同層或更深層」的網址，**不可以搬�
 
 About 頁 BIO／CV 分頁列右側有「CV PDF ↓」，下載目前所選語言的 PDF（`main.js` 語言切換時會改 `[data-cv-pdf]` 的 `href`）。
 
-- 檔案：`assets/cv/WuChengRu_CV_EN.pdf`、`WuChengRu_CV_ZH.pdf`（A4，銀灰細雜訊底，頁首有聯絡方式與作品集 QR code，頁尾有更新年月）
-- **內容只有一份來源**：排版模板 `scripts/cv/cv-print.html` 執行時直接讀 `index.html` 的 `.about-name`、`.about-role`、`.bio-text.{en|zh}`、`.cv-content.{en|zh}`、社群連結裡的 Email／Instagram、`<link rel="canonical">`。PDF 裡不要另外手打內容
+- 檔案：`assets/cv/WuChengRu_CV_EN.pdf`、`WuChengRu_CV_ZH.pdf`（A4，銀灰細雜訊底；頁首左起：個人照、名字／職稱／聯絡方式、作品集 QR code；頁尾有更新年月）
+- **字級規範（使用者指定）**：內文與 CV 項目 12pt、次要資訊（年份、補充說明、聯絡方式、分類標題）10.5pt、頁尾 9pt，**最小不得低於 9pt**。改模板後用 PyMuPDF 讀字級確認
+- **內容只有一份來源**：排版模板 `scripts/cv/cv-print.html` 執行時直接讀 `index.html` 的 `.about-photo`（個人照）、`.about-name`、`.about-role`、`.bio-text.{en|zh}`、`.cv-content.{en|zh}`、社群連結裡的 Email／Instagram、`<link rel="canonical">`。PDF 裡不要另外手打內容
 - 聯絡資訊只放網站上已公開的（Email、IG、網站），**不放電話、地址**
 - 英文 CV 刻意維持「Selected Works」精選形式（使用者決定），中文版是完整版
 
@@ -111,12 +112,13 @@ About 頁 BIO／CV 分頁列右側有「CV PDF ↓」，下載目前所選語言
 node scripts/build_cv_pdf.mjs
 ```
 
-需要 Node 18+ 與 Microsoft Edge（路徑不同時設定 `EDGE_PATH`）。腳本會自己開本機伺服器和 headless Edge、輸出兩份 PDF、結束時自動關閉。產生後用 PDF 閱讀器打開檢查分頁（目前英文 1 頁、中文 3 頁），再跟網站修改一起 commit。忘記重跑的話 PDF 會跟網站內容不一致。
+需要 Node 18+ 與 Microsoft Edge（路徑不同時設定 `EDGE_PATH`）。腳本會自己開本機伺服器和 headless Edge、輸出兩份 PDF、結束時自動關閉。產生後用 PDF 閱讀器打開檢查分頁（目前英文 2 頁、中文 4 頁），再跟網站修改一起 commit。忘記重跑的話 PDF 會跟網站內容不一致。
 
 **排版技術備忘**：
 - `@page { margin: 0 }` 才能讓底色滿版；每頁的上下留白靠 `body` padding＋`box-decoration-break: clone`
 - 底紋與頁尾是 `position: fixed`，列印時會在每頁重複出現；Chrome 不支援在內容裡顯示頁碼，所以沒有頁碼
-- 雜訊貼圖 `noise.png` 用 320px、`background-size` 整數 px，太小或非整數會在 PDF 裡出現接縫細線
+- 雜訊是獨立的 `.grain` 圖層：`noise.png` 為 640px、4 階灰的 2-bit 調色盤圖（約 100 KB），以 `background-size: 320px` 顯示（顆粒約 0.13mm），淡度用 `opacity` 控制。貼圖尺寸要用整數 px，太小或非整數會在 PDF 裡出現接縫細線；用帶透明度的全彩雜訊圖會大到 400 KB 以上
+- 職稱每一項用 `white-space: nowrap` 包起來、`.cv-sub` 也不拆行，避免單字被拆到下一行
 - QR code（`scripts/cv/qr.svg`）用 segno 產生，必須有 `xmlns` 才能當圖片載入；作品集網址改了要重新產生
 
 ---
@@ -591,7 +593,7 @@ ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
 11. **右鍵規則**：改成只在連結上開放；卡片縮圖加 `pointer-events: none`，右鍵卡片只能開新分頁、不能另存縮圖。曾短暫加上 F12 等快捷鍵屏蔽，討論後還原（見「禁止輕易更動的項目」）。
 12. **修正 popstate**：網址列手動改成 `#project/{id}` 時會被導回首頁，現在會正確打開作品頁。
 13. 29 項行為測試全數通過（SPA 切換、上一頁、選單與卡片新分頁、直接開 `#music`／`#project/{id}`、手機選單、分類篩選、右鍵開放與封鎖範圍、快捷鍵不再攔截）。
-14. **CV PDF 下載**：About 頁新增「CV PDF ↓」，跟著 EN／CN 切換下載對應語言；PDF 由 `scripts/build_cv_pdf.mjs` 從網站內容自動產生（英文 1 頁、中文 3 頁，銀灰細雜訊底）。
+14. **CV PDF 下載**：About 頁新增「CV PDF ↓」，跟著 EN／CN 切換下載對應語言；PDF 由 `scripts/build_cv_pdf.mjs` 從網站內容自動產生（銀灰細雜訊底、個人照、內文 12pt；英文 2 頁、中文 4 頁）。
 
 ### 2026-10-20（新增 3 個作品、Events 分類、通用轉換腳本、文件勘誤）
 

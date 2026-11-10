@@ -14,15 +14,19 @@
       margin: 0;
     }
 
+    /* 字級（使用者指定方案 B）：內文 12pt、次要資訊 10.5pt、頁尾 9pt，最小不低於 9pt */
     :root {
       --paper: #e9e9e6;
       --ink: #161616;
-      --ink-2: #3c3c3a;
-      --muted: #74746f;
+      --ink-2: #3a3a38;
+      --muted: #6c6c67;
       --line: rgba(22, 22, 22, 0.14);
       --accent: #c8ee60;
       --sans: 'Inter', 'Noto Sans TC', sans-serif;
       --heading: 'Space Grotesk', 'Noto Sans TC', sans-serif;
+      --fs-body: 12pt;
+      --fs-small: 10.5pt;
+      --fs-foot: 9pt;
     }
 
     html[lang="zh-Hant"] {
@@ -43,39 +47,49 @@
 
     body {
       font-family: var(--sans);
-      font-size: 9.2pt;
-      line-height: 1.6;
+      font-size: var(--fs-body);
+      line-height: 1.55;
       color: var(--ink-2);
-      padding: 18mm 18mm 24mm;
+      padding: 16mm 17mm 24mm;
       -webkit-box-decoration-break: clone;
       box-decoration-break: clone;
     }
 
-    /* 銀灰底＋細雜訊：position: fixed 在列印時會重複出現在每一頁 */
-    .paper {
+    /* 銀灰底：position: fixed 在列印時會重複出現在每一頁 */
+    .paper,
+    .grain {
       position: fixed;
       inset: 0;
-      z-index: -1;
+    }
+
+    .paper {
+      z-index: -2;
       background-color: var(--paper);
       background-image:
-        url("noise.png"),
         radial-gradient(120% 80% at 15% 0%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 60%),
         linear-gradient(165deg, #ececea 0%, #e3e4e1 60%, #e9e9e6 100%);
-      /* 貼圖尺寸用整數 px，避免 PDF 裡出現接縫細線 */
-      background-size: 320px 320px, 100% 100%, 100% 100%;
+    }
+
+    /* 細雜訊：640px 的 4 階灰貼圖縮成 320px 顯示（顆粒約 0.13mm），淡度由 opacity 控制；
+       貼圖尺寸用整數 px，避免 PDF 裡出現接縫細線 */
+    .grain {
+      z-index: -1;
+      background-image: url("noise.png");
+      background-size: 320px 320px;
+      opacity: 0.07;
     }
 
     .foot {
       position: fixed;
-      left: 18mm;
-      right: 18mm;
-      bottom: 10mm;
+      left: 17mm;
+      right: 17mm;
+      bottom: 9mm;
       display: flex;
       justify-content: space-between;
       padding-top: 2mm;
       border-top: 0.4pt solid var(--line);
-      font-size: 6.4pt;
-      letter-spacing: 0.14em;
+      font-size: var(--fs-foot);
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--muted);
     }
@@ -87,18 +101,26 @@
 
     header {
       display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10mm;
+      grid-template-columns: 27mm 1fr 23mm;
+      gap: 6mm;
       align-items: end;
-      padding-bottom: 7mm;
+      padding-bottom: 6mm;
       border-bottom: 0.6pt solid var(--ink);
+    }
+
+    .photo {
+      display: block;
+      width: 27mm;
+      height: 34mm;
+      object-fit: cover;
+      outline: 0.4pt solid rgba(22, 22, 22, 0.25);
     }
 
     h1 {
       white-space: nowrap;
       font-family: var(--heading);
       font-weight: 700;
-      font-size: 25pt;
+      font-size: 28pt;
       line-height: 1;
       letter-spacing: -0.01em;
       color: var(--ink);
@@ -107,41 +129,34 @@
     h1 .tc {
       font-family: 'Noto Sans TC', sans-serif;
       font-weight: 500;
-      font-size: 15pt;
+      font-size: 17pt;
       letter-spacing: 0.08em;
       margin-left: 3mm;
       color: var(--ink-2);
     }
 
     .role {
-      margin-top: 3mm;
-      font-size: 7.4pt;
-      letter-spacing: 0.2em;
+      margin-top: 2.5mm;
+      font-size: var(--fs-small);
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--muted);
+      line-height: 1.35;
     }
 
     .contact {
+      margin-top: 4mm;
       display: grid;
-      grid-template-columns: auto 19mm;
-      gap: 5mm;
-      align-items: end;
-    }
-
-    .contact dl {
-      display: grid;
-      grid-template-columns: auto auto;
-      gap: 1.2mm 4mm;
-      font-size: 8pt;
+      grid-template-columns: auto 1fr;
+      gap: 0.6mm 4mm;
+      font-size: var(--fs-small);
       line-height: 1.35;
     }
 
     .contact dt {
-      font-size: 6.6pt;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--muted);
-      align-self: center;
     }
 
     .contact dd {
@@ -150,43 +165,43 @@
 
     .qr {
       display: block;
-      width: 19mm;
-      height: 19mm;
+      width: 23mm;
+      height: 23mm;
     }
 
     section {
-      margin-top: 6.5mm;
+      margin-top: 7mm;
     }
 
-    .label {
+    .label,
+    .cv-section-title {
       display: flex;
       align-items: center;
-      gap: 2.4mm;
+      gap: 2.6mm;
       font-family: var(--heading);
       font-weight: 500;
-      font-size: 7.4pt;
-      letter-spacing: 0.24em;
+      font-size: var(--fs-small);
+      letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--ink);
-      padding-bottom: 1.8mm;
-      margin-bottom: 3.2mm;
+      padding-bottom: 2mm;
+      margin-bottom: 3.5mm;
       border-bottom: 0.4pt solid var(--line);
       break-after: avoid;
     }
 
-    .label::before {
+    .label::before,
+    .cv-section-title::before {
       content: '';
-      width: 1.6mm;
-      height: 1.6mm;
+      width: 2mm;
+      height: 2mm;
       background: var(--accent);
       outline: 0.3pt solid rgba(22, 22, 22, 0.35);
       flex: none;
     }
 
     .bio p {
-      max-width: 150mm;
-      margin-bottom: 2mm;
-      color: var(--ink-2);
+      margin-bottom: 2.4mm;
     }
 
     .bio em,
@@ -196,54 +211,29 @@
 
     /* CV（沿用網站的 class，從 index.html 讀進來） */
     .cv-section {
-      margin-top: 6mm;
-    }
-
-    .cv-section-title {
-      display: flex;
-      align-items: center;
-      gap: 2.4mm;
-      font-family: var(--heading);
-      font-weight: 500;
-      font-size: 7.4pt;
-      letter-spacing: 0.24em;
-      text-transform: uppercase;
-      color: var(--ink);
-      padding-bottom: 1.8mm;
-      margin-bottom: 3.2mm;
-      border-bottom: 0.4pt solid var(--line);
-      break-after: avoid;
-    }
-
-    .cv-section-title::before {
-      content: '';
-      width: 1.6mm;
-      height: 1.6mm;
-      background: var(--accent);
-      outline: 0.3pt solid rgba(22, 22, 22, 0.35);
-      flex: none;
+      margin-top: 7mm;
     }
 
     .cv-row {
       display: grid;
-      grid-template-columns: 17mm 1fr;
-      gap: 0 2.5mm;
-      margin-bottom: 1.25mm;
+      grid-template-columns: 22mm 1fr;
+      gap: 0 3mm;
+      margin-bottom: 2mm;
       align-items: baseline;
       break-inside: avoid;
     }
 
     .cv-year {
       white-space: nowrap;
-      font-size: 7.8pt;
+      font-size: var(--fs-small);
       color: var(--muted);
       font-variant-numeric: tabular-nums;
     }
 
     .cv-detail,
     .cv-edu {
-      font-size: 8.8pt;
-      line-height: 1.55;
+      font-size: var(--fs-body);
+      line-height: 1.5;
       color: var(--ink-2);
     }
 
@@ -254,27 +244,32 @@
 
     .cv-sub {
       color: var(--muted);
-      font-size: 7.8pt;
+      font-size: var(--fs-small);
+      white-space: nowrap;
+    }
+
+    .nowrap {
+      white-space: nowrap;
     }
 
     .text-link {
       color: var(--ink);
-      border-bottom: 0.4pt solid rgba(22, 22, 22, 0.3);
+      border-bottom: 0.5pt solid rgba(22, 22, 22, 0.3);
     }
   </style>
 </head>
 
 <body>
   <div class="paper"></div>
+  <div class="grain"></div>
   <div class="foot"><span id="foot-title"></span><span id="foot-web"></span></div>
 
   <header>
+    <img class="photo" id="photo" alt="WU CHENG-RU" />
     <div>
       <h1><span id="name"></span><span class="tc">吳承儒</span></h1>
       <p class="role" id="role"></p>
-    </div>
-    <div class="contact">
-      <dl>
+      <dl class="contact">
         <dt>Email</dt>
         <dd><a id="email"></a></dd>
         <dt>Instagram</dt>
@@ -282,8 +277,8 @@
         <dt>Portfolio</dt>
         <dd><a id="web"></a></dd>
       </dl>
-      <img class="qr" src="qr.svg" alt="Portfolio QR code" />
     </div>
+    <img class="qr" src="qr.svg" alt="Portfolio QR code" />
   </header>
 
   <section class="bio">
@@ -295,14 +290,24 @@
 
   <script>
     (async () => {
-      const lang = new URLSearchParams(location.search).get('lang') === 'zh' ? 'zh' : 'en';
+      const params = new URLSearchParams(location.search);
+      const lang = params.get('lang') === 'zh' ? 'zh' : 'en';
       document.documentElement.lang = lang === 'zh' ? 'zh-Hant' : 'en';
       const html = await (await fetch('../../index.html')).text();
       const site = new DOMParser().parseFromString(html, 'text/html');
       const $ = sel => site.querySelector(sel);
 
+      document.getElementById('photo').src = '../../' + $('.about-photo').getAttribute('src');
       document.getElementById('name').textContent = $('.about-name').textContent.trim();
-      document.getElementById('role').textContent = $('.about-role').textContent.replace(/\s+/g, ' ').trim();
+      // 每個職稱各自不換行，避免「AV／PERFORMER」被拆成兩行
+      const roles = $('.about-role').textContent.split('·').map(r => r.replace(/\s+/g, ' ').trim()).filter(Boolean);
+      const roleEl = document.getElementById('role');
+      roles.forEach((r, i) => {
+        const span = document.createElement('span');
+        span.className = 'nowrap';
+        span.textContent = r + (i < roles.length - 1 ? ' ·' : '');
+        roleEl.append(span, ' ');
+      });
 
       const mail = $('.social-list a[href^="mailto:"]').getAttribute('href');
       const email = document.getElementById('email');
@@ -319,7 +324,7 @@
       web.href = webUrl;
       web.textContent = webUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
 
-      const updated = new URLSearchParams(location.search).get('updated') || '';
+      const updated = params.get('updated') || '';
       document.getElementById('foot-title').textContent =
         `WU CHENG-RU — ${lang === 'zh' ? '簡歷' : 'Curriculum Vitae'}${updated ? ' · Updated ' + updated : ''}`;
       document.getElementById('foot-web').textContent = web.textContent;
