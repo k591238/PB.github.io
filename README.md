@@ -2,7 +2,7 @@
 
 > **給下一位 AI Agent 的讀我文件**  
 > 本文件完整記錄專案架構、規範與開發狀態，閱讀後可直接接手繼續開發。  
-> 最後更新：2026-10-20
+> 最後更新：2026-11-10
 
 ---
 
@@ -27,6 +27,10 @@ PB.github.io/
 ├── .nojekyll                      ← 告訴 GitHub 不要跑 Jekyll build（本專案未使用 Jekyll）
 ├── robots.txt                     ← 搜尋引擎爬蟲規則（見下方「SEO / Search Console 設定」）
 ├── sitemap.xml                    ← 網站地圖，提交給 Google Search Console 用
+├── handouts/                      ← 講義區（獨立靜態頁，不經過 SPA，見下方「📚 講義區」）
+│   ├── index.html                ← 講義列表頁（手寫，新增講義要在這裡加一筆）
+│   └── laser-pop/                ← 雷射 POP 講義（⚠️ 由 TD_Laser_POP 自動同步，不要在這裡直接改）
+│       └── index.html
 ├── assets/
 │   ├── css/
 │   │   └── style.css             ← 所有樣式（Design Tokens + 全部元件 CSS）
@@ -85,7 +89,42 @@ PB.github.io/
 
 ### sitemap.xml 的協定限制
 
-Sitemap 只能列出「跟自己同層或更深層」的網址，**不可以搬進子資料夾**（會因為列出的網址層級比 sitemap 本身高而判定無效）。必須維持在 repo 根目錄。
+Sitemap 只能列出「跟自己同層或更深層」的網址，**不可以搬進子資料夾**（會因為列出的網址層級比 sitemap 本身高而判定無效）。必須維持在 repo 根目錄。新增講義時記得把網址加進 sitemap。
+
+---
+
+## 📚 講義區（`handouts/`）
+
+講義是**獨立的靜態 HTML 頁**，放在 `handouts/` 底下，GitHub Pages 直接提供，**不經過 SPA 的路由、也不放進 `index.html` 的 `<template>`**。理由：講義有自己的排版和 JS，獨立檔案不會跟作品集互相干擾；也不像 `<template>` 內容那樣可能讀不到，搜尋引擎可以正常收錄。
+
+| 網址 | 檔案 |
+|------|------|
+| `https://k591238.github.io/PB.github.io/handouts/` | `handouts/index.html`（列表頁） |
+| `https://k591238.github.io/PB.github.io/handouts/laser-pop/` | `handouts/laser-pop/index.html` |
+
+**入口**：About 頁的社群連結區有「Teaching」（桌機版 `social-list` 跟手機版 `about-mobile-social` 兩組都有），連到列表頁。刻意不放主選單，避免稀釋作品集定位。
+
+**列表頁不要引用 `assets/css/style.css`**：那支 CSS 會把系統游標藏起來改用自製游標（需要 `main.js` 驅動），單獨套用會讓游標消失。列表頁是內嵌一份同色系的精簡樣式。
+
+### ⚠️ `laser-pop` 是自動同步的，不要在這裡直接改
+
+講義原始檔在另一個 repo：`Desktop\2026_Laser_Tutorial\web\laser-pop-handout.html`（GitHub：`k591238/TD_Laser_POP`）。那邊 commit 時，`post-commit` hook 會執行 `scripts/sync_pages.sh`，在它自己的 clone（`_pages_pb/`）把講義複製到 `handouts/laser-pop/`，**只 commit 這個資料夾**並 push。
+
+**課堂範例檔（`.toe`）不放在公開網站**：學生版 TD 範例只在上課時另外提供，講義頁沒有下載按鈕。之後的講義也比照：公開講義只放內容，課堂用的檔案另外發。
+
+所以：
+- 在這裡直接改 `handouts/laser-pop/` 會在下次同步時被覆蓋，要改請改原始檔
+- 同步腳本可能已經推了新 commit，**在這個資料夾開工前先 `git pull`**，否則 push 會被拒絕
+- 講義頁裡的 QR code 寫死指向上面的網址，網址改了要重新產生（原始檔用 `segno` 產生的 SVG）
+- 舊網址 `k591238.github.io/Class_web_Temp/` 已改成轉址頁，會自動跳到新網址
+
+### 新增一份講義
+
+1. 建立 `handouts/{名稱}/index.html`（開頭要有 `<!doctype html>`，否則會進入相容模式，表格等排版會跑掉）
+2. 講義裡的資源一律用**相對路徑**，不可寫 `/images/...` 這種從根目錄開始的路徑（專案網址帶 `/PB.github.io/`，會失效）
+3. 建議在講義裡放回到作品集的連結：`../../`（作品集）、`../`（講義列表）
+4. 在 `handouts/index.html` 的 `<ul>` 加一筆
+5. 把網址加進 `sitemap.xml`
 
 ---
 
@@ -171,7 +210,7 @@ const projectsData = [
 
 > ⚠️ **文件歷史註記**：這份文件曾在 2026-07 描述一套 `.proj-gallery` class 系統（`cols-2`/`cols-3`/`natural`/`compact` 等），但那套 class **從未真正寫進 `style.css`**，`index.html` 裡也沒有任何 template 用過它 —— 純屬文件跟實際程式碼對不上。2026-10 盤點後移除了那段描述，改記錄全部 13+ 個 template 實際上在用的寫法。若之後真的想做成可複用的 class（順便補上目前缺的手機版自動收欄），再另外動工，記得同步更新這裡。
 
-所有 template 的圖片格線都是**直接在 `<div>` 上寫 inline `display:grid`**，沒有共用 class，也**沒有手機版自動收欄的 media query**（窄螢幕一樣維持 2/3 欄，只是圖片變小）。範例：
+所有 template 的圖片格線都是**直接在 `<div>` 上寫 inline `display:grid`**，沒有共用 class。範例：
 
 ```html
 <!-- 2 欄，裁切成 3:2 -->
@@ -194,6 +233,12 @@ const projectsData = [
   ...
 </div>
 ```
+
+**手機版自動收欄（2026-11 新增）**：`style.css` 在 `.detail-grid-2.portrait` 規則後面有兩段 media query，用屬性選擇器抓 `#project-detail-content` 裡所有寫了 `grid-template-columns` 的 inline 格線：
+- `≤600px`：全部改成單欄
+- `≤799px`：`repeat(4, 1fr)` 的 Instagram 嵌入區改成單欄、最寬 420px（IG 嵌入最小寬度 326px，4 欄在平板會被擠壞）
+
+因為 inline style 優先權比 CSS 檔高，這裡必須用 `!important`。新格線照現有 inline 寫法就會自動套用，不用另外處理；如果之後真的改成共用 class，這兩段要一起改。
 
 **慣例**：
 - 橫式紀錄照常用 `aspect-ratio: 3/2; object-fit: cover`（裁切置中）
@@ -343,7 +388,7 @@ python scripts/convert_project.py --id px --source "source/{專案名}" \
 - 所有圖片路徑確認存在
 - `works-grid` 裡的卡片有加（Step 2.5）—— 用瀏覽器打開 `/#projects` 實際看一下新卡片有沒有出現，不要只靠改 code 判斷
 - 直式照片有併排縮小處理，沒有單獨撐成一張大圖
-- 手機版（375px 寬）格線沒有破版（目前**沒有**自動收欄，2/3 欄數不變，只是圖片變小，正常現象）
+- 手機版（375px 寬）格線應該自動變成單欄、沒有圖片超出畫面（見「手機版自動收欄」）
 
 ---
 
@@ -416,7 +461,24 @@ python scripts/convert_project.py --id px --source "source/{專案名}" \
 
 ---
 
+## 🔍 本機截圖驗證
+
+在 `git_Web` 資料夾（PB.github.io 的上一層）執行 `python -m http.server 8765`，網址用 `http://127.0.0.1:8765/PB.github.io/`，路徑會跟正式站一致。
+
+用 headless Edge 的 `--screenshot` 參數截作品集或講義時常常沒有產生檔案（頁面有持續播放的動畫、Edge 會立刻返回並在背景寫檔，殘留程序還會卡住下一次）。比較穩定的做法是用 `--remote-debugging-port` 啟動 headless Edge，再透過 DevTools Protocol（`Page.captureScreenshot`）截圖，Node 24 內建 `WebSocket` 不用裝套件。作品頁可以直接用 `#project/{id}` 網址打開。
+
+---
+
 ## 📅 開發歷程紀錄
+
+### 2026-11-10（講義區、手機版收欄）
+
+1. **新增講義區 `handouts/`**：雷射 POP 講義從獨立 repo `Class_web_Temp` 搬進作品集，改為 `handouts/laser-pop/`，另做列表頁 `handouts/index.html`。講義仍由 TD_Laser_POP 自動同步（同步目的地從 Class_web_Temp 改成本 repo），`Class_web_Temp` 改成轉址頁。
+2. **講義頁調整**（改在原始檔）：補上 `<!doctype html>`（原本跑在相容模式）、`lang`、description、canonical；QR code 和網址換成新網址；頂部加「BY WU CHENG-RU」、頁尾加回列表頁和作品集的連結；拿掉 `Student_Laser.toe` 下載按鈕（範例檔只在上課時提供）。
+3. **About 頁**：社群連結區新增「Teaching」（桌機、手機兩組），新增 `icon-teaching` 圖示。
+4. **sitemap.xml**：加入講義列表頁和雷射 POP 講義。
+5. **手機版作品頁格線自動收欄**：見「圖片格線」章節。16 個作品頁在 390／700／1280px 寬度都驗證過：手機全單欄、沒有圖片超出畫面，桌機版不變。
+6. 刪除根目錄未追蹤的舊講義副本 `laser-pop-handout.html`（跟 TD_Laser_POP@130dba1 版本相同，可從那邊歷史找回）。
 
 ### 2026-10-20（新增 3 個作品、Events 分類、通用轉換腳本、文件勘誤）
 

@@ -1,0 +1,1605 @@
+<!doctype html>
+<html lang="zh-Hant">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>雷射 POP 工作流</title>
+<meta name="description" content="TouchDesigner 雷射 POP 課程講義：認識雷射硬體與器材、理解路徑與掃描時間的邏輯，再用 POP 做出圖形送到 Helios DAC。吳承儒 Wu Cheng-Ru（PB / Pen_bit）編寫。">
+<link rel="canonical" href="https://k591238.github.io/PB.github.io/handouts/laser-pop/">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Art direction: technical spec sheet / product manual. Hairlines, tiny uppercase mono metadata, oversized grotesk display type, one orange signal color. Light = paper spec sheet, dark = black poster. Layout: left content column + fixed right timeline index (one entry per section, past/active/future states). RGB stays semantic for laser channels only. */
+:root{
+  --bg:#e8e8e5; --surface:#f1f1ee; --surface-2:#dcdcd8; --fg:#121212; --muted:#6a6a66;
+  --line:rgba(18,18,18,.16); --line-strong:rgba(18,18,18,.55);
+  --accent:#e4521b; --accent-soft:rgba(228,82,27,.10);
+  --r:#d12b2b; --g:#13874a; --b:#1f5fd1; --blank:#a3a39e;
+  --scope-bg:#0b0b0b; --scope-grid:rgba(255,255,255,.08); --scope-fg:#eeeeee;
+  --display:"Space Grotesk","Noto Sans TC",sans-serif; --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --tl-w:230px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0a0a0a; --surface:#131313; --surface-2:#1d1d1d; --fg:#f0f0ee; --muted:#8a8a86;
+  --line:rgba(240,240,238,.14); --line-strong:rgba(240,240,238,.5);
+  --accent:#ff6a2c; --accent-soft:rgba(255,106,44,.12);
+  --r:#ff5a5a; --g:#3ddc84; --b:#5aa9ff; --blank:#4d4d4a;
+  --scope-bg:#000; --scope-grid:rgba(255,255,255,.07); --scope-fg:#eeeeee; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0a0a0a; --surface:#131313; --surface-2:#1d1d1d; --fg:#f0f0ee; --muted:#8a8a86;
+  --line:rgba(240,240,238,.14); --line-strong:rgba(240,240,238,.5);
+  --accent:#ff6a2c; --accent-soft:rgba(255,106,44,.12);
+  --r:#ff5a5a; --g:#3ddc84; --b:#5aa9ff; --blank:#4d4d4a;
+  --scope-bg:#000; --scope-grid:rgba(255,255,255,.07); --scope-fg:#eeeeee; color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:24px}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15.5px;line-height:1.75;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:880px;margin:0 0 0 clamp(0px,5vw,72px)}
+a{color:var(--fg);text-decoration-color:var(--accent);text-underline-offset:3px}
+a:focus-visible,summary:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:clamp(1.7rem,4.2vw,2.6rem);font-weight:700;line-height:1.25}
+h2{font-size:clamp(1.6rem,3.6vw,2.3rem);font-weight:700;line-height:1.2}
+h3{font-size:1.05rem;font-weight:700;margin-top:.6rem;display:flex;gap:.5rem;align-items:center}
+h3::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--fg);flex:none}
+p{margin:0;max-width:64ch}
+b{font-weight:700}
+code{font-family:var(--mono);font-size:.84em;background:var(--surface-2);padding:.05em .35em;border-radius:2px;white-space:nowrap}
+
+/* right timeline index */
+.tl-nav{position:fixed;top:0;right:0;bottom:0;width:var(--tl-w);z-index:6;display:flex;flex-direction:column;justify-content:center;padding:24px max(18px,env(safe-area-inset-right,0px)) 72px 0;pointer-events:none}
+.tl-nav ol{list-style:none;margin:0;padding:0;position:relative;pointer-events:auto}
+.tl-nav ol::after{content:"";position:absolute;right:4px;top:6px;bottom:6px;width:1px;background:var(--line)}
+.tl-nav li button{all:unset;cursor:pointer;display:flex;justify-content:flex-end;align-items:center;gap:.7rem;width:100%;padding:.32rem 0;font-family:var(--mono);font-size:.7rem;letter-spacing:.04em;color:var(--muted);opacity:.55;transition:opacity .2s,color .2s}
+.tl-nav li button:hover{opacity:1}
+.tl-nav li button .dot{width:9px;height:9px;border-radius:50%;border:1px solid var(--line-strong);background:var(--bg);position:relative;z-index:1;flex:none;transition:transform .2s,background .2s}
+.tl-nav li.past button{opacity:.8}
+.tl-nav li.past button .dot{background:var(--line-strong);border-color:transparent}
+.tl-nav li.active button{opacity:1;color:var(--fg);font-weight:500}
+.tl-nav li.active button .dot{background:var(--accent);border-color:var(--accent);transform:scale(1.35)}
+.tl-nav li button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tl-step .theme{width:auto;padding:0 .6rem;display:inline-flex;gap:.4rem;align-items:center;margin-right:.35rem}
+.tl-step .theme i{width:11px;height:11px;border-radius:50%;border:1px solid currentColor;background:linear-gradient(90deg,currentColor 50%,transparent 50%);display:block}
+/* theme crossfade */
+::view-transition-old(root),::view-transition-new(root){animation-duration:.7s;animation-timing-function:cubic-bezier(.4,0,.2,1)}
+html.theming,html.theming *{transition:background-color .7s,color .7s,border-color .7s,fill .7s,stroke .7s!important}
+@media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation:none}}
+.tl-step{position:fixed;right:max(18px,env(safe-area-inset-right,0px));bottom:22px;z-index:7;display:flex;gap:.35rem;align-items:center;background:var(--bg);padding:5px;border:1px solid var(--line);font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+.tl-step button{font:inherit;width:30px;height:30px;border:1px solid var(--line-strong);background:var(--bg);color:var(--fg);cursor:pointer;border-radius:2px}
+.tl-step button:hover{border-color:var(--accent);color:var(--accent)}
+.tl-step .count{margin-right:.4rem;font-variant-numeric:tabular-nums}
+body{padding-right:calc(var(--tl-w) + 16px)}
+@media (max-width:1100px){:root{--tl-w:44px}.tl-nav li button .lbl{display:none}.tl-nav ol::after{right:4px}}
+@media (max-width:640px){:root{--tl-w:0px}.tl-nav{display:none}body{padding-right:max(16px,env(safe-area-inset-right,0px))}.tl-step{bottom:14px}}
+
+/* hero */
+header.hero{min-height:92vh;display:grid;align-content:space-between;gap:2rem;padding-block:2.4rem 3rem;border-bottom:1px solid var(--line-strong)}
+.meta-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem 1.4rem;font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;line-height:1.5}
+.meta-row div{border-top:1px solid var(--line-strong);padding-top:.4rem;min-width:0}
+.meta-row span{display:block;color:var(--muted)}
+.mega{font-family:var(--display);font-weight:500;font-size:clamp(4.2rem,17vw,11rem);line-height:.82;letter-spacing:-.045em;margin:0;display:flex;align-items:flex-start;gap:.06em;flex-wrap:wrap}
+.mega sup{font-size:.16em;line-height:1.05;letter-spacing:0;font-weight:500;margin-top:.35em;font-family:var(--display)}
+.mega .x{color:var(--accent)}
+.hero .sub{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:2rem;align-items:end}
+.lead{font-size:1rem;color:var(--fg)}
+.rgb{display:inline-flex;gap:4px;vertical-align:middle}
+.meta-row .rgb{display:flex;margin-bottom:.35rem}
+.rgb i{width:8px;height:8px;border-radius:50%;display:block}
+.rgb i:nth-child(1){background:var(--r)}.rgb i:nth-child(2){background:var(--g)}.rgb i:nth-child(3){background:var(--b)}
+@media (max-width:760px){.hero .sub{grid-template-columns:1fr}}
+
+/* sections */
+section{padding-block:3.4rem 3.2rem;border-bottom:1px solid var(--line-strong);display:grid;gap:1.15rem}
+.sec-no{display:flex;align-items:center;gap:.8rem;font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.sec-no::after{content:"";flex:1;height:1px;background:var(--line)}
+.sec-no b{font-family:var(--display);font-size:2.6rem;letter-spacing:-.03em;color:var(--fg);font-weight:500;line-height:1}
+ul.points{margin:0;padding-left:0;list-style:none;display:grid;gap:0;max-width:70ch;border-top:1px solid var(--line)}
+ul.points li{padding:.55rem 0 .55rem 1.4rem;border-bottom:1px solid var(--line);position:relative}
+ul.points li::before{content:"—";position:absolute;left:0;color:var(--accent);font-family:var(--mono)}
+ol.steps{margin:0;padding:0;list-style:none;counter-reset:st;display:grid;max-width:72ch;border-top:1px solid var(--line)}
+ol.steps li{counter-increment:st;position:relative;padding:.6rem 0 .6rem 2.6rem;border-bottom:1px solid var(--line)}
+ol.steps li::before{content:counter(st,decimal-leading-zero);position:absolute;left:0;top:.78rem;font-family:var(--mono);font-size:.8rem;line-height:1.4;color:var(--accent)}
+
+/* diagrams: line art */
+.diagram{background:var(--surface);border:1px solid var(--line);padding:1rem;overflow-x:auto;margin:0}
+.diagram svg{display:block;min-width:640px;width:100%;height:auto}
+.diagram figcaption{font-size:.8rem;color:var(--muted);margin-top:.5rem}
+svg .bx{fill:none;stroke:var(--line-strong);stroke-width:1}
+svg .bx.gpu,svg .bx.out{stroke:var(--fg);stroke-width:1.2}
+svg .bx.hw{stroke:var(--accent);stroke-width:1.4}
+svg .t{fill:var(--fg);font-family:var(--display);font-size:14px;font-weight:700}
+svg .s{fill:var(--muted);font-family:var(--mono);font-size:11px}
+svg .q{fill:var(--accent);font-family:var(--mono);font-size:11px}
+svg .ar{stroke:var(--fg);stroke-width:1;fill:none}
+svg .cable{stroke:var(--accent);stroke-width:2;fill:none}
+svg .ah{fill:var(--fg)}
+.duo{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);border:1px solid var(--line-strong);background:var(--surface)}
+.duo > *{padding:1rem;min-width:0}
+.duo-vis{border-right:1px solid var(--line);display:grid;gap:.5rem;align-content:start}
+.duo-vis canvas{display:block;width:100%;height:auto;background:var(--scope-bg)}
+.duo-txt{display:grid;gap:.85rem;align-content:start}
+.duo-txt p{font-size:.92rem}
+.duo .readout{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:760px){.duo{grid-template-columns:1fr}.duo-vis{border-right:0;border-bottom:1px solid var(--line)}}
+.graph{display:flex;flex-wrap:wrap;gap:.6rem 1.4rem;padding:1rem;border:1px solid var(--line-strong);border-bottom:0;background:var(--surface)}
+.node{position:relative;font-family:var(--mono);font-size:.72rem;border:1px solid var(--line-strong);background:var(--bg);color:var(--fg);padding:.4rem .6rem .45rem;min-width:7.2rem;text-align:left;cursor:pointer;border-radius:3px;display:grid;gap:.1rem}
+.node b{font-family:var(--display);font-size:.9rem}
+.node span{color:var(--muted)}
+.node:not(:last-child)::after{content:"";position:absolute;right:-1.45rem;top:50%;width:1.4rem;height:1px;background:var(--line-strong)}
+.node[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.node.byp{opacity:.45;border-style:dashed}
+.node.byp b{text-decoration:line-through}
+.byp-btn{font-family:var(--mono);font-size:.7rem;border:1px solid var(--line-strong);background:transparent;color:var(--fg);padding:.25rem .6rem;cursor:pointer;justify-self:start}
+.byp-btn[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.does{font-family:var(--mono);font-size:.74rem;border-left:2px solid var(--accent);padding:.3rem 0 .3rem .7rem}
+.vids{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.vid{background:var(--surface);border-right:1px solid var(--line);border-bottom:1px solid var(--line);display:grid;gap:.45rem;align-content:start;padding:0 0 1rem;min-width:0}
+.vid > *:not(.yt){margin:0 1rem}
+.yt{position:relative;aspect-ratio:16/9;background:#000;overflow:hidden}
+.yt button{all:unset;cursor:pointer;position:absolute;inset:0;display:grid;place-items:center;background-size:cover;background-position:center}
+.yt button::after{content:"▶";width:54px;height:38px;border-radius:9px;background:rgba(0,0,0,.72);color:#fff;display:grid;place-items:center;font-size:1rem;transition:background .2s}
+.yt button:hover::after,.yt button:focus-visible::after{background:var(--accent)}
+.yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vid b{font-family:var(--display);font-size:1rem}
+.vid .by{font-family:var(--mono);font-size:.68rem;color:var(--muted)}
+.vid p{font-size:.86rem}
+.vid a.yt-link{font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+.talk{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);border:1px solid var(--line-strong);background:var(--surface)}
+.talk > *{min-width:0}
+.talk .side{padding:1rem;display:grid;gap:.4rem;align-content:start;border-left:1px solid var(--line)}
+.chap{all:unset;cursor:pointer;display:grid;grid-template-columns:3.4rem 1fr;gap:.6rem;padding:.4rem 0;border-bottom:1px solid var(--line);font-size:.86rem;line-height:1.5}
+.chap span{font-family:var(--mono);font-size:.74rem;color:var(--accent)}
+.chap:hover,.chap:focus-visible{color:var(--accent)}
+@media (max-width:760px){.talk{grid-template-columns:1fr}.talk .side{border-left:0;border-top:1px solid var(--line)}}
+.res{display:grid;grid-template-columns:auto minmax(0,1fr);gap:1rem 1.4rem;align-items:center;border-top:1px solid var(--line-strong);padding-top:1.1rem}
+.res .qr{width:128px;background:#fff;padding:6px;border-radius:4px}
+.res .qr svg{display:block;width:100%;height:auto;shape-rendering:crispEdges}
+.res-txt{display:grid;gap:.55rem;min-width:0}
+.res-txt .url{font-family:var(--mono);font-size:.8rem;word-break:break-all}
+svg .ico{color:var(--fg)}
+svg .ico.hwc{color:var(--accent)}
+.kit{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.kit > div{background:var(--surface);border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:1rem 1.1rem 1.1rem;display:grid;gap:.3rem;align-content:start;min-width:0}
+.kit svg{width:46px;height:46px;color:var(--fg);margin-bottom:.2rem}
+.kit .hw svg{color:var(--accent)}
+.kit .warn svg{color:var(--r)}
+.kit b{font-family:var(--display);font-size:1rem}
+.kit span{font-size:.84rem;color:var(--muted);line-height:1.55}
+details > summary + *{margin-top:.2rem}
+
+/* spec tables */
+.tbl{overflow-x:auto;border-top:1px solid var(--line-strong)}
+table{border-collapse:collapse;width:100%;font-size:.88rem;min-width:600px}
+th,td{text-align:left;vertical-align:top;padding:.55rem .7rem .55rem 0;border-bottom:1px solid var(--line)}
+th{font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:400}
+td.k{font-family:var(--mono);font-size:.8rem;white-space:nowrap}
+td.k.wrap{white-space:normal;min-width:16em}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+th:has(+ th), td{padding-right:1rem}
+.warn-t{color:var(--accent);font-weight:700}
+.ask{border-left:2px solid var(--accent);padding:.5rem 0 .5rem 1rem;font-family:var(--display);font-weight:700;font-size:1.05rem}
+.ask small{display:block;font-family:var(--sans);font-weight:400;color:var(--muted);font-size:.84rem;margin-top:.25rem}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.card{background:var(--surface);padding:1rem 1.1rem 1.1rem;display:grid;gap:.5rem;align-content:start;min-width:0}
+.card .lbl,.lbl{font-family:var(--mono);font-size:.68rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;display:flex;gap:.45rem;align-items:center}
+.card .lbl::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--fg);flex:none}
+.big{font-family:var(--display);font-size:2rem;font-weight:500;font-variant-numeric:tabular-nums;line-height:1.1;letter-spacing:-.02em}
+.big small{font-family:var(--mono);font-size:.72rem;color:var(--muted);font-weight:400;margin-left:.35rem;letter-spacing:0}
+.stages{display:grid;border-top:1px solid var(--line-strong)}
+.stage{display:grid;grid-template-columns:5rem 1fr;gap:1rem;padding:1.1rem 0;border-bottom:1px solid var(--line)}
+.stage .n{font-family:var(--display);font-size:3rem;font-weight:500;line-height:.9;letter-spacing:-.04em}
+.stage > div{min-width:0;display:grid;gap:.4rem}
+.stage h3{margin:0}.stage h3::before{display:none}
+.stage ul{margin:0;padding-left:1.1rem}
+.stage .goal{font-family:var(--mono);font-size:.76rem;color:var(--muted)}
+.stage .goal::before{content:"✓ ";color:var(--accent)}
+details{border-top:1px solid var(--line-strong);padding:0}
+details:last-of-type{border-bottom:1px solid var(--line)}
+details[open]{padding-bottom:.8rem}
+summary{cursor:pointer;font-family:var(--mono);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;padding:.75rem 0;list-style:none;display:flex;justify-content:space-between}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--accent)}
+details[open] summary::after{content:"−"}
+details .tbl{border-top:1px solid var(--line)}
+.danger{border:1px solid var(--accent);padding:0 1.3rem 1.3rem;display:grid;gap:.8rem;position:relative}
+.danger::before{content:"";display:block;height:14px;margin:0 -1.3rem .6rem;background:repeating-linear-gradient(-45deg,var(--accent) 0 8px,transparent 8px 16px)}
+.danger h2{color:var(--accent)}
+.danger ol{margin:0;padding-left:1.3rem;display:grid;gap:.45rem}
+pre{background:var(--surface);border:1px solid var(--line);padding:.8rem 1rem;overflow-x:auto;margin:0;font-family:var(--mono);font-size:.8rem;line-height:1.7}
+.note{font-size:.82rem;color:var(--muted)}
+footer .copy{margin-top:.6rem;color:var(--fg);opacity:.7}
+footer{padding-block:2rem 5rem;color:var(--muted);font-family:var(--mono);font-size:.7rem;letter-spacing:.04em}
+
+.pat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:0;border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.pat{border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.pat canvas{display:block;width:100%;height:auto;aspect-ratio:1;background:var(--scope-bg)}
+.pat-n{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.78rem;border-top:1px solid var(--line);padding-top:.35rem;font-variant-numeric:tabular-nums}
+.pat p{font-size:.86rem}/* interactive scope */
+.lab{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:0;border:1px solid var(--line-strong);background:var(--surface)}
+.scope{display:grid;gap:.6rem;min-width:0;padding:1rem;border-right:1px solid var(--line);position:sticky;top:0;align-self:start}
+.scope canvas{display:block;width:100%;height:auto;background:var(--scope-bg)}
+.readout{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--line-strong)}
+.readout div{padding:.45rem .5rem .3rem 0;min-width:0;border-right:1px solid var(--line)}
+.readout div + div{padding-left:.6rem}
+.readout div:last-child{border-right:0}
+.readout b{display:block;font-family:var(--display);font-weight:500;font-size:1.35rem;font-variant-numeric:tabular-nums;line-height:1.25;letter-spacing:-.02em}
+.readout span{font-family:var(--mono);font-size:.64rem;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+.chip{display:inline-block;font-family:var(--mono);font-size:.7rem;padding:.12rem .5rem;border:1px solid currentColor;border-radius:2px}
+.chip.ok{color:var(--g)}
+.chip.bad{color:var(--r)}
+.chip.mid{color:var(--accent)}
+.status{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center}
+.legend{display:flex;flex-wrap:wrap;gap:.3rem .9rem;font-family:var(--mono);font-size:.68rem;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:2px;vertical-align:3px;margin-right:.35rem}
+.ctrls{display:grid;grid-template-columns:minmax(0,1fr);gap:.75rem;align-content:start;min-width:0;padding:1rem}
+.ctrl{display:grid;grid-template-columns:minmax(0,1fr);gap:.15rem;min-width:0}
+.ctrl[hidden]{display:none}
+.ctrl .row{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;font-size:.84rem}
+.ctrl .row code{background:none;padding:0;color:var(--muted);font-size:.72rem;margin-left:.2rem}
+.ctrl .row output{font-family:var(--mono);font-size:.8rem;font-variant-numeric:tabular-nums;color:var(--accent);white-space:nowrap}
+.ctrl small{font-size:.72rem;color:var(--muted);line-height:1.5}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:18px;background:transparent;margin:0}
+input[type=range]::-webkit-slider-runnable-track{height:1px;background:var(--line-strong)}
+input[type=range]::-moz-range-track{height:1px;background:var(--line-strong)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--fg);margin-top:-5.5px;border:0}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--fg);border:0}
+input[type=range]:hover::-webkit-slider-thumb,input[type=range]:focus::-webkit-slider-thumb{background:var(--accent)}
+input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-thumb{background:var(--accent)}
+.seg{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line-strong);width:max-content;max-width:100%}
+.seg button,.presets button,.try{font-family:var(--mono);font-size:.72rem;letter-spacing:.02em;border:0;background:transparent;color:var(--fg);padding:.35rem .65rem;cursor:pointer;border-radius:0}
+.seg button + button{border-left:1px solid var(--line-strong)}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.presets{display:flex;flex-wrap:wrap;gap:.3rem}
+.presets button{border:1px solid var(--line-strong)}
+.presets button:hover,.try:hover{border-color:var(--accent);color:var(--accent)}
+.try{display:inline-flex;gap:.35rem;align-items:center;justify-self:start;border:1px solid var(--accent);color:var(--accent)}
+.try:hover{background:var(--accent);color:var(--bg)!important}
+.group-t{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-top:1px solid var(--line-strong);padding-top:.55rem;margin-top:.2rem}
+.mini{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;border:1px solid var(--line-strong);background:var(--surface);align-items:stretch}
+.mini > *{padding:1rem}
+.mini > * + *{border-left:1px solid var(--line)}
+.bar{height:2px;background:var(--line);margin-top:.4rem}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .15s}
+@media (max-width:760px){.lab,.mini{grid-template-columns:1fr}.scope{border-right:0;border-bottom:1px solid var(--line);position:static}.mini > * + *{border-left:0;border-top:1px solid var(--line)}.readout{grid-template-columns:repeat(2,minmax(0,1fr))}.readout div:nth-child(2){border-right:0}.readout div:nth-child(3){padding-left:0}}
+@media (max-width:520px){.stage{grid-template-columns:1fr}.stage .n{font-size:2rem}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+
+<nav class="tl-nav" aria-label="章節目錄"><ol id="tlnav"></ol></nav>
+<div class="tl-step" aria-label="切換章節"><button type="button" class="theme" id="themebtn" aria-label="切換亮色／暗色模式"><i></i><span id="themelbl">暗色</span></button><span class="count" id="tlcount"></span><button type="button" id="tlprev" aria-label="上一節">↑</button><button type="button" id="tlnext" aria-label="下一節">↓</button></div>
+
+<main class="wrap">
+<header class="hero" id="intro" data-label="開場">
+  <div class="meta-row">
+    <div><span>Course</span>TouchDesigner 雷射教學</div>
+    <div><span>Operator</span>POP → Laser CHOP</div>
+    <div><span>Hardware</span>Helios DAC</div>
+    <div><span>Measured</span>TD 2025.33230</div>
+    <div><span>By</span><a href="../../">WU CHENG-RU</a></div>
+  </div>
+  <p class="mega" aria-hidden="true">LASER<span class="x">×</span>POP<sup>XY<br>RGB<br>48K</sup></p>
+  <div class="sub">
+    <h1>用 POP 理解雷射：<br>點是路徑，屬性是指令</h1>
+    <div style="display:grid;gap:1rem">
+      <p class="lead">雷射沒有畫面也沒有像素，只有兩面振鏡推著一顆光點沿路徑跑。這份講義先認識硬體與器材，再理解路徑與時間的邏輯，最後在 TouchDesigner 用 POP 做出圖形、送到 Helios。</p>
+      <div class="meta-row"><div><span class="rgb" aria-hidden="true"><i></i><i></i><i></i></span><span>第 08 章可直接拉參數體驗；文中數字皆為 TD 實測</span></div></div>
+    </div>
+  </div>
+  <div class="res" aria-label="課程資源">
+    <div class="qr"><svg viewBox="0 0 37 37" class="segno" role="img" aria-label="講義網址 QR Code"><path fill="#fff" d="M0 0h37v37h-37z"/><path class="qrline" stroke="#000" d="M2 2.5h7m1 0h1m2 0h4m2 0h2m2 0h1m2 0h1m1 0h7m-33 1h1m5 0h1m1 0h7m2 0h3m2 0h1m1 0h1m1 0h1m5 0h1m-33 1h1m1 0h3m1 0h1m1 0h3m1 0h3m3 0h4m1 0h2m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m2 0h2m1 0h1m1 0h5m2 0h1m4 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m2 0h2m2 0h5m1 0h2m3 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m3 0h1m2 0h4m1 0h1m1 0h4m2 0h1m5 0h1m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-23 1h1m2 0h1m1 0h2m1 0h2m2 0h2m-24 1h1m2 0h7m2 0h1m1 0h1m1 0h5m1 0h2m1 0h1m2 0h1m1 0h3m-33 1h3m1 0h1m8 0h7m3 0h2m3 0h4m-31 1h1m1 0h2m1 0h1m2 0h2m1 0h2m1 0h1m1 0h1m2 0h4m1 0h1m2 0h5m-31 1h1m1 0h1m2 0h1m1 0h1m3 0h1m1 0h3m4 0h6m2 0h1m-31 1h1m1 0h1m3 0h2m2 0h4m1 0h2m3 0h1m2 0h2m1 0h2m3 0h1m-30 1h1m1 0h2m1 0h1m3 0h1m2 0h1m2 0h1m3 0h3m1 0h1m3 0h2m-31 1h4m1 0h3m1 0h1m1 0h2m1 0h4m1 0h4m1 0h1m1 0h1m2 0h2m-30 1h1m1 0h3m3 0h4m1 0h1m1 0h1m1 0h3m1 0h1m2 0h1m1 0h1m1 0h2m1 0h1m-33 1h7m2 0h1m4 0h2m4 0h1m2 0h1m1 0h5m-29 1h2m1 0h1m3 0h2m2 0h1m1 0h1m2 0h4m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m-32 1h1m4 0h2m1 0h2m1 0h2m1 0h6m1 0h2m1 0h1m1 0h1m1 0h2m1 0h1m-33 1h4m5 0h2m2 0h1m4 0h2m2 0h1m1 0h3m1 0h5m-31 1h5m1 0h1m1 0h1m4 0h3m1 0h2m1 0h3m2 0h1m1 0h1m-30 1h1m2 0h1m3 0h2m3 0h1m3 0h4m1 0h3m3 0h2m1 0h1m-31 1h1m1 0h1m1 0h5m1 0h1m1 0h1m1 0h5m3 0h3m4 0h1m1 0h2m-33 1h1m7 0h2m1 0h1m2 0h2m1 0h1m4 0h1m2 0h2m2 0h2m1 0h1m-33 1h3m1 0h3m2 0h1m1 0h1m2 0h1m4 0h1m4 0h6m1 0h1m-24 1h3m2 0h2m1 0h3m2 0h1m1 0h2m3 0h1m1 0h1m-31 1h7m1 0h1m1 0h1m1 0h1m1 0h2m1 0h1m1 0h2m2 0h2m1 0h1m1 0h1m1 0h1m-31 1h1m5 0h1m1 0h1m1 0h1m2 0h1m1 0h1m4 0h1m3 0h1m3 0h5m-33 1h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h1m5 0h2m1 0h7m-29 1h1m1 0h3m1 0h1m1 0h5m1 0h3m2 0h2m1 0h1m1 0h1m2 0h1m3 0h2m-33 1h1m1 0h3m1 0h1m2 0h1m2 0h1m2 0h2m2 0h2m3 0h1m2 0h3m1 0h2m-33 1h1m5 0h1m4 0h2m1 0h1m4 0h1m2 0h1m2 0h8m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h5m4 0h2m2 0h2"/></svg></div>
+    <div class="res-txt">
+      <div class="lbl">講義網址 · 掃描或點選開啟</div>
+      <a class="url" href="https://k591238.github.io/PB.github.io/handouts/laser-pop/">k591238.github.io/PB.github.io/handouts/laser-pop</a>
+    </div>
+  </div>
+</header>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <symbol id="i-laptop" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="9" y="10" width="30" height="21" rx="2"/><path d="M4 37h40l-3-6H7z"/><path d="M15 17h10M15 22h16"/></symbol>
+  <symbol id="i-dac" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="5" y="14" width="38" height="20" rx="3"/><rect x="9" y="21" width="7" height="6"/><path d="M23 21h15l-2 6H25z"/><circle cx="12" cy="17.5" r=".6"/></symbol>
+  <symbol id="i-usb" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="5" y="18" width="13" height="12" rx="1.5"/><rect x="18" y="20" width="7" height="8"/><path d="M5 24h-1M25 24h7c5 0 8 4 8 9v8"/></symbol>
+  <symbol id="i-db25" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M4 15h26l-3 14H7z"/><path d="M9 20h16M11 24h12"/><path d="M30 22h4c5 0 8 4 8 9v10"/></symbol>
+  <symbol id="i-proj" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="3" y="16" width="28" height="18" rx="3"/><circle cx="25" cy="25" r="3.5"/><path d="M29 23l15-9M29 25h15M29 27l15 9"/><path d="M8 34v4M26 34v4"/></symbol>
+  <symbol id="i-estop" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="9" y="27" width="30" height="13" rx="2"/><path d="M13 27a11 9 0 0 1 22 0z"/><path d="M24 18v-6"/></symbol>
+  <symbol id="i-key" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><circle cx="15" cy="24" r="8"/><circle cx="15" cy="24" r="2.5"/><path d="M23 24h20M36 24v7M42 24v5"/></symbol>
+  <symbol id="i-tripod" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="15" y="5" width="18" height="10" rx="2"/><path d="M24 15v7M24 22L11 43M24 22l13 21M24 22v21"/></symbol>
+  <symbol id="i-cube" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="9" y="9" width="30" height="30" rx="5"/><circle cx="24" cy="24" r="6"/><circle cx="24" cy="24" r="1.5"/></symbol>
+</defs></svg>
+
+<section id="cases">
+  <div class="sec-no"><b>▶</b>案例</div>
+  <h2>雷射能做什麼：先看作品</h2>
+  <p>同樣是一顆光點沿路徑跑，可以打在牆上、打在空間裡、和投影疊合，也能和舞者同台。每支影片下面寫了「看什麼」，對應到講義的章節。</p>
+  <div class="vids">
+    <div class="vid"><div class="yt" data-id="xY_4i_SS-jg"><button type="button" aria-label="播放：MIMIC" style="background-image:url(https://i.ytimg.com/vi/xY_4i_SS-jg/hqdefault.jpg)"></button></div>
+      <b>MIMIC</b><span class="by">MEDIA TRIBE</span><p>雷射和投影機疊在一起。看兩者怎麼對位：這就是第 04 章 mapping 要解決的事。</p><a class="yt-link" href="https://www.youtube.com/watch?v=xY_4i_SS-jg" target="_blank" rel="noopener">在 YouTube 觀看 ↗</a></div>
+    <div class="vid"><div class="yt" data-id="b34OVhcwlFY"><button type="button" aria-label="播放：NOMAD live" style="background-image:url(https://i.ytimg.com/vi/b34OVhcwlFY/hqdefault.jpg)"></button></div>
+      <b>NOMAD live</b><span class="by">TUNDRA</span><p>生成式的雷射影音現場演出。看圖形一直變化卻不閃：每秒重畫要穩（第 05、06 章）。</p><a class="yt-link" href="https://www.youtube.com/watch?v=b34OVhcwlFY" target="_blank" rel="noopener">在 YouTube 觀看 ↗</a></div>
+    <div class="vid"><div class="yt" data-id="XjlYLSjDZnE"><button type="button" aria-label="播放：AIR" style="background-image:url(https://i.ytimg.com/vi/XjlYLSjDZnE/hqdefault.jpg)"></button></div>
+      <b>AIR</b><span class="by">Rebel Overlay</span><p>動態雷射光雕塑。看光束打在空間裡，而不只是畫在牆上。</p><a class="yt-link" href="https://www.youtube.com/watch?v=XjlYLSjDZnE" target="_blank" rel="noopener">在 YouTube 觀看 ↗</a></div>
+    <div class="vid"><div class="yt" data-id="az9r7Ks2zN0"><button type="button" aria-label="播放：Shadows blues" style="background-image:url(https://i.ytimg.com/vi/az9r7Ks2zN0/hqdefault.jpg)"></button></div>
+      <b>Shadows blues</b><span class="by">Whales Lab</span><p>用 TouchDesigner 控制雷射的舞蹈作品。看舞者和光束同台時，光束的位置怎麼安排（第 01 章）。</p><a class="yt-link" href="https://www.youtube.com/watch?v=az9r7Ks2zN0" target="_blank" rel="noopener">在 YouTube 觀看 ↗</a></div>
+  </div>
+
+  <h3>講座：劇場裡的雷射設計與演出控制</h3>
+  <div class="talk">
+    <div class="yt" data-id="MhywqrhQY68" id="talk_yt"><button type="button" aria-label="播放講座" style="background-image:url(https://i.ytimg.com/vi/MhywqrhQY68/hqdefault.jpg)"></button></div>
+    <div class="side">
+      <span class="by" style="font-family:var(--mono);font-size:.7rem;color:var(--muted)">Walter Nied · TouchDesigner 官方頻道 · 點時間直接跳到那一段</span>
+        <button type="button" class="chap" data-t="285"><span>4:45</span>買了雷射才發現：還要 DAC 和一條「像印表機線」的 ILDA 線</button>
+        <button type="button" class="chap" data-t="323"><span>5:23</span>用相機拍雷射，看得到光點在「走」：這就是視覺暫留</button>
+        <button type="button" class="chap" data-t="427"><span>7:07</span>劇場作品開始：街舞、DJ、饒舌和一台架高的雷射</button>
+        <button type="button" class="chap" data-t="845"><span>14:05</span>軟急停：在 TD 停止 cook，雷射就停</button>
+        <button type="button" class="chap" data-t="907"><span>15:07</span>MIDI 控制接 Filter CHOP，動作才平順</button>
+        <button type="button" class="chap" data-t="1001"><span>16:41</span>第一輪的教訓：背景影像會搶走舞者，少即是多</button>
+        <button type="button" class="chap" data-t="1165"><span>19:25</span>第二輪：只做雷射，用 Ableton 時間軸讓每段可排練</button>
+        <button type="button" class="chap" data-t="1390"><span>23:10</span>安全從構思開始：架高、可預期、可排練</button>
+        <button type="button" class="chap" data-t="1684"><span>28:04</span>總亮度推桿與色彩曲線：雷射亮度不是線性</button>
+        <button type="button" class="chap" data-t="1794"><span>29:54</span>換場館時用整體位移、縮放來校正</button>
+      <a class="yt-link" style="font-family:var(--mono);font-size:.7rem;color:var(--muted)" href="https://www.youtube.com/watch?v=MhywqrhQY68" target="_blank" rel="noopener">在 YouTube 觀看 ↗</a>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="card"><div class="lbl">講座重點 · 創作</div><p><b>少即是多。</b>背景影像容易搶走觀眾對表演者的注意力；把預算和時間集中在一個元素（這裡是一台架高的雷射），作品反而更清楚。</p></div>
+    <div class="card"><div class="lbl">講座重點 · 安全</div><p><b>可排練就是安全。</b>表演者知道雷射何時、在哪裡出現，才能避開。所以有人在場時，雷射動作要固定，不要即興。</p></div>
+    <div class="card"><div class="lbl">講座重點 · 工作流程</div><p>時間軸交給 Ableton，雷射長什麼樣交給 TouchDesigner，各做擅長的事。現場 DJ 的速度會飄，時間軸也要能跟著調。</p></div>
+  </div>
+</section>
+
+<section id="safety">
+  <div class="danger">
+    <div class="sec-no"><b>01</b>安全</div>
+    <h2>雷射會造成永久性眼睛傷害</h2>
+    <p>碰任何器材之前，全班先記住這幾條：</p>
+    <ol>
+      <li>光束永遠不對著人：投射區域內不能有人，也不能有鏡面或會反光的東西。</li>
+      <li>急停開關放在操作者手邊，並指定一位安全負責人。</li>
+      <li>接線、拔線前，先關掉投影機或按下急停。</li>
+      <li>每次開機先測：按下急停，投影機要立刻熄光。</li>
+      <li>暗光開場：RGB Scale 先調到 0.1～0.2。POP 沒有 Color 屬性時，輸出是全白最大亮度。</li>
+      <li>光束不動時能量集中在一點：避免單點圖形與很長的角點停留。</li>
+      <li>有人在場時，雷射動作要固定、可預期、排練過，不要即興。表演者知道光何時在哪裡，才能避開。</li>
+      <li>軟體停止（例如讓 TouchDesigner 停止運算）只是輔助，一定要有實體急停開關。</li>
+      <li>不要用相機或手機近距離對著雷射光束拍攝，可能打壞感光元件。</li>
+      <li>了解所在地區的雷射法規；部分地區要求操作者具備雷射安全員（LSO）資格。</li>
+    </ol>
+  </div>
+</section>
+
+<section id="system">
+  <div class="sec-no"><b>02</b>硬體 · 系統</div>
+  <h2>一台雷射怎麼動起來</h2>
+  <p>TouchDesigner 算出每個點的位置和顏色，DAC 把數字變成電壓，投影機裡的兩面振鏡再依電壓轉動，推著光點跑。</p>
+  <figure class="diagram">
+    <svg viewBox="0 0 760 290" role="img" aria-label="系統圖：電腦經 USB 接到 DAC，DAC 經 ILDA 線接到雷射投影機，投影機裡 RGB 雷射經兩面振鏡把光點打到牆上">
+      <defs><marker id="ah1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0,0L10,5L0,10z"/></marker></defs>
+      <use href="#i-laptop" class="ico" x="18" y="52" width="80" height="80"/>
+      <text class="t" x="20" y="158">電腦</text><text class="s" x="20" y="176">TouchDesigner</text><text class="s" x="20" y="192">算出點和顏色</text>
+      <path class="cable" d="M104,92 L168,92"/><text class="q" x="120" y="82">USB</text>
+      <use href="#i-dac" class="ico hwc" x="172" y="52" width="80" height="80"/>
+      <text class="t" x="174" y="158">DAC</text><text class="s" x="174" y="176">Helios</text><text class="s" x="174" y="192">數字 → 電壓</text>
+      <path class="cable" d="M256,92 L340,92"/><text class="q" x="262" y="82">ILDA 線</text>
+      <rect class="bx hw" x="342" y="28" width="268" height="184" rx="10"/>
+      <text class="t" x="356" y="52">雷射投影機</text>
+      <circle cx="372" cy="96" r="7" style="fill:var(--r)"/><circle cx="372" cy="120" r="7" style="fill:var(--g)"/><circle cx="372" cy="144" r="7" style="fill:var(--b)"/>
+      <path class="ar" d="M379,96 L420,120 M379,120 L420,120 M379,144 L420,120"/><path class="ar" d="M420,120 L486,120"/>
+      <text class="s" x="356" y="176">RGB 雷射</text>
+      <path d="M478,132 L496,108" style="stroke:var(--fg);stroke-width:3"/><text class="s" x="462" y="98">X 振鏡</text>
+      <path class="ar" d="M487,120 L540,166"/>
+      <path d="M530,176 L552,160" style="stroke:var(--fg);stroke-width:3"/><text class="s" x="526" y="198">Y 振鏡</text>
+      <path d="M541,168 L700,106" style="stroke:var(--accent);stroke-width:1.6"/>
+      <rect class="bx" x="650" y="40" width="100" height="150" rx="2"/><text class="s" x="662" y="58">牆面</text>
+      <ellipse cx="700" cy="120" rx="34" ry="40" style="fill:none;stroke:var(--accent);stroke-width:1;stroke-dasharray:3 4"/>
+      <circle cx="700" cy="106" r="5" style="fill:var(--accent)"/>
+      <path class="ar" d="M710,90 q14,4 20,18" marker-end="url(#ah1)"/>
+      <text class="s" x="8" y="252">兩面振鏡每秒轉動上萬次，推著同一顆光點沿路徑跑，人眼就看成一個圖形。</text>
+      <text class="s" x="8" y="272">X 振鏡管左右、Y 振鏡管上下；RGB 三色雷射的亮度決定顏色，關掉就是 blanking。</text>
+    </svg>
+  </figure>
+</section>
+
+<section id="kit">
+  <div class="sec-no"><b>03</b>硬體 · 器材</div>
+  <h2>器材清單</h2>
+  <p>一台雷射的最小系統，加上現場一定要有的安全周邊。</p>
+  <div class="kit">
+    <div class=""><svg aria-hidden="true"><use href="#i-laptop"/></svg><b>電腦</b><span>跑 TouchDesigner，先確認能穩定 60 fps</span></div>
+    <div class=""><svg aria-hidden="true"><use href="#i-usb"/></svg><b>USB 線</b><span>電腦接 DAC。USB 不適合拉長，電腦放在 DAC 旁邊</span></div>
+    <div class="hw"><svg aria-hidden="true"><use href="#i-dac"/></svg><b>DAC（Helios）</b><span>把數字變成電壓。包裝只附 USB 線</span></div>
+    <div class="hw"><svg aria-hidden="true"><use href="#i-db25"/></svg><b>ILDA 線（DB-25）</b><span>DAC 接投影機。要用 ILDA 專用線，長距離走這條</span></div>
+    <div class="hw"><svg aria-hidden="true"><use href="#i-proj"/></svg><b>雷射投影機</b><span>要有 ILDA 輸入；看清楚掃描速度與功率</span></div>
+    <div class="warn"><svg aria-hidden="true"><use href="#i-estop"/></svg><b>急停開關</b><span>接在投影機的 Interlock 上，一按就熄光</span></div>
+    <div class="warn"><svg aria-hidden="true"><use href="#i-key"/></svg><b>鑰匙</b><span>投影機的總開關，不用時拔走</span></div>
+    <div class=""><svg aria-hidden="true"><use href="#i-tripod"/></svg><b>腳架、安全鋼索</b><span>投影機一動 mapping 就要重做；吊掛一定加鋼索</span></div>
+    <div class=""><svg aria-hidden="true"><use href="#i-cube"/></svg><b>LaserCube</b><span>DAC 做在機身裡，USB 或網路直連，不需要 ILDA 線</span></div>
+  </div>
+  <p class="note">ILDA 接頭和舊式印表機線外型一樣（DB-25），但印表機線不保證每一腳都有接通，請用 ILDA 專用線。</p>
+</section>
+
+<section id="multi">
+  <div class="sec-no"><b>04</b>硬體 · 多台雷射</div>
+  <h2>一台 DAC，一路訊號</h2>
+  <p>要分開控制兩台雷射（畫不同內容、各自 mapping），就需要兩台 DAC，TD 裡也要有兩條輸出。</p>
+  <figure class="diagram">
+    <svg viewBox="0 0 760 250" role="img" aria-label="兩台雷射：電腦裡兩條輸出，各自經 USB 接一台 DAC，再經 ILDA 線接一台雷射投影機">
+      <defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0,0L10,5L0,10z"/></marker></defs>
+      <use href="#i-laptop" class="ico" x="10" y="78" width="74" height="74"/>
+      <text class="t" x="14" y="172">電腦</text><text class="s" x="14" y="190">同一個 pattern</text>
+      <path class="ar" d="M86,108 L116,64" marker-end="url(#ah2)"/><path class="ar" d="M86,122 L116,166" marker-end="url(#ah2)"/>
+      <rect class="bx gpu" x="118" y="36" width="196" height="56" rx="7"/><text class="t" x="130" y="59">輸出 1</text><text class="s" x="130" y="78">Mapping → Laser → Device</text>
+      <path class="cable" d="M314,64 L362,64"/><text class="q" x="324" y="54">USB</text>
+      <use href="#i-dac" class="ico hwc" x="366" y="38" width="52" height="52"/>
+      <path class="cable" d="M420,64 L486,64"/><text class="q" x="428" y="54">ILDA</text>
+      <use href="#i-proj" class="ico hwc" x="490" y="32" width="64" height="64"/>
+      <text class="t" x="566" y="69">雷射 1</text>
+      <rect class="bx gpu" x="118" y="140" width="196" height="56" rx="7"/><text class="t" x="130" y="163">輸出 2</text><text class="s" x="130" y="182">Mapping → Laser → Device</text>
+      <path class="cable" d="M314,168 L362,168"/><text class="q" x="324" y="158">USB</text>
+      <use href="#i-dac" class="ico hwc" x="366" y="142" width="52" height="52"/>
+      <path class="cable" d="M420,168 L486,168"/><text class="q" x="428" y="158">ILDA</text>
+      <use href="#i-proj" class="ico hwc" x="490" y="136" width="64" height="64"/>
+      <text class="t" x="566" y="173">雷射 2</text>
+      <text class="s" x="8" y="236">一台 DAC 只送一路訊號：兩台雷射 = 兩台 DAC = TD 裡兩條輸出。</text>
+    </svg>
+  </figure>
+  <ol class="steps">
+    <li><b>全部接好再掃描</b>：所有 Helios 插上後只按一次 Scan。演出中不要按，它會斷開使用中的連線。</li>
+    <li><b>每台一個 Laser Device CHOP</b>：Type 選 Helios，Device 各選一台。</li>
+    <li><b>一台一台確認</b>：先開 #1，確認是哪台出光、方向對不對，再開 #2。</li>
+    <li><b>亮度、mapping 分開調</b>：每台投影機功率不同，同樣的 RGB Scale 亮度不會一樣。</li>
+  </ol>
+  <div class="grid2">
+    <div class="card"><div class="lbl">台數多、距離遠</div><p>4 台以內、離電腦近，用 USB 的 Helios 最省。更多或更遠時，改用網路 DAC（例如 EtherDream），Laser Device CHOP 一樣支援。</p></div>
+    <div class="card"><div class="lbl">線怎麼拉</div><p>USB 短、ILDA 長：電腦和 DAC 放一起，再用 ILDA 線拉到投影機。線長依投影機規格，訊號線不要和電源線綁在一起。</p></div>
+  </div>
+  <p class="note">兩台畫一模一樣的內容時，一個 Laser CHOP 可以同時接兩個 Laser Device CHOP。</p>
+</section>
+
+<section id="path">
+  <div class="sec-no"><b>05</b>邏輯 · 路徑</div>
+  <h2>雷射是一條路徑，不是一張圖</h2>
+  <div class="duo" id="pd">
+    <div class="duo-vis">
+      <canvas id="pd_c" width="560" height="560" aria-label="光點沿路徑移動的慢動作示意"></canvas>
+      <canvas id="pd_t" width="560" height="26" aria-label="一圈的 sample 時間軸"></canvas>
+      <div class="legend"><span><i style="background:var(--g)"></i>出光</span><span><i style="background:var(--accent)"></i>角點停留</span><span><i style="background:var(--blank)"></i>blanking（關光移動）</span></div>
+    </div>
+    <div class="duo-txt">
+      <p>振鏡一次只能指向一個位置。光點沿著路徑跑完一圈（一個 <b>cycle</b>）再重來，跑得夠快，人眼就看成一張圖。</p>
+      <p class="note">左邊的光點是慢動作（放慢 200 倍）；淡淡的整個圖形是人眼看到的樣子。對應 TD 學生版的 <code>ch05_path</code>。用相機拍雷射，常會拍到光點走過的軌跡，正好證明人眼看到的圖形是「重畫」出來的。</p>
+      <div class="ctrl"><div class="row"><span>圖形</span></div>
+        <div class="seg" id="pd_pat"><button type="button" data-v="rose" aria-pressed="true">Rose · 1 筆</button><button type="button" data-v="star" aria-pressed="false">Star · 角點</button><button type="button" data-v="tunnel" aria-pressed="false">Tunnel · 4 筆</button><button type="button" data-v="fan" aria-pressed="false">Fan · 12 筆</button></div></div>
+      <div class="ctrl"><div class="row"><label for="pd_size">Size（圖形大小）</label><output id="pd_vsize"></output></div>
+        <input type="range" id="pd_size" min="0.2" max="1" step="0.05" value="0.8"><small>圖形越大，路徑越長，一圈越久。取樣率固定 30000。</small></div>
+      <div class="readout">
+        <div><b id="pd_n">–</b><span>每圈 sample</span></div>
+        <div><b id="pd_ms">–</b><span>一圈時間</span></div>
+        <div><b id="pd_hz">–</b><span>每秒重畫</span></div>
+      </div>
+      <div class="status" id="pd_st"></div>
+      <p><b>每秒重畫 = 取樣率 ÷ 每圈 sample</b>。低於約 50 次，人眼就會看到閃爍。要看的是一圈花多少 sample，不是 POP 有幾個點。</p>
+    </div>
+  </div>
+</section>
+
+<section id="budget">
+  <div class="sec-no"><b>06</b>邏輯 · 時間預算</div>
+  <h2>一圈花多少 sample，決定會不會閃</h2>
+  <p>一圈的時間花在三件事：<b>出光路徑的長度</b>、<b>角點停留</b>、<b>筆畫之間的 blanking</b>。下面兩個示意各看一件。</p>
+  <h3>筆畫越多，blanking 越多</h3>
+  <div class="duo" id="bd">
+    <div class="duo-vis">
+      <canvas id="bd_c" width="560" height="560" aria-label="Copy POP 份數與 blanking 示意"></canvas>
+      <canvas id="bd_t" width="560" height="26" aria-label="一圈的 sample 時間軸"></canvas>
+      <div class="legend"><span><i style="background:var(--g)"></i>出光</span><span><i style="background:var(--accent)"></i>角點停留</span><span><i style="background:var(--blank)"></i>blanking</span></div>
+    </div>
+    <div class="duo-txt">
+      <p>圓加矩形用 Copy POP 複製。每多一份就多兩筆，每一筆之間都要關光移動（灰色虛線）。</p>
+      <div class="ctrl"><div class="row"><label for="bd_copies">Copy POP 份數</label><output id="bd_vc"></output></div>
+        <input type="range" id="bd_copies" min="1" max="6" step="1" value="2"></div>
+      <div class="readout">
+        <div><b id="bd_n">–</b><span>每圈 sample</span></div>
+        <div><b id="bd_bl">–</b><span>blanking 佔比</span></div>
+        <div><b id="bd_hz">–</b><span>每秒重畫</span></div>
+      </div>
+      <div class="status" id="bd_st"></div>
+      <p class="note">TD 實測（48 kHz）：1 份 122 Hz、4 份 40 Hz。對應 TD 學生版的 <code>ch06_budget</code>。</p>
+    </div>
+  </div>
+  <h3>角點與導引點</h3>
+  <div class="duo" id="cn">
+    <div class="duo-vis">
+      <canvas id="cn_c" width="560" height="560" aria-label="角點停留與振鏡慣性示意"></canvas>
+      <div class="legend"><span><i style="background:var(--scope-fg)"></i>指令路徑</span><span><i style="background:var(--g)"></i>振鏡實際走的路</span><span><i style="background:var(--accent)"></i>角點停留</span></div>
+    </div>
+    <div class="duo-txt">
+      <p>振鏡有慣性，急轉彎不停一下就會被切圓。<b>角點</b>（<code>LasCorner = 1</code>）原地停留讓振鏡追上；<b>導引點</b>（<code>= 0</code>）直接滑過。</p>
+      <div class="ctrl"><div class="row"><span>圖形</span></div>
+        <div class="seg" id="cn_shape"><button type="button" data-v="sq" aria-pressed="true">正方形</button><button type="button" data-v="circ" aria-pressed="false">圓（40 點）</button></div></div>
+      <div class="ctrl"><div class="row"><span>LasCorner</span></div>
+        <div class="seg" id="cn_corner"><button type="button" data-v="corner" aria-pressed="true">1 角點</button><button type="button" data-v="guide" aria-pressed="false">0 導引點</button></div></div>
+      <div class="readout">
+        <div><b id="cn_n">–</b><span>每圈 sample</span></div>
+        <div><b id="cn_h">–</b><span>停留 sample</span></div>
+        <div><b id="cn_hz">–</b><span>每秒重畫</span></div>
+      </div>
+      <p class="note">轉角要用角點，曲線用導引點。沒設 LasCorner 時，所有點都當角點：圓會白白多花很多 sample。振鏡慣性為示意。</p>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="card"><div class="lbl">備註 · LasCorner 是什麼</div><p>Laser CHOP 指定讀取的點屬性，不是自訂名稱。1 = 角點（原地停留），0 = 導引點（只輸出一次、直接滑過）。可以逐點設定。沒設時全部當角點；2025.30000 以前的版本沒有導引點，所以舊的 SOP 流程不會碰到它。</p></div>
+    <div class="card"><div class="lbl">備註 · 怎麼設</div><p><b>真正的尖角設 1</b>：矩形四角、星形頂點、折線轉折。<b>曲線設 0</b>：圓、弧線、Lissajous。全部設 1 不會比較穩：曲線上每點都停，一圈變長、容易閃，還會出現一串亮點。想要圓角請把幾何做成弧線，不要靠導引點讓振鏡「切圓」，那個弧度會隨投影機改變。</p></div>
+  </div>
+  <h3>省時間的方法，依效果排序</h3>
+  <ul class="points">
+    <li><b>減少筆畫數</b>：能連成一筆就不要分兩筆。分段改用 Color 漸暗，不要斷開 primitive。</li>
+    <li><b>曲線用導引點</b>：只在真正的轉角設 <code>LasCorner = 1</code>。</li>
+    <li><b>縮短總路徑</b>：圖形越大，一圈越久。</li>
+    <li><b>取樣率不是加速鍵</b>：Step Size 以時間計算，取樣率提高時每圈 sample 等比變多，一圈的時間幾乎不變。</li>
+  </ul>
+</section>
+
+<section id="flow">
+  <div class="sec-no"><b>07</b>軟體 · POP 網路</div>
+  <h2>一顆一顆接起來：POP 雷射網路</h2>
+  <p>每一顆 POP 只問一件事：它改寫了哪個屬性，還是改變了筆畫數？點節點、拉參數，看右下的數字怎麼變。</p>
+  <div class="graph" id="ng_graph" aria-label="POP 網路，點一顆節點看它的參數"><button type="button" class="node" data-n="circle" aria-pressed="false"><span>生成</span><b>Circle POP</b></button><button type="button" class="node" data-n="copy" aria-pressed="true"><span>排列</span><b>Copy POP</b></button><button type="button" class="node" data-n="attr" aria-pressed="false"><span>屬性</span><b>Attribute POP</b></button><button type="button" class="node" data-n="noise" aria-pressed="false"><span>動態</span><b>Noise POP</b></button><button type="button" class="node" data-n="trail" aria-pressed="false"><span>動態</span><b>Trail POP</b></button><button type="button" class="node" data-n="laser" aria-pressed="false"><span>輸出</span><b>Laser CHOP</b></button></div>
+  <div class="duo" id="ng">
+    <div class="duo-vis">
+      <canvas id="ng_c" width="560" height="560" aria-label="POP 網路輸出到雷射的示意"></canvas>
+      <div class="readout" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+        <div><b id="ng_pts">–</b><span>Point</span></div>
+        <div><b id="ng_prims">–</b><span>Primitive（筆）</span></div>
+        <div><b id="ng_n">–</b><span>每圈 sample</span></div>
+        <div><b id="ng_hz">–</b><span>每秒重畫</span></div>
+      </div>
+      <div class="status" id="ng_st"></div>
+    </div>
+    <div class="duo-txt">
+      <div class="lbl" id="ng_title">Copy POP</div>
+      <div class="does" id="ng_does"></div>
+      <div id="ng_pars" style="display:grid;gap:.75rem"></div>
+      <button type="button" class="byp-btn" id="ng_byp" aria-pressed="false">Bypass</button>
+      <p class="note">對應 TD 學生版的 <code>ch07_pop_network</code>，節點名稱和接法相同。點上方節點切換參數，Bypass 等於在 TD 把這顆節點關掉。示意用的近似模型，sample 數與 TD 實測約差 15%。</p>
+    </div>
+  </div>
+  <h3>Point 與 Primitive</h3>
+  <ul class="points">
+    <li><b>Point</b>：振鏡要經過的位置，以及在那裡的顏色（<code>P</code>、<code>Color</code>、<code>LasCorner</code>）。</li>
+    <li><b>Primitive</b>：一筆連續出光的線。多一個 primitive，就多一次 blanking。</li>
+  </ul>
+  <div class="grid2">
+    <div class="card"><div class="lbl">實測 · 沒有 Color 屬性</div><p>輸出 RGB 全部是 <b class="warn-t">1.0（全白、最大亮度）</b>。開發時請在最上游先加一顆 Attribute POP 設定 Color，並把 RGB Scale 調低。</p></div>
+    <div class="card"><div class="lbl">實測 · Rectangle POP 預設是「面」</div><p>Surface Type 預設 <b>Quadrilaterals</b>。Laser CHOP 會走過四個點，但<b class="warn-t">不畫回到起點的最後一條邊</b>。請改成 <b>Line Strips</b>。Circle POP（Connectivity = Line Strip、Closed 開啟）則會完整封閉。</p></div>
+    <div class="card"><div class="lbl">為什麼不用 instancing</div><p>算圖時 instancing 比 Copy POP 快，但 Laser CHOP 讀的是真實的點和 primitive。要讓雷射畫出多份，就必須用 Copy POP 產生真的幾何。</p></div>
+  </div>
+  <details>
+    <summary>線條工具 POP</summary>
+    <div class="tbl"><table>
+    <thead><tr><th>POP</th><th>作用</th><th>雷射用途</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Line POP</td><td>一串控制點組成 line strip，可選 linear、bezier、hermite 內插</td><td>手繪路徑、從資料生成圖形</td></tr>
+      <tr><td class="k">Line Resample POP</td><td>依份數、間距或曲率重新分佈點，形狀不變</td><td>讓點分佈均勻，配合導引點使用。不會直接減少 sample</td></tr>
+      <tr><td class="k">Line Smooth POP</td><td>平均相鄰點，平滑線條（點數不變）</td><td>noise 之後讓路徑更好掃</td></tr>
+      <tr><td class="k">Line Break POP</td><td>依 LineBreak 屬性把點切成多條 line strip</td><td>虛線、分段。切越多，blanking 越多</td></tr>
+      <tr><td class="k">SOP to POP</td><td>把 SOP 幾何轉成 POP</td><td>沿用現成的 SOP 素材或舊專案</td></tr>
+    </tbody>
+  </table></div>
+  </details>
+</section>
+
+<section id="lab">
+  <div class="sec-no"><b>08</b>軟體 · 模擬</div>
+  <h2>拉參數，看雷射怎麼畫</h2>
+  <p>模擬器用和 Laser CHOP 相同的規則產生 sample。換圖形、調參數，看「每秒重畫」有沒有掉到 50 以下。</p>
+  <div class="lab" id="labbox">
+    <div class="scope">
+      <canvas id="sc" width="640" height="640" aria-label="雷射模擬畫面"></canvas>
+      <div class="legend"><span><i style="background:var(--g)"></i>圓（出光）</span><span><i style="background:var(--r)"></i>矩形（出光）</span><span><i style="background:var(--accent)"></i>角點停留</span><span><i style="background:var(--blank)"></i>blanking</span></div>
+      <canvas id="tl" width="640" height="44" aria-label="一個 cycle 的時間軸"></canvas>
+      <div class="note" id="tlnote">時間軸：一個 cycle 的所有 sample。框線是這一幀送出的範圍。</div>
+      <div class="readout">
+        <div><b id="o_n">–</b><span>每圈 sample</span></div>
+        <div><b id="o_hz">–</b><span>每秒重畫</span></div>
+        <div><b id="o_cov">–</b><span>每幀涵蓋</span></div>
+        <div><b id="o_lit">–</b><span>出光比例</span></div>
+      </div>
+      <div class="status" id="o_status"></div>
+    </div>
+    <div class="ctrls">
+      <div class="ctrl"><div class="row"><span>顯示方式</span></div>
+        <div class="seg" id="mode">
+          <button type="button" data-v="frame" aria-pressed="true">每幀（像模擬器）</button>
+          <button type="button" data-v="eye" aria-pressed="false">人眼看到</button>
+          <button type="button" data-v="slow" aria-pressed="false">慢動作</button>
+        </div>
+        <small id="modehelp">只畫這一幀送出的 sample，和 TD 範例 laser_rig 裡的 laser_simulator 一樣。</small>
+      </div>
+      <div class="presets" aria-label="情境">
+        <button type="button" data-p="stable">穩定：1 份</button>
+        <button type="button" data-p="flicker">截圖情境：4 份 20 kHz</button>
+        <button type="button" data-p="quads">矩形少一邊</button>
+        <button type="button" data-p="nohold">角點不停留</button>
+        <button type="button" data-p="tail">顏色延遲拖尾</button>
+      </div>
+      <div class="group-t">圖形 · TD 範例 laser_patterns 的 Pattern 選單</div>
+      <div class="ctrl"><div class="row"><span>Pattern <code>Pattern</code></span></div>
+        <div class="seg" id="pattern">
+          <button type="button" data-v="demo" aria-pressed="true">Circle+Rect</button><button type="button" data-v="lissajous" aria-pressed="false">Lissajous</button><button type="button" data-v="rose" aria-pressed="false">Rose</button><button type="button" data-v="star" aria-pressed="false">Star</button><button type="button" data-v="spiral" aria-pressed="false">Spiral</button><button type="button" data-v="wave" aria-pressed="false">Wave</button><button type="button" data-v="tunnel" aria-pressed="false">Tunnel</button><button type="button" data-v="fan" aria-pressed="false">Fan</button>
+        </div><div class="does" id="patdesc" aria-live="polite"></div></div>
+      <div class="ctrl" data-pat="demo"><div class="row"><label for="copies">Copy POP 份數</label><output id="v_copies"></output></div>
+        <input type="range" id="copies" min="1" max="8" step="1" value="2"><small>每份 2 筆（圓 + 矩形）。筆畫越多，blanking 越多。</small></div>
+      <div class="ctrl" data-pat="demo"><div class="row"><span>圓的點 LasCorner</span></div>
+        <div class="seg" id="circ"><button type="button" data-v="0" aria-pressed="true">0 導引點</button><button type="button" data-v="1" aria-pressed="false">1 角點</button></div></div>
+      <div class="ctrl" data-pat="demo"><div class="row"><span>Rectangle POP Surface Type</span></div>
+        <div class="seg" id="rect"><button type="button" data-v="strip" aria-pressed="true">Line Strips</button><button type="button" data-v="quad" aria-pressed="false">Quadrilaterals</button></div></div>
+      <div class="ctrl" data-pat="lissajous rose spiral wave tunnel"><div class="row"><label for="points">Points per Stroke <code>Points</code></label><output id="v_points"></output></div>
+        <input type="range" id="points" min="8" max="400" step="1" value="120"><small>每一筆的點數。導引點不停留，所以點數多半不影響 sample 數。</small></div>
+      <div class="ctrl" data-pat="lissajous rose star spiral wave tunnel fan"><div class="row"><label for="size">Size <code>Size</code></label><output id="v_size"></output></div>
+        <input type="range" id="size" min="0.1" max="1" step="0.01" value="0.8"><small>圖形越大，路徑越長，一圈越久。</small></div>
+      <div class="ctrl" data-pat="lissajous rose star spiral wave tunnel fan"><div class="row"><label for="rotate">Rotate (deg) <code>Rotate</code></label><output id="v_rotate"></output></div>
+        <input type="range" id="rotate" min="-180" max="180" step="1" value="0"></div>
+      <div class="ctrl" data-pat="lissajous"><div class="row"><label for="freqx">Lissajous Freq X <code>Freqx</code></label><output id="v_freqx"></output></div>
+        <input type="range" id="freqx" min="1" max="8" step="1" value="3"></div>
+      <div class="ctrl" data-pat="lissajous"><div class="row"><label for="freqy">Lissajous Freq Y <code>Freqy</code></label><output id="v_freqy"></output></div>
+        <input type="range" id="freqy" min="1" max="8" step="1" value="2"><small>X、Y 的頻率比決定圖形；比值越大，線越密、路徑越長。</small></div>
+      <div class="ctrl" data-pat="lissajous"><div class="row"><label for="phase">Lissajous Phase (deg) <code>Phase</code></label><output id="v_phase"></output></div>
+        <input type="range" id="phase" min="0" max="360" step="1" value="90"><small>TD 裡開啟 Animate 時，相位會隨時間轉動，圖形看起來在旋轉。</small></div>
+      <div class="ctrl" data-pat="rose"><div class="row"><label for="petals">Rose Petals (k) <code>Petals</code></label><output id="v_petals"></output></div>
+        <input type="range" id="petals" min="1" max="9" step="1" value="5"><small>r = cos(kθ)。k 為奇數時是 k 瓣，偶數時是 2k 瓣。</small></div>
+      <div class="ctrl" data-pat="star"><div class="row"><label for="spikes">Star Spikes <code>Spikes</code></label><output id="v_spikes"></output></div>
+        <input type="range" id="spikes" min="3" max="12" step="1" value="5"></div>
+      <div class="ctrl" data-pat="star"><div class="row"><label for="innerradius">Star Inner Radius <code>Innerradius</code></label><output id="v_innerradius"></output></div>
+        <input type="range" id="innerradius" min="0.05" max="1" step="0.01" value="0.45"><small>設成 1 就變成多邊形（2 × Spikes 個邊）。每個頂點都是角點。</small></div>
+      <div class="ctrl" data-pat="spiral"><div class="row"><label for="turns">Spiral Turns <code>Turns</code></label><output id="v_turns"></output></div>
+        <input type="range" id="turns" min="1" max="12" step="0.5" value="4"></div>
+      <div class="ctrl" data-pat="wave"><div class="row"><label for="cycles">Wave Cycles <code>Cycles</code></label><output id="v_cycles"></output></div>
+        <input type="range" id="cycles" min="0.5" max="8" step="0.5" value="2"></div>
+      <div class="ctrl" data-pat="wave"><div class="row"><label for="amplitude">Wave Amplitude <code>Amplitude</code></label><output id="v_amplitude"></output></div>
+        <input type="range" id="amplitude" min="0" max="1" step="0.01" value="0.5"></div>
+      <div class="ctrl" data-pat="tunnel"><div class="row"><label for="rings">Tunnel Rings <code>Rings</code></label><output id="v_rings"></output></div>
+        <input type="range" id="rings" min="1" max="10" step="1" value="4"><small>每一圈是一筆，多一圈就多一次 blanking。</small></div>
+      <div class="ctrl" data-pat="fan"><div class="row"><label for="beams">Fan Beams <code>Beams</code></label><output id="v_beams"></output></div>
+        <input type="range" id="beams" min="1" max="16" step="1" value="7"><small>每一道光束是一筆。光束圖形幾乎都是 blanking 成本。</small></div>
+      <div class="ctrl" data-pat="fan"><div class="row"><label for="spread">Fan Spread (deg) <code>Spread</code></label><output id="v_spread"></output></div>
+        <input type="range" id="spread" min="0" max="180" step="1" value="90"></div>
+      <div class="ctrl" data-pat="lissajous rose star spiral wave tunnel fan"><div class="row"><span>Corner Mode <code>Cornermode</code></span></div>
+        <div class="seg" id="cornermode"><button type="button" data-v="auto" aria-pressed="true">Auto</button><button type="button" data-v="guide" aria-pressed="false">All Guide</button><button type="button" data-v="corner" aria-pressed="false">All Corner</button></div>
+        <small>Auto：只有 Star 的頂點是角點。改成 All Corner，看曲線圖形的 sample 數增加多少。</small></div>
+      <div class="group-t">Laser CHOP › Laser 頁</div>
+      <div class="ctrl"><div class="row"><label for="rate">Output Sample Rate <code>outputrate</code></label><output id="v_rate"></output></div>
+        <input type="range" id="rate" min="10000" max="65500" step="500" value="30000"><small>TD 預設 48000。Helios 上限 65500；實際要配合投影機的掃描速度。</small></div>
+      <div class="group-t">Laser CHOP › Scanning 頁</div>
+      <div class="ctrl"><div class="row"><label for="step">Step Size <code>stepsize</code></label><output id="v_step"></output></div>
+        <input type="range" id="step" min="0.003" max="0.03" step="0.001" value="0.01"><small>出光時每個 sample 能移動的距離。越大一圈越快，但線變暗、變不直。預設 0.01。</small></div>
+      <div class="ctrl"><div class="row"><label for="bstep">Blanking Step Size <code>bstepsize</code></label><output id="v_bstep"></output></div>
+        <input type="range" id="bstep" min="0.003" max="0.05" step="0.001" value="0.01"><small>關光移動時每個 sample 能移動的距離。預設 0.01。</small></div>
+      <div class="ctrl"><div class="row"><label for="minhold">Minimum Corner Hold <code>mincornerhold</code></label><output id="v_minhold"></output></div>
+        <input type="range" id="minhold" min="0" max="0.6" step="0.01" value="0.05"><small>接近直線（180°）的角點停留，單位 ms。預設 0.05。</small></div>
+      <div class="ctrl"><div class="row"><label for="hold">Maximum Corner Hold <code>maxcornerhold</code></label><output id="v_hold"></output></div>
+        <input type="range" id="hold" min="0" max="0.6" step="0.01" value="0.2"><small>急轉彎（0°）的角點停留，單位 ms。預設 0.2。比 Min 小時會被往上夾成 Min。</small></div>
+      <div class="group-t">Laser CHOP › Color 頁</div>
+      <div class="ctrl"><div class="row"><label for="pbon">Pre Blanking On Delay <code>preblankon</code></label><output id="v_pbon"></output></div>
+        <input type="range" id="pbon" min="0" max="0.5" step="0.005" value="0.11"><small>關光前，在筆畫終點亮著停留的 ms。預設 0.11。</small></div>
+      <div class="ctrl"><div class="row"><label for="pobon">Post Blanking On Delay <code>postblankon</code></label><output id="v_pobon"></output></div>
+        <input type="range" id="pobon" min="0" max="0.5" step="0.005" value="0.074"><small>關光後，在原地暗著停留的 ms。預設 0.074。</small></div>
+      <div class="ctrl"><div class="row"><label for="pboff">Pre Blanking Off Delay <code>preblankoff</code></label><output id="v_pboff"></output></div>
+        <input type="range" id="pboff" min="0" max="0.5" step="0.005" value="0.185"><small>開光前，在下一筆起點暗著停留的 ms。預設 0.185。</small></div>
+      <div class="ctrl"><div class="row"><label for="poboff">Post Blanking Off Delay <code>postblankoff</code></label><output id="v_poboff"></output></div>
+        <input type="range" id="poboff" min="0" max="0.5" step="0.005" value="0.074"><small>開光後，在起點亮著停留的 ms。預設 0.074。</small></div>
+      <div class="ctrl"><div class="row"><label for="cdelay">Color Delay <code>colordelay</code></label><output id="v_cdelay"></output></div>
+        <input type="range" id="cdelay" min="-0.4" max="0.4" step="0.01" value="0"><small>顏色通道相對於位置的延遲（ms）。不為 0 時線段頭尾會出現拖尾或缺口。預設 0。</small></div>
+      <div class="group-t">投影機（不是 TD 參數，示意）</div>
+      <div class="ctrl"><div class="row"><label for="galvo">振鏡速度</label><output id="v_galvo"></output></div>
+        <input type="range" id="galvo" min="8000" max="60000" step="1000" value="30000"><small>振鏡追不上指令時，轉角變圓。角點停留就是在等它追上。</small></div>
+    </div>
+  </div>
+  <p class="note">模擬器依實測校準：TD 中半徑 1 的圓加 1×1 矩形，48 kHz 預設參數時每圈約 340 sample。振鏡慣性是示意模型，實際行為依投影機而定。</p>
+  <details>
+    <summary>TD 範例 laser_patterns 的參數與內部</summary>
+    <div class="tbl"><table>
+    <thead><tr><th>頁面</th><th>參數</th><th>作用</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Pattern</td><td class="k">Pattern</td><td>選擇圖形：Lissajous、Rose、Star / Polygon、Spiral、Wave、Tunnel、Fan</td></tr>
+      <tr><td class="k">Pattern</td><td class="k">Points · Size · Rotate</td><td>每筆點數、大小、旋轉角度</td></tr>
+      <tr><td class="k">Pattern</td><td class="k">Animate · Speed</td><td>隨時間轉動相位或角度。動態時每圈長度會些微變化</td></tr>
+      <tr><td class="k">Shape</td><td class="k wrap">Freqx · Freqy · Phase · Petals · Spikes · Innerradius · Turns · Cycles · Amplitude · Rings · Beams · Spread</td><td>各圖形專屬的參數（名稱前綴標明屬於哪個圖形）</td></tr>
+      <tr><td class="k">Color</td><td class="k">Colormode · Color · Brightness</td><td>單色或沿路徑彩虹。Brightness 預設 0.3</td></tr>
+      <tr><td class="k">Laser</td><td class="k">Cornermode</td><td>Auto（只有 Star 頂點是角點）、All Guide、All Corner，寫入 <code>LasCorner</code></td></tr>
+    </tbody>
+  </table></div>
+  <figure class="diagram">
+    <svg viewBox="0 0 760 200" role="img" aria-label="laser_patterns 內部：Circle POP、Copy POP、Attribute POP、GLSL POP、out1，另有 laser_preview 與 redraw_meter">
+      <defs><marker id="ah5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0,0L10,5L0,10z"/></marker></defs>
+      <rect class="bx gpu" x="8" y="24" width="128" height="74" rx="2"/><text class="t" x="20" y="50">strip</text><text class="s" x="20" y="68">Circle POP</text><text class="q" x="20" y="86">一條 line strip</text>
+      <path class="ar" d="M136,61 L156,61" marker-end="url(#ah5)"/>
+      <rect class="bx gpu" x="158" y="24" width="128" height="74" rx="2"/><text class="t" x="170" y="50">strokes</text><text class="s" x="170" y="68">Copy POP</text><text class="q" x="170" y="86">Rings / Beams 筆</text>
+      <path class="ar" d="M286,61 L306,61" marker-end="url(#ah5)"/>
+      <rect class="bx gpu" x="308" y="24" width="128" height="74" rx="2"/><text class="t" x="320" y="50">attrs</text><text class="s" x="320" y="68">Attribute POP</text><text class="q" x="320" y="86">加 Color、LasCorner</text>
+      <path class="ar" d="M436,61 L456,61" marker-end="url(#ah5)"/>
+      <rect class="bx hw" x="458" y="24" width="140" height="74" rx="2"/><text class="t" x="470" y="50">pattern_glsl</text><text class="s" x="470" y="68">GLSL POP</text><text class="q" x="470" y="86">u → P、Color</text>
+      <path class="ar" d="M598,61 L618,61" marker-end="url(#ah5)"/>
+      <rect class="bx out" x="620" y="24" width="132" height="74" rx="2"/><text class="t" x="632" y="50">out1</text><text class="s" x="632" y="68">Out POP</text><text class="q" x="632" y="86">接到 Laser CHOP</text>
+      <path class="ar" d="M528,98 L528,128" marker-end="url(#ah5)"/>
+      <rect class="bx" x="458" y="130" width="140" height="56" rx="2"/><text class="t" x="470" y="154">laser_preview</text><text class="s" x="470" y="172">Laser CHOP 30 kHz</text>
+      <path class="ar" d="M598,158 L618,158" marker-end="url(#ah5)"/>
+      <rect class="bx" x="620" y="130" width="132" height="56" rx="2"/><text class="t" x="632" y="154">redraw_meter</text><text class="s" x="632" y="172">每圈 sample · Hz</text>
+      <text class="s" x="8" y="130">每個點依它在筆畫中的位置 u（0～1）</text>
+      <text class="s" x="8" y="148">由 GLSL POP 的公式決定座標。</text>
+      <text class="s" x="8" y="166">拓樸（點數、筆數）由前三顆 POP 決定。</text>
+    </svg>
+  </figure>
+  <ul class="points">
+    <li><b>接到雷射</b>：自己的 Laser CHOP 把 Source 設成 POP，POP 參數指到 <code>laser_patterns/out1</code>；或把 <code>out1</code> 接到 <code>source_switch</code>，由 <code>laser_rig</code> 送到 Helios 或 LaserCube。</li>
+    <li><b>看成本</b>：COMP 裡的 <code>redraw_meter</code> 顯示每圈 sample、每秒重畫與每幀涵蓋比例，和本講義模擬器的讀數一致。</li>
+    <li><b>改公式</b>：打開 <code>pattern_glsl_compute</code>，每種圖形只有幾行。改一行就是一個新圖形。</li>
+  </ul>
+  </details>
+</section>
+
+<section id="pathanim">
+  <div class="sec-no"><b>09</b>軟體 · 路徑動畫</div>
+  <h2>把圖形「畫」出來：Write-on 與 Comet</h2>
+  <div class="duo" id="pa">
+    <div class="duo-vis">
+      <canvas id="pa_c" width="560" height="560" aria-label="路徑動畫示意"></canvas>
+      <div class="legend"><span><i style="background:var(--g)"></i>出光的一段</span><span><i style="background:var(--blank)"></i>振鏡仍要掃過（只調暗時）</span><span><i style="background:var(--accent)"></i>筆頭</span></div>
+    </div>
+    <div class="duo-txt">
+      <p>只讓路徑上的「一段」出光，筆頭（Path）往前推，圖形就像被畫出來。<b>Write-on</b>：從起點畫到終點後停住。<b>Comet</b>：固定長度（Length）的一段沿路徑跑，尾端漸暗。</p>
+      <div class="ctrl"><div class="row"><span>圖形</span></div>
+        <div class="seg" id="pa_pat"><button type="button" data-v="star" aria-pressed="true">Star</button><button type="button" data-v="rose" aria-pressed="false">Rose</button><button type="button" data-v="demo" aria-pressed="false">Circle+Rect</button><button type="button" data-v="wave" aria-pressed="false">Wave</button></div></div>
+      <div class="ctrl"><div class="row"><span>Mode</span></div>
+        <div class="seg" id="pa_mode"><button type="button" data-v="writeon" aria-pressed="false">Write-on</button><button type="button" data-v="comet" aria-pressed="true">Comet</button></div></div>
+      <div class="ctrl"><div class="row"><span>看不見的部分</span></div>
+        <div class="seg" id="pa_hide"><button type="button" data-v="cut" aria-pressed="true">剪掉</button><button type="button" data-v="dim" aria-pressed="false">只調暗</button></div></div>
+      <div class="ctrl"><div class="row"><label for="pa_path">Path（筆頭位置）</label><output id="pa_vpath"></output></div>
+        <input type="range" id="pa_path" min="0" max="1" step="0.005" value="0"><small>拖曳時暫停自動播放，放開後從這裡接著跑。</small></div>
+      <div class="ctrl"><div class="row"><label for="pa_len">Length（Comet 長度）</label><output id="pa_vlen"></output></div>
+        <input type="range" id="pa_len" min="0.05" max="1" step="0.01" value="0.25"></div>
+      <div class="readout">
+        <div><b id="pa_n">–</b><span>每圈 sample</span></div>
+        <div><b id="pa_hz">–</b><span>每秒重畫</span></div>
+        <div><b id="pa_lit">–</b><span>出光比例</span></div>
+      </div>
+      <p><b>看不見的部分要剪掉，不能只調暗。</b>顏色是 0 的點，振鏡還是要掃過去，一圈的時間不會變短。真的剪掉後，畫得越短，每秒重畫越高。</p>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="card"><div class="lbl">Resolution：動畫解析度</div><p>筆頭只能停在點上。正方形只有 4 個點，筆頭會從一個角跳到下一個角，所以要先把線切成很多等距的小段。切得越細，筆頭移動越順，但點越多、越吃效能。它只影響動畫，不影響雷射線條本身。</p></div>
+    <div class="card"><div class="lbl">角點要重新判斷</div><p>切成小段後多出很多點。只有「原本是角點、而且路徑真的在這裡轉彎」的點才保留 LasCorner = 1，不然每個小點都會停留，一圈變得很長。</p></div>
+    <div class="card"><div class="lbl">任何圖形都能用</div><p>Pattern、文字、圖片或影片描出來的輪廓，都能接在後面變成路徑動畫。對應 TD 的 <code>laser_path</code>（放在 source_switch 和 laser_color 之間，Mode = Off 時原樣通過）。</p></div>
+  </div>
+</section>
+
+<section id="helios">
+  <div class="sec-no"><b>10</b>軟體 · 接上 Helios</div>
+  <h2>從 TouchDesigner 送到 Helios</h2>
+  <p>Laser CHOP 後面接 <b>Laser Device CHOP</b>，Type 選 Helios。Output Sample Rate 依投影機的掃描速度設定，不超過 Helios 的 65,500。</p>
+  <h3>TouchDesigner 設定步驟</h3>
+  <ol class="steps">
+    <li><b>投影機先不要出光</b>：鑰匙關閉或在急停狀態，確認投射方向沒有人。</li>
+    <li><b>接 USB</b>：Helios 的電源燈亮起。Windows 8 以上會自動安裝驅動；更舊的系統用 Zadig 安裝 WinUSB 驅動。</li>
+    <li><b>接 ILDA 線</b>：Helios 的 DB25 接到投影機的 ILDA 輸入。投影機要切到 <b>ILDA 模式</b>，不是自走或聲控模式。</li>
+    <li><b>Laser CHOP</b>：Source = POP，Output Sample Rate 設成投影機規格的掃描速度（例如投影機標示 30K，就設 30000），不超過 65500。</li>
+    <li><b>Laser Device CHOP</b>：接在 Laser CHOP 後面，<b>Type 選 Helios</b>，Device 選單會自動列出接上的 Helios。沒出現時按 Scan。</li>
+    <li><b>先調暗</b>：Red / Green / Blue Scale 調到 0.1～0.2，再把 Active 打開。</li>
+    <li><b>確認路徑後才加亮度</b>：圖形方向不對時，用 X Scale 或 Y Scale 設 −1 翻轉。</li>
+  </ol>
+  <div class="grid2">
+    <div class="card"><div class="lbl">Type 要選對</div><p>Type 選 <b>EtherDream</b> 時（網路型 DAC，要填 IP 和 Port），找不到裝置節點就會變紅。使用 Helios 時 Type 選 <b>Helios</b>，不需要填 IP。</p></div>
+    <div class="card"><div class="lbl">Scan 的注意事項</div><p>Scan 時不能有使用中的 Helios 連線，否則會被關掉。實測：沒接裝置時切換 Active 或 Scan，TD 會短暫掉幀（60 → 23 fps），之後恢復，屬正常現象。</p></div>
+    <div class="card"><div class="lbl">舊節點</div><p>Helios DAC CHOP 已標示為 deprecated，請統一使用 Laser Device CHOP。</p></div>
+  </div>
+
+  <h3>上機後的實務觀念</h3>
+  <div class="grid2">
+    <div class="card"><div class="lbl">顏色不是線性的</div><p>雷射二極體的亮度和輸入值不成比例，紅、綠、藍三色反應也不同：輸入 0.1 可能幾乎不亮，白色在低亮度時容易偏色。專業做法是每台投影機各做一條「色彩曲線」校正。先有這個觀念，看到淡出不平順或白色偏色時，就知道原因。</p></div>
+    <div class="card"><div class="lbl">總亮度與平滑</div><p>演出時準備一個總亮度推桿（Dimmer），隨時可以整體調暗。用 MIDI 控制器時，數值只有 0～127 階，先接 <b>Filter CHOP</b> 平滑，雷射動作才不會一格一格跳。</p></div>
+    <div class="card"><div class="lbl">換場館</div><p>每個場館的投影位置都不一樣。把整體的位移、縮放、旋轉集中在一組參數（或 mapping），換場地時只調這一組，不用動每個圖形。</p></div>
+  </div>
+  <h3>Queue Time：延遲與穩定的取捨</h3>
+  <div class="duo" id="qd">
+    <div class="duo-vis">
+      <canvas id="qd_c" width="560" height="300" aria-label="Queue Time 緩衝示意：TD 產生的 sample 排隊後才由 DAC 送出"></canvas>
+      <div class="legend"><span><i style="background:var(--g)"></i>排隊中的 sample</span><span><i style="background:var(--r)"></i>斷光（緩衝用完）</span></div>
+    </div>
+    <div class="duo-txt">
+      <p>Laser Device CHOP 先把 sample 放進緩衝排隊，再交給 Helios。<b>Queue Time 就是隊伍的長度</b>：越長越不怕 TD 卡頓，但你的操作要等越久才出光。</p>
+      <div class="ctrl"><div class="row"><label for="qd_q">Queue Time</label><output id="qd_vq"></output></div>
+        <input type="range" id="qd_q" min="0.02" max="0.5" step="0.01" value="0.1"><small>預設 0.1 秒。</small></div>
+      <div class="presets"><button type="button" id="qd_col">換顏色</button><button type="button" id="qd_lag">模擬 TD 卡頓 0.15 秒</button></div>
+      <div class="readout">
+        <div><b id="qd_ms">–</b><span>操作到出光</span></div>
+        <div><b id="qd_s">–</b><span>緩衝 sample</span></div>
+        <div><b id="qd_drop">0</b><span>斷光次數</span></div>
+      </div>
+      <p class="note">按「換顏色」，看新顏色要排多久才到雷射；按「卡頓」，Queue Time 比卡頓短就會斷光。取樣率以 30000 計算。</p>
+    </div>
+  </div>
+  <h3>常見問題</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>症狀</th><th>先檢查</th></tr></thead>
+    <tbody>
+      <tr><td>Device 選單是空的</td><td>USB 有沒有接好、電源燈有沒有亮；先關掉其他使用中的 Laser Device CHOP，再按 Scan；舊版 Windows 要裝 WinUSB 驅動</td></tr>
+      <tr><td>TD 沒錯誤，但完全沒光</td><td>投影機是否在 ILDA 模式、鑰匙與 interlock、RGB Scale 是否為 0、Laser CHOP 的 Active、POP 是否有 Color</td></tr>
+      <tr><td>圖形左右或上下顛倒</td><td>X Scale / Y Scale 設 −1（背投或鏡面反射時常見）</td></tr>
+      <tr><td>閃爍</td><td>每秒重畫太低：減少筆畫、曲線改導引點、縮小圖形</td></tr>
+      <tr><td>轉角變圓、角落過亮</td><td>Corner Hold 太小或太大；取樣率超過投影機的掃描速度</td></tr>
+      <tr><td>線段頭尾有拖尾或缺口</td><td>調 Color Delay 與 blanking 參數</td></tr>
+      <tr><td>操作後畫面慢半拍</td><td>Queue Time 太長</td></tr>
+      <tr><td>USB 裝置無法辨識（燈亮但系統認不到）</td><td>依官方說明重新燒錄 Helios 韌體</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="attrs">
+  <div class="sec-no"><b>A</b>附錄 · 參數速查</div>
+  <h2>Laser CHOP 會讀的屬性與參數</h2>
+  <figure class="diagram">
+    <svg viewBox="0 0 760 250" role="img" aria-label="POP 屬性如何變成 Laser CHOP 的通道：P 變 x y，Color 變 r g b，LasCorner 決定停留，Primitive 決定 blanking">
+      <defs><marker id="ah7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0,0L10,5L0,10z"/></marker></defs>
+      <rect class="bx gpu" x="8" y="18" width="190" height="214" rx="8"/><text class="t" x="22" y="44">POP</text>
+      <text class="q" x="22" y="78">P</text><text class="s" x="80" y="78">位置</text>
+      <text class="q" x="22" y="118">Color</text><text class="s" x="80" y="118">顏色</text>
+      <text class="q" x="22" y="158">LasCorner</text><text class="s" x="104" y="158">停不停</text>
+      <text class="q" x="22" y="198">Primitive</text><text class="s" x="104" y="198">分筆</text>
+      <path class="ar" d="M198,74 L290,96" marker-end="url(#ah7)"/><path class="ar" d="M198,114 L290,112" marker-end="url(#ah7)"/>
+      <path class="ar" d="M198,154 L290,128" marker-end="url(#ah7)"/><path class="ar" d="M198,194 L290,144" marker-end="url(#ah7)"/>
+      <rect class="bx out" x="292" y="78" width="150" height="86" rx="8"/><text class="t" x="306" y="110">Laser CHOP</text><text class="s" x="306" y="132">排成一串 sample</text><text class="s" x="306" y="150">插入停留、blanking</text>
+      <path class="ar" d="M442,121 L476,121" marker-end="url(#ah7)"/>
+      <rect class="bx hw" x="478" y="18" width="274" height="214" rx="8"/><text class="t" x="492" y="44">CHOP 通道（每個 sample）</text>
+      <text class="q" x="492" y="80">x · y</text><text class="s" x="560" y="80">−1～1，振鏡角度</text>
+      <text class="q" x="492" y="118">r · g · b</text><text class="s" x="572" y="118">0～1，三色亮度</text>
+      <text class="s" x="492" y="156">停留 = 同一個 x y 重複幾次</text>
+      <text class="s" x="492" y="194">blanking = r g b 為 0 時移動</text>
+    </svg>
+  </figure>
+  <details>
+    <summary>POP 屬性與對應通道</summary>
+    <div class="tbl"><table>
+    <thead><tr><th>POP 屬性</th><th>CHOP 來源的通道</th><th>作用</th></tr></thead>
+    <tbody>
+      <tr><td class="k">P</td><td class="k">x, y, z</td><td>點位置（只輸出 x、y）</td></tr>
+      <tr><td class="k">Color</td><td class="k">r, g, b …</td><td>顏色。沒有這個屬性時輸出全白</td></tr>
+      <tr><td class="k">LasCorner</td><td class="k">lascorner</td><td>1 = 角點，0 = 導引點；沒設時全部是角點</td></tr>
+      <tr><td class="k">LasCornerHoldAdd</td><td class="k">lascornerholdadd</td><td>每點額外加上的停留次數</td></tr>
+      <tr><td class="k">LasCornerHoldLookupFactor</td><td class="k">lascornerholdlookupfactor</td><td>每點的停留倍率</td></tr>
+      <tr><td>primitive</td><td class="k">id</td><td>分筆。POP 直接用 primitive，CHOP 來源才需要 id</td></tr>
+    </tbody>
+  </table></div>
+  </details>
+  <details>
+    <summary>Laser CHOP · Scanning 頁（實測預設值）</summary>
+    <div class="tbl"><table><tbody>
+      <tr><td class="k">stepsize = 0.01</td><td>出光時每步移動的距離。越小線越亮越直，但一圈越久</td></tr>
+      <tr><td class="k">bstepsize = 0.01</td><td>blanking 移動時的步距</td></tr>
+      <tr><td class="k">mincornerhold = 0.05</td><td>角點停留下限（接近直線時）。不可大於 max</td></tr>
+      <tr><td class="k">maxcornerhold = 0.2</td><td>角點停留上限（急轉彎時）</td></tr>
+      <tr><td class="k">closedoverlap = 0.15</td><td>封閉圖形首尾重疊（毫秒），讓接縫亮度均勻</td></tr>
+    </tbody></table></div>
+  </details>
+  <details>
+    <summary>Laser CHOP · Color 頁（實測預設值）</summary>
+    <div class="tbl"><table><tbody>
+      <tr><td class="k wrap">redscale / greenscale / bluescale = 1</td><td>各色通道強度</td></tr>
+      <tr><td class="k">preblankon = 0.11 · postblankon = 0.074</td><td>關光前、後在原位停留的毫秒數</td></tr>
+      <tr><td class="k">preblankoff = 0.185 · postblankoff = 0.074</td><td>開光前、後在原位停留的毫秒數</td></tr>
+      <tr><td class="k">colordelay = 0</td><td>顏色通道延遲。振鏡比顏色慢，調這個可消除拖尾</td></tr>
+      <tr><td class="k">interpcolors = on</td><td>在點之間內插顏色</td></tr>
+    </tbody></table></div>
+  </details>
+  <details>
+    <summary>Laser Device CHOP（Helios 相關）</summary>
+    <div class="tbl"><table><tbody>
+      <tr><td class="k">type = helios</td><td>另有 etherdream（網路，需 IP/Port）與 shownet</td></tr>
+      <tr><td class="k">device</td><td>自動列出接上的 Helios</td></tr>
+      <tr><td class="k">scan</td><td>重新掃描。掃描時會關閉使用中的 Helios 連線</td></tr>
+      <tr><td class="k">queuetime = 0.1 · queueunits = seconds</td><td>緩衝長度；點數少時可以調小</td></tr>
+      <tr><td class="k">xscale / yscale</td><td>縮放與翻轉（−1）</td></tr>
+      <tr><td class="k wrap">redscale / greenscale / bluescale / intensityscale</td><td>RGB 全為 0 時自動 blanking</td></tr>
+      <tr><td class="k">輸入通道</td><td>x、y（−1～1），r、g、b、i（0～1），user1～4 選用</td></tr>
+    </tbody></table></div>
+  </details>
+</section>
+
+</main>
+<footer><div class="wrap">實測數據來自 TouchDesigner 2025.33230 與 Laser CHOP 預設參數。互動模擬器依實測校準，振鏡慣性為示意模型。<div class="copy">© 2026 PenBit · TouchDesigner 雷射 POP 課程講義 · 保留所有權利</div><div class="copy"><a href="../">所有講義</a> · <a href="../../">WU CHENG-RU 作品集</a></div></div></footer>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+// TD Laser CHOP defaults (measured in 2025.33230), except outputrate starts at 30000 for a typical projector
+const DEF={pattern:'demo',points:120,size:0.8,rotate:0,freqx:3,freqy:2,phase:90,petals:5,spikes:5,innerradius:0.45,turns:4,cycles:2,amplitude:0.5,rings:4,beams:7,spread:90,cornermode:'auto',copies:2,circ:0,rect:'strip',rate:30000,step:0.01,bstep:0.01,minhold:0.05,hold:0.2,pbon:0.11,pobon:0.074,pboff:0.185,poboff:0.074,cdelay:0,galvo:30000,mode:'frame'};
+const P=Object.assign({},DEF);
+const PRESETS={
+  stable:{copies:1},
+  flicker:{copies:4,rate:20000,step:0.0081,minhold:0.22,hold:0.1},
+  quads:{copies:1,rect:'quad',mode:'eye'},
+  nohold:{copies:1,minhold:0,hold:0,galvo:14000,mode:'eye'},
+  tail:{copies:1,cdelay:0.25,mode:'eye'}
+};
+let S=null, ptr=0, slowPos=0, last=performance.now();
+
+// same formulas as the GLSL POP in the TD example /laser_patterns (animation time t = 0)
+const TAU=Math.PI*2;
+function patternStrokes(o){
+  const pat=o.pattern, out=[];
+  const strokes=pat==='tunnel'?o.rings:(pat==='fan'?o.beams:1);
+  const closed=['lissajous','rose','star','tunnel'].includes(pat);
+  const n=pat==='star'?o.spikes*2:(pat==='fan'?2:o.points);
+  const ro=o.rotate*Math.PI/180, cr=Math.cos(ro), sr=Math.sin(ro);
+  for(let s=0;s<strokes;s++){
+    const pts=[];
+    for(let i=0;i<n;i++){
+      const u=closed?i/n:i/Math.max(n-1,1);
+      let x=0,y=0,corner=false;
+      if(pat==='lissajous'){x=Math.sin(TAU*o.freqx*u+o.phase*Math.PI/180); y=Math.sin(TAU*o.freqy*u);}
+      else if(pat==='rose'){const k=o.petals, per=(k%2)?TAU/2:TAU, th=u*per, r=Math.cos(k*th); x=r*Math.cos(th); y=r*Math.sin(th);}
+      else if(pat==='star'){const th=TAU*u+TAU/4, r=(i%2===0)?1:o.innerradius; x=r*Math.cos(th); y=r*Math.sin(th); corner=true;}
+      else if(pat==='spiral'){const th=TAU*o.turns*u; x=u*Math.cos(th); y=u*Math.sin(th);}
+      else if(pat==='wave'){x=u*2-1; y=o.amplitude*Math.sin(TAU*o.cycles*u);}
+      else if(pat==='tunnel'){const r=0.15+0.85*(((s+0.5)/strokes)%1); x=r*Math.cos(TAU*u); y=r*Math.sin(TAU*u);}
+      else if(pat==='fan'){const a=TAU/4+o.spread*Math.PI/180*((strokes>1?s/(strokes-1):0.5)-0.5); x=u*2*Math.cos(a); y=-1+u*2*Math.sin(a);}
+      if(o.cornermode==='corner') corner=true; else if(o.cornermode==='guide') corner=false;
+      pts.push([(cr*x-sr*y)*o.size,(sr*x+cr*y)*o.size,corner]);
+    }
+    out.push({pts,closed,col:'g'});
+  }
+  return out;
+}
+function shapes(o){
+  if(o.strokes) return o.strokes;
+  if(o.pattern!=='demo') return patternStrokes(o);
+  const out=[];
+  for(let k=0;k<o.copies;k++){
+    const s=Math.pow(0.75,k), r=1*s, h=0.5*s, c=[];
+    for(let i=0;i<40;i++){const a=i/40*2*Math.PI; c.push([r*Math.cos(a),r*Math.sin(a),o.circ===1]);}
+    out.push({pts:c,closed:true,col:'g'});
+    out.push({pts:[[-h,-h,true],[h,-h,true],[h,h,true],[-h,h,true]],closed:o.rect==='strip',col:'r'});
+  }
+  return out;
+}
+function compute(o){
+  const R=o.rate, dS=o.step*192000/R, smp=[];
+  const n=ms=>Math.max(0,Math.round(ms*R/1000));
+  const push=(x,y,k,c)=>smp.push({x,y,k,c}); // k: 0 lit, 1 hold, 2 blank
+  const st=shapes(o); let cur=null;
+  const dB=o.bstep*192000/R; // blank move: Blanking Step Size per 192 kHz internal step (verified in TD at 30k and 48k)
+  let curCol=null;
+  const blankTo=(p,nextCol)=>{
+    for(let i=0;i<n(o.pbon);i++) push(cur[0],cur[1],1,curCol);   // preblankon: still lit, waiting at the end point
+    for(let i=0;i<n(o.pobon);i++) push(cur[0],cur[1],2,null);    // postblankon: dark, still at the end point
+    const L=Math.hypot(p[0]-cur[0],p[1]-cur[1]), m=Math.ceil(L/dB);
+    for(let j=1;j<=m;j++){const t=j/m; push(cur[0]+(p[0]-cur[0])*t,cur[1]+(p[1]-cur[1])*t,2,null);}
+    for(let i=0;i<n(o.pboff);i++) push(p[0],p[1],2,null);        // preblankoff: dark, waiting at the next start
+    for(let i=0;i<n(o.poboff);i++) push(p[0],p[1],1,nextCol);    // postblankoff: lit, waiting at the next start
+  };
+  const holdMs=interior=>{const mn=o.minhold, mx=Math.max(o.hold,mn);return mn+(mx-mn)*(1-interior/180);};
+  const ovl=n(0.15); // Closed Shape Overlap (closedoverlap) default 0.15 ms
+  st.forEach(s=>{
+    const pts=s.pts.slice(); if(s.closed) pts.push(pts[0]);
+    if(cur) blankTo(pts[0],s.col);
+    const start=smp.length;
+    push(pts[0][0],pts[0][1],0,s.col);
+    let carry=0; // TD steps continuously along the path: distance travelled since the last sample
+    for(let i=1;i<pts.length;i++){
+      const a=pts[i-1], p=pts[i], L=Math.hypot(p[0]-a[0],p[1]-a[1]);
+      let d=dS-carry;
+      while(d<=L+1e-9){const t=L?d/L:1; push(a[0]+(p[0]-a[0])*t,a[1]+(p[1]-a[1])*t,0,s.col); d+=dS;}
+      carry=L-(d-dS);
+      const last=i===pts.length-1;
+      if(!p[2]||(s.closed&&last)) continue;
+      // corner point: land exactly on it, then hold
+      if(carry>1e-6) push(p[0],p[1],0,s.col); carry=0;
+      const prev=a, next=!last?pts[i+1]:null;
+      let interior=0;
+      if(next){const v1=[p[0]-prev[0],p[1]-prev[1]], v2=[next[0]-p[0],next[1]-p[1]];
+        const cs=(v1[0]*v2[0]+v1[1]*v2[1])/(Math.hypot(...v1)*Math.hypot(...v2)||1);
+        interior=180-Math.acos(Math.max(-1,Math.min(1,cs)))*180/Math.PI;}
+      for(let j=0;j<n(holdMs(interior));j++) push(p[0],p[1],1,s.col);
+    }
+    if(s.closed){ // first point is a corner too when closed
+      const p=pts[0];
+      if(p[2]){const prev=pts[pts.length-2], next=pts[1], v1=[p[0]-prev[0],p[1]-prev[1]], v2=[next[0]-p[0],next[1]-p[1]];
+        const cs=(v1[0]*v2[0]+v1[1]*v2[1])/(Math.hypot(...v1)*Math.hypot(...v2)||1);
+        const interior=180-Math.acos(Math.max(-1,Math.min(1,cs)))*180/Math.PI;
+        if(carry>1e-6) push(p[0],p[1],0,s.col);
+        for(let j=0;j<n(holdMs(interior));j++) push(p[0],p[1],1,s.col);}
+      for(let j=0;j<ovl&&start+1+j<smp.length;j++){const q=smp[start+1+j]; push(q.x,q.y,0,s.col);} // overlap the seam
+    }
+    cur=pts[pts.length-1]; curCol=s.col;
+  });
+  // a single closed shape needs no blanking; anything else returns to the start in the dark
+  if(cur&&!(st.length===1&&st[0].closed)) blankTo(st[0].pts[0],st[0].col);  const N=smp.length;
+  // color delay: light state shifted relative to position
+  const sh=Math.round(o.cdelay*R/1000);
+  const on=smp.map((_,i)=>{const s=smp[((i-sh)%N+N)%N]; return s.k!==2?s.c:null;});
+  // galvo inertia: first-order lag, run twice for steady state
+  const fc=o.galvo*0.08, a=1-Math.exp(-2*Math.PI*fc/R);
+  let gx=smp[0].x, gy=smp[0].y; const gp=new Float32Array(N*2);
+  for(let pass=0;pass<2;pass++) for(let i=0;i<N;i++){gx+=(smp[i].x-gx)*a; gy+=(smp[i].y-gy)*a; gp[i*2]=gx; gp[i*2+1]=gy;}
+  const lit=on.filter(Boolean).length;
+  return {smp,on,gp,N,R,lit};
+}
+function build(){S=compute(P); ptr=0; slowPos=0;}
+
+window.LaserSim={compute:o=>compute(Object.assign({},DEF,o)),strokes:o=>shapes(Object.assign({},DEF,o)),DEF};
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function colors(){return {g:css('--g'),r:css('--r'),blank:css('--blank'),acc:css('--accent'),bg:css('--scope-bg'),grid:css('--scope-grid'),fg:css('--scope-fg')};}
+const sc=$('sc'), cx=sc.getContext('2d'), tl=$('tl'), tx=tl.getContext('2d');
+function map(v){return (v*0.47+0.5)*sc.width;}
+function mapY(v){return (0.5-v*0.47)*sc.height;}
+function bgDraw(C){
+  cx.globalAlpha=1; cx.fillStyle=C.bg; cx.fillRect(0,0,sc.width,sc.height);
+  cx.strokeStyle=C.grid; cx.lineWidth=1;
+  for(let i=-4;i<=4;i++){const x=map(i/4),y=mapY(i/4);cx.beginPath();cx.moveTo(x,mapY(1));cx.lineTo(x,mapY(-1));cx.stroke();cx.beginPath();cx.moveTo(map(-1),y);cx.lineTo(map(1),y);cx.stroke();}
+}
+function seg(C,i,j,alpha,w){
+  const c=S.on[j]; if(!c) return;
+  cx.strokeStyle=C[c]; cx.globalAlpha=alpha; cx.lineWidth=w;
+  cx.beginPath(); cx.moveTo(map(S.gp[i*2]),mapY(S.gp[i*2+1])); cx.lineTo(map(S.gp[j*2]),mapY(S.gp[j*2+1])); cx.stroke();
+}
+function drawFrame(C){
+  bgDraw(C);
+  const per=S.R/60, count=Math.min(Math.round(per),S.N*3);
+  for(let s=1;s<count;s++){const i=(ptr+s-1)%S.N, j=(ptr+s)%S.N; seg(C,i,j,0.95,2.2);}
+  return {start:ptr,len:count};
+}
+function drawEye(C,t){
+  bgDraw(C);
+  const hz=S.R/S.N;
+  let amp=1; if(hz<50) amp=1-Math.min(0.75,(50-hz)/50)*(0.5+0.5*Math.sin(t*0.025))*(Math.random()*0.6+0.4);
+  for(let j=1;j<=S.N;j++){const i=j-1; seg(C,i%S.N,j%S.N,0.9*amp,2);}
+  cx.globalAlpha=0.16*amp;
+  for(let j=0;j<S.N;j++){const c=S.on[j]; if(!c) continue; cx.fillStyle=C[c]; cx.beginPath(); cx.arc(map(S.gp[j*2]),mapY(S.gp[j*2+1]),3.2,0,7); cx.fill();}
+  return null;
+}
+function drawSlow(C,dt){
+  bgDraw(C);
+  slowPos=(slowPos+dt*S.N/4.5)%S.N;
+  const head=Math.floor(slowPos), trail=Math.floor(S.N*0.6);
+  for(let s=trail;s>0;s--){
+    const j=((head-s)%S.N+S.N)%S.N, i=(j-1+S.N)%S.N, f=1-s/trail;
+    if(S.on[j]) seg(C,i,j,0.15+0.8*f,2);
+    else{cx.setLineDash([3,4]);cx.strokeStyle=C.blank;cx.globalAlpha=0.5*f;cx.lineWidth=1.2;cx.beginPath();cx.moveTo(map(S.gp[i*2]),mapY(S.gp[i*2+1]));cx.lineTo(map(S.gp[j*2]),mapY(S.gp[j*2+1]));cx.stroke();cx.setLineDash([]);}
+  }
+  const k=S.smp[head].k; cx.globalAlpha=1;
+  cx.fillStyle=k===2?C.blank:(k===1?C.acc:C.fg);
+  cx.beginPath(); cx.arc(map(S.gp[head*2]),mapY(S.gp[head*2+1]),5,0,7); cx.fill();
+  return {start:head,len:1};
+}
+function drawTL(C,win){
+  const W=tl.width,H=tl.height; tx.fillStyle=C.bg; tx.fillRect(0,0,W,H);
+  for(let x=0;x<W;x++){
+    const i=Math.floor(x/W*S.N), s=S.smp[i];
+    tx.fillStyle=s.k===2?C.blank:(s.k===1?C.acc:C[s.c]); tx.fillRect(x,8,1,H-16);
+  }
+  if(win){
+    const x0=win.start/S.N*W, w=Math.max(2,win.len/S.N*W);
+    tx.strokeStyle=C.fg; tx.lineWidth=2;
+    tx.strokeRect(x0+1,3,Math.min(w,W)-2,H-6);
+    if(x0+w>W) tx.strokeRect(1,3,x0+w-W-2,H-6);
+  }
+}
+function readout(){
+  const hz=S.R/S.N, cov=(S.R/60)/S.N;
+  $('o_n').textContent=S.N.toLocaleString();
+  $('o_hz').textContent=hz.toFixed(0)+' Hz';
+  $('o_cov').textContent=Math.round(cov*100)+'%';
+  $('o_lit').textContent=Math.round(S.lit/S.N*100)+'%';
+  const st=$('o_status'); st.textContent='';
+  const chip=(cls,t)=>{const s=document.createElement('span');s.className='chip '+cls;s.textContent=t;st.appendChild(s);};
+  if(hz>=60) chip('ok','穩定，不會閃'); else if(hz>=50) chip('mid','接近閃爍邊緣'); else chip('bad','會閃爍');
+  if(cov<1) chip('bad','模擬器每幀畫不完一圈'); else chip('ok','每幀至少畫完一圈');
+  if(P.rate>P.galvo) chip('mid','取樣率高於振鏡速度');
+  if(P.pattern==='demo'&&P.rect==='quad') chip('bad','矩形少畫最後一邊');
+  if(Math.abs(P.cdelay)>=0.05) chip('mid','顏色與位置不同步');
+  if(P.hold<P.minhold) chip('mid','Max Corner Hold 小於 Min，被往上夾成 Min');
+}
+const modeHelp={frame:'只畫這一幀送出的 sample，和 TD 範例 laser_rig 裡的 laser_simulator 一樣。缺線代表一幀畫不完一圈。',eye:'人眼的視覺暫留：整圈疊在一起。重畫率太低時畫面會閃，停留越久的點越亮。',slow:'放慢約 4.5 秒走一圈。虛線是 blanking（關光移動），亮黃色光點代表角點停留。'};
+let raf;
+function loop(t){
+  const dt=Math.min(0.05,(t-last)/1000); last=t;
+  const C=colors(); let win=null;
+  if(P.mode==='frame'){win=drawFrame(C); ptr=(ptr+Math.round(S.R/60))%S.N;}
+  else if(P.mode==='eye'){drawEye(C,t);}
+  else{win=drawSlow(C,dt);}
+  drawTL(C,win);
+  raf=requestAnimationFrame(loop);
+}
+// controls
+const ms3=v=>v.toFixed(3);
+const i0=v=>String(Math.round(v)), f2=v=>v.toFixed(2), deg=v=>Math.round(v)+'°';
+const rng={points:[v=>v,i0],size:[v=>v,f2],rotate:[v=>v,deg],freqx:[v=>v,i0],freqy:[v=>v,i0],phase:[v=>v,deg],petals:[v=>v,i0],spikes:[v=>v,i0],innerradius:[v=>v,f2],turns:[v=>v,v=>v.toFixed(1)],cycles:[v=>v,v=>v.toFixed(1)],amplitude:[v=>v,f2],rings:[v=>v,i0],beams:[v=>v,i0],spread:[v=>v,deg],copies:[v=>v,v=>v+' 份'],rate:[v=>v,v=>v.toLocaleString()],step:[v=>v,ms3],bstep:[v=>v,ms3],minhold:[v=>v,v=>v.toFixed(2)],hold:[v=>v,v=>v.toFixed(2)],pbon:[v=>v,ms3],pobon:[v=>v,ms3],pboff:[v=>v,ms3],poboff:[v=>v,ms3],cdelay:[v=>v,v=>(v>0?'+':'')+v.toFixed(2)],galvo:[v=>v,v=>(v/1000).toFixed(0)+' kpps']};
+function syncUI(){
+  for(const k in rng){$(k).value=P[k]; $('v_'+k).textContent=rng[k][1](+P[k]);}
+  setSeg('mode',P.mode); setSeg('circ',String(P.circ)); setSeg('rect',P.rect); setSeg('pattern',P.pattern); setSeg('cornermode',P.cornermode);
+  document.querySelectorAll('.ctrl[data-pat]').forEach(el=>{el.hidden=!el.dataset.pat.split(' ').includes(P.pattern);});
+  $('modehelp').textContent=modeHelp[P.mode];
+}
+function setSeg(id,v){document.querySelectorAll('#'+id+' button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===v?'true':'false'));}
+for(const k in rng){$(k).addEventListener('input',e=>{P[k]=parseFloat(e.target.value);$('v_'+k).textContent=rng[k][1](P[k]);build();readout();});}
+[['mode',v=>v],['circ',v=>+v],['rect',v=>v],['pattern',v=>v],['cornermode',v=>v]].forEach(([id,f])=>{
+  document.querySelectorAll('#'+id+' button').forEach(b=>b.addEventListener('click',()=>{P[id]=f(b.dataset.v);syncUI();if(id!=='mode'){build();readout();}}));
+});
+function applyPreset(name,scroll){Object.assign(P,DEF,PRESETS[name]);syncUI();build();readout();if(scroll)$('lab').scrollIntoView({block:'start'});}
+document.querySelectorAll('.presets button').forEach(b=>b.addEventListener('click',()=>applyPreset(b.dataset.p,false)));
+document.querySelectorAll('.try[data-p]').forEach(b=>b.addEventListener('click',()=>applyPreset(b.dataset.p,true)));
+document.querySelectorAll('.try[data-pat]').forEach(b=>b.addEventListener('click',()=>{Object.assign(P,DEF,{pattern:b.dataset.pat,mode:'eye'});syncUI();build();readout();$('lab').scrollIntoView({block:'start'});}));
+function drawThumbs(){
+  const C=colors();
+  document.querySelectorAll('#patgrid .pat').forEach(card=>{
+    const cv=card.querySelector('canvas'), x=cv.getContext('2d'), W=cv.width;
+    x.fillStyle=C.bg; x.fillRect(0,0,W,W); x.strokeStyle=C.g; x.lineWidth=1.6; x.lineJoin='round';
+    patternStrokes(Object.assign({},DEF,{pattern:card.dataset.pat})).forEach(s=>{
+      x.beginPath(); s.pts.forEach((p,i)=>{const px=(p[0]*0.45+0.5)*W, py=(0.5-p[1]*0.45)*W; if(i) x.lineTo(px,py); else x.moveTo(px,py);});
+      if(s.closed) x.closePath(); x.stroke();
+    });
+  });
+}
+drawThumbs();
+syncUI(); build(); readout();
+if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){P.mode='eye';syncUI();}
+raf=requestAnimationFrame(loop);
+
+
+
+// light / dark toggle with crossfade
+(function(){
+  const root=document.documentElement, btn=document.getElementById('themebtn'), lbl=document.getElementById('themelbl');
+  const mq=window.matchMedia('(prefers-color-scheme: dark)');
+  const isDark=()=>root.dataset.theme?root.dataset.theme==='dark':mq.matches;
+  const sync=()=>{const d=isDark(); lbl.textContent=d?'亮色':'暗色'; btn.setAttribute('aria-pressed',d?'true':'false');};
+  try{const s=localStorage.getItem('laser-theme'); if(s==='dark'||s==='light') root.dataset.theme=s;}catch(e){}
+  sync(); mq.addEventListener&&mq.addEventListener('change',sync);
+  btn.addEventListener('click',()=>{
+    const next=isDark()?'light':'dark';
+    const apply=()=>{root.dataset.theme=next; sync(); try{localStorage.setItem('laser-theme',next);}catch(e){}};
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){apply();return;}
+    if(document.startViewTransition){document.startViewTransition(apply);}
+    else{root.classList.add('theming'); apply(); setTimeout(()=>root.classList.remove('theming'),750);}
+  });
+})();
+// timeline index (right side): one entry per section, past / active / future
+(function(){
+  const pages=[...document.querySelectorAll('header.hero[id], section[id]')];
+  const ol=document.getElementById('tlnav'), items=[];
+  pages.forEach((p,i)=>{
+    const no=p.querySelector('.sec-no');
+    let label;
+    if(no){const n=no.querySelector('b'); label=(n?n.textContent:String(i).padStart(2,'0'))+' — '+no.textContent.replace(n?n.textContent:'','').trim();}
+    else label='00 — '+(p.dataset.label||'開場');
+    const li=document.createElement('li'), b=document.createElement('button');
+    b.type='button'; b.setAttribute('aria-label',label);
+    const l=document.createElement('span'); l.className='lbl'; l.textContent=label;
+    const d=document.createElement('span'); d.className='dot';
+    b.append(l,d); li.appendChild(b); ol.appendChild(li); items.push(li);
+    b.addEventListener('click',()=>go(i));
+  });
+  let cur=-1;
+  function go(i){i=Math.max(0,Math.min(pages.length-1,i)); pages[i].scrollIntoView({block:'start'});}
+  function update(){
+    const y=window.innerHeight*0.35; let a=0;
+    pages.forEach((p,i)=>{if(p.getBoundingClientRect().top<=y) a=i;});
+    if((window.innerHeight+window.scrollY)>=document.documentElement.scrollHeight-2) a=pages.length-1;
+    if(a===cur) return; cur=a;
+    items.forEach((li,i)=>{li.className=i<a?'past':(i===a?'active':'future'); li.firstChild.setAttribute('aria-current',i===a?'true':'false');});
+    document.getElementById('tlcount').textContent=String(a).padStart(2,'0')+' / '+String(pages.length-1).padStart(2,'0');
+    try{history.replaceState(null,'','#'+pages[a].id);}catch(e){}
+  }
+  document.getElementById('tlprev').addEventListener('click',()=>go(cur-1));
+  document.getElementById('tlnext').addEventListener('click',()=>go(cur+1));
+  // keyboard: ← ↑ PageUp = previous section, → ↓ PageDown = next (not while typing or dragging a slider)
+  document.addEventListener('keydown',e=>{
+    if(e.altKey||e.ctrlKey||e.metaKey) return;
+    const t=e.target; if(t.closest&&t.closest('input,textarea,select,[contenteditable]')) return;
+    const c=Math.max(cur,0);
+    if(['ArrowDown','ArrowRight','PageDown'].includes(e.key)){e.preventDefault(); go(c+1);}
+    else if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){e.preventDefault(); go(c-1);}
+  });
+  let ticking=false;
+  window.addEventListener('scroll',()=>{if(!ticking){ticking=true;requestAnimationFrame(()=>{ticking=false;update();});}},{passive:true});
+  window.addEventListener('resize',update);
+  update();
+})();
+})();
+</script>
+<script>
+// 05 path demo: slow-motion dot on the real sample stream + persistence-of-vision layer
+(function(){
+  const $=id=>document.getElementById(id), sim=window.LaserSim; if(!sim) return;
+  const c=$('pd_c'), x=c.getContext('2d'), t=$('pd_t'), tx=t.getContext('2d');
+  const st={pattern:'rose', rate:30000, size:0.8}, SLOW=200;
+  let S=null, pos=0, last=performance.now(), vis=false;
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const M=v=>(v*0.44+0.5)*c.width, MY=v=>(0.5-v*0.44)*c.height;
+  function calc(){
+    S=sim.compute({pattern:st.pattern, rate:st.rate, size:st.size, beams:12}); pos=0;
+    const hz=S.R/S.N;
+    $('pd_vsize').textContent=st.size.toFixed(2);
+    $('pd_n').textContent=S.N; $('pd_ms').textContent=(S.N/S.R*1000).toFixed(1)+' ms'; $('pd_hz').textContent=Math.round(hz)+' Hz';
+    $('pd_st').innerHTML=hz>=50?'<span class="chip ok">穩定</span>':'<span class="chip bad">會閃</span>';
+    drawTL();
+  }
+  function drawTL(cur){
+    const W=t.width, H=t.height, col={g:css('--g'), r:css('--r')}, hold=css('--accent'), bl=css('--blank');
+    tx.clearRect(0,0,W,H);
+    for(let i=0;i<S.N;i++){const s=S.smp[i]; tx.fillStyle=s.k===2?bl:(s.k===1?hold:col[s.c]||col.g); tx.fillRect(Math.floor(i/S.N*W),0,Math.ceil(W/S.N)+1,H);}
+    if(cur!=null){tx.fillStyle=css('--fg'); tx.fillRect(cur/S.N*W-1,0,2,H);}
+  }
+  function frame(now){
+    const dt=Math.min(0.1,(now-last)/1000); last=now;
+    if(vis&&S){
+      pos=(pos+dt*S.R/SLOW)%S.N;
+      const g=css('--g'), r=css('--r'), acc=css('--accent');
+      x.fillStyle=css('--scope-bg'); x.fillRect(0,0,c.width,c.height);
+      // eye layer: whole lit path; flickers when the redraw rate is below ~50 Hz (illustrative)
+      const hz=S.R/S.N, bad=Math.max(0,Math.min(1,(50-hz)/30));
+      const a=0.28*(1-bad*0.85*(0.5+0.5*Math.sin(now/1000*2*Math.PI*7)));
+      x.globalAlpha=a; x.lineWidth=2;
+      for(let i=1;i<S.N;i++){const p=S.smp[i-1], q=S.smp[i]; if(!S.on[i]) continue; x.strokeStyle=S.on[i]==='r'?r:g; x.beginPath(); x.moveTo(M(p.x),MY(p.y)); x.lineTo(M(q.x),MY(q.y)); x.stroke();}
+      // slow-motion trail (last ~12% of the cycle)
+      const tail=Math.max(8,Math.round(S.N*0.12)), k=Math.floor(pos);
+      for(let j=tail;j>0;j--){
+        const i0=(k-j+S.N)%S.N, i1=(k-j+1+S.N)%S.N, p=S.smp[i0], q=S.smp[i1];
+        x.globalAlpha=(1-j/tail); x.lineWidth=3;
+        x.strokeStyle=S.on[i1]?(S.on[i1]==='r'?r:g):css('--blank');
+        if(!S.on[i1]) x.setLineDash([3,4]);
+        x.beginPath(); x.moveTo(M(p.x),MY(p.y)); x.lineTo(M(q.x),MY(q.y)); x.stroke(); x.setLineDash([]);
+      }
+      const s=S.smp[k]; x.globalAlpha=1;
+      x.fillStyle=s.k===2?css('--blank'):(s.k===1?acc:'#fff');
+      x.beginPath(); x.arc(M(s.x),MY(s.y),s.k===1?8:6,0,Math.PI*2); x.fill();
+      drawTL(pos);
+    }
+    requestAnimationFrame(frame);
+  }
+  document.querySelectorAll('#pd_pat button').forEach(b=>b.addEventListener('click',()=>{
+    st.pattern=b.dataset.v; document.querySelectorAll('#pd_pat button').forEach(o=>o.setAttribute('aria-pressed',o===b?'true':'false')); calc();}));
+  $('pd_size').addEventListener('input',e=>{st.size=+e.target.value; calc();});
+  new IntersectionObserver(es=>{vis=es[0].isIntersecting;}).observe(c);
+  calc(); requestAnimationFrame(frame);
+})();
+</script>
+<script>
+// 06 / 07 demos (share the simulator engine via window.LaserSim)
+(function(){
+  const sim=window.LaserSim; if(!sim) return;
+  const $=id=>document.getElementById(id);
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const TAU=Math.PI*2;
+  const mk=c=>({x:c.getContext('2d'),M:v=>(v*0.44+0.5)*c.width,MY:v=>(0.5-v*0.44)*c.height,c});
+  function chip(ok,t){return '<span class="chip '+(ok?'ok':'bad')+'">'+t+'</span>';}
+  function timeline(cv,S,cur){
+    const t=cv.getContext('2d'),W=cv.width,H=cv.height,col={g:css('--g'),r:css('--r')},hold=css('--accent'),bl=css('--blank');
+    t.clearRect(0,0,W,H);
+    for(let i=0;i<S.N;i++){const s=S.smp[i]; t.fillStyle=s.k===2?bl:(s.k===1?hold:col[s.c]||col.g); t.fillRect(Math.floor(i/S.N*W),0,Math.ceil(W/S.N)+1,H);}
+    if(cur!=null){t.fillStyle=css('--fg'); t.fillRect(cur/S.N*W-1,0,2,H);}
+  }
+  // whole cycle: lit in colour, blanking as dashed grey, holds as orange dots
+  function cycle(V,S){
+    const {x,M,MY}=V, col={g:css('--g'),r:css('--r')};
+    x.fillStyle=css('--scope-bg'); x.fillRect(0,0,V.c.width,V.c.height);
+    x.lineWidth=2;
+    for(let i=1;i<S.N;i++){const p=S.smp[i-1],q=S.smp[i];
+      if(q.k===2){x.strokeStyle=css('--blank'); x.setLineDash([4,5]);} else {x.strokeStyle=col[q.c]||col.g; x.setLineDash([]);}
+      x.beginPath(); x.moveTo(M(p.x),MY(p.y)); x.lineTo(M(q.x),MY(q.y)); x.stroke();}
+    x.setLineDash([]); x.fillStyle=css('--accent');
+    S.smp.forEach(s=>{if(s.k===1){x.beginPath(); x.arc(M(s.x),MY(s.y),4,0,TAU); x.fill();}});
+  }
+  function dot(V,S,pos){const s=S.smp[Math.floor(pos)%S.N]; V.x.fillStyle=s.k===2?css('--blank'):'#fff'; V.x.beginPath(); V.x.arc(V.M(s.x),V.MY(s.y),6,0,TAU); V.x.fill();}
+  const loops=[];
+  function addLoop(el,fn){const L={vis:false,fn}; new IntersectionObserver(es=>{L.vis=es[0].isIntersecting;}).observe(el); loops.push(L);}
+  let last=performance.now();
+  function tick(now){const dt=Math.min(0.1,(now-last)/1000); last=now; loops.forEach(L=>{if(L.vis) L.fn(dt,now);}); requestAnimationFrame(tick);}
+
+  // ---------- 06a strokes & blanking ----------
+  (function(){
+    const V=mk($('bd_c')); let S, pos=0;
+    function calc(){
+      const n=+$('bd_copies').value; $('bd_vc').textContent=n+' 份（'+n*2+' 筆）';
+      S=sim.compute({pattern:'demo',copies:n,rate:48000}); pos=0;
+      const bl=S.smp.filter(s=>s.k===2).length, hz=S.R/S.N;
+      $('bd_n').textContent=S.N; $('bd_bl').textContent=Math.round(bl/S.N*100)+'%'; $('bd_hz').textContent=Math.round(hz)+' Hz';
+      $('bd_st').innerHTML=hz>=50?chip(1,'穩定'):chip(0,'會閃');
+    }
+    $('bd_copies').addEventListener('input',calc); calc();
+    addLoop(V.c,dt=>{pos=(pos+dt*S.R/300)%S.N; cycle(V,S); dot(V,S,pos); timeline($('bd_t'),S,pos);});
+  })();
+
+  // ---------- 06b corners ----------
+  (function(){
+    const V=mk($('cn_c')), st={shape:'sq',corner:'corner'}; let S, pos=0;
+    function calc(){
+      const cor=st.corner==='corner', o={rate:30000,galvo:9000,cornermode:st.corner};
+      if(st.shape==='sq') Object.assign(o,{pattern:'star',spikes:2,innerradius:1,rotate:45,size:0.75});
+      else {const pts=[]; for(let i=0;i<40;i++){const a=i/40*TAU; pts.push([0.75*Math.cos(a),0.75*Math.sin(a),cor]);} o.strokes=[{pts,closed:true,col:'g'}];}
+      S=sim.compute(o); pos=0;
+      $('cn_n').textContent=S.N; $('cn_h').textContent=S.smp.filter(s=>s.k===1).length; $('cn_hz').textContent=Math.round(S.R/S.N)+' Hz';
+    }
+    function seg(id,key){document.querySelectorAll('#'+id+' button').forEach(b=>b.addEventListener('click',()=>{st[key]=b.dataset.v; document.querySelectorAll('#'+id+' button').forEach(o=>o.setAttribute('aria-pressed',o===b?'true':'false')); calc();}));}
+    seg('cn_shape','shape'); seg('cn_corner','corner'); calc();
+    addLoop(V.c,dt=>{
+      const {x,M,MY}=V; pos=(pos+dt*S.R/400)%S.N;
+      x.fillStyle=css('--scope-bg'); x.fillRect(0,0,V.c.width,V.c.height);
+      x.globalAlpha=0.35; x.strokeStyle=css('--scope-fg'); x.lineWidth=1; x.setLineDash([3,4]); x.beginPath();
+      S.smp.forEach((s,i)=>i?x.lineTo(M(s.x),MY(s.y)):x.moveTo(M(s.x),MY(s.y))); x.closePath(); x.stroke(); x.setLineDash([]); x.globalAlpha=1;
+      x.strokeStyle=css('--g'); x.lineWidth=2.5; x.beginPath();
+      for(let i=0;i<S.N;i++){const gx=S.gp[i*2],gy=S.gp[i*2+1]; i?x.lineTo(M(gx),MY(gy)):x.moveTo(M(gx),MY(gy));} x.closePath(); x.stroke();
+      x.fillStyle=css('--accent'); S.smp.forEach(s=>{if(s.k===1){x.beginPath(); x.arc(M(s.x),MY(s.y),4.5,0,TAU); x.fill();}});
+      const k=Math.floor(pos); x.fillStyle='#fff'; x.beginPath(); x.arc(M(S.gp[k*2]),MY(S.gp[k*2+1]),6,0,TAU); x.fill();
+    });
+  })();
+
+  // ---------- 07 POP node graph ----------
+  (function(){
+    const V=mk($('ng_c'));
+    const st={circle:{n:32,r:0.75},copy:{copies:2,scale:0.75,rot:0},attr:{color:'g',corner:'0'},noise:{amp:0.08,period:0.6,target:'P'},trail:{slices:3},laser:{step:0.01}};
+    const byp={copy:false,attr:false,noise:false,trail:true};
+    const DEF={
+      circle:{title:'Circle POP',does:'建立 Point 和 1 個 Primitive（一筆封閉的圓）。點數多寡幾乎不影響 sample，路徑長度才會。',
+        pars:[['n','Divisions（點數）','range',6,64,1],['r','Radius','range',0.2,1,0.05]]},
+      copy:{title:'Copy POP',does:'增加 Primitive：每多一份就多一筆，多一次 blanking。',
+        pars:[['copies','Number of Copies','range',1,6,1],['scale','Uniform Scale（每份）','range',0.5,1,0.05],['rot','Rotate Z（每份）','range',0,45,1]]},
+      attr:{title:'Attribute POP',does:'改寫 Color 與 LasCorner，不改變筆畫數。LasCorner = 1 時每個點都會停留。Bypass 看看沒有 Color 會怎樣。',
+        pars:[['color','Color','seg',[['g','綠'],['r','紅'],['rainbow','彩虹']]],['corner','LasCorner','seg',[['0','0 導引點'],['1','1 角點']]]]},
+      noise:{title:'Noise POP',does:'改寫 P（形狀）或 Color（亮度），不增加筆畫。路徑變彎變長，一圈會稍微久一點。',
+        pars:[['target','Output Attribute','seg',[['P','P'],['Color','Color']]],['amp','Amplitude','range',0,0.3,0.01],['period','Period','range',0.2,2,0.05]]},
+      trail:{title:'Trail POP',does:'把過去幾幀的位置留下來。接在線條後面時，每個點都會拖出一條自己的線：筆畫數 = 點數（32 點 × 2 份 = 64 筆），blanking 暴增。',
+        pars:[['slices','Trail Length（切片）','range',2,8,1]]},
+      laser:{title:'Laser CHOP',does:'把所有 Point 與 Primitive 變成一串 sample。Step Size 越大越快，但線變暗、變不直。',
+        pars:[['step','Step Size','range',0.005,0.03,0.001]]}
+    };
+    let sel='copy', hist=[], frameN=0, S=null, dirty=true, lastCalc=0, geo=null;
+    const nz=(x,y,t,f)=>(Math.sin(x*f*1.7+t*1.1)+Math.sin(y*f*2.3-t*0.9)+Math.sin((x+y)*f*1.1+t*1.6))/3;
+    function build(t){
+      const C=st.circle, base=[]; for(let i=0;i<C.n;i++){const a=i/C.n*TAU; base.push({x:C.r*Math.cos(a),y:C.r*Math.sin(a),u:i/C.n});}
+      const cp=byp.copy?{copies:1,scale:1,rot:0}:st.copy, out=[];
+      for(let k=0;k<cp.copies;k++){const sc=Math.pow(cp.scale,k), ro=cp.rot*k*Math.PI/180, c=Math.cos(ro), s=Math.sin(ro);
+        out.push(base.map(p=>({x:(c*p.x-s*p.y)*sc,y:(s*p.x+c*p.y)*sc,u:p.u,b:1})));}
+      if(!byp.noise){const N=st.noise, f=Math.PI/N.period;
+        out.forEach(str=>str.forEach(p=>{const v=nz(p.x,p.y,t,f);
+          if(N.target==='P'){const w=nz(p.y+3.1,p.x-1.7,t+5,f); p.x+=N.amp*v*2; p.y+=N.amp*w*2;}
+          else p.b=Math.max(0.05,Math.min(1,0.55+v*N.amp*4));}));}
+      return out;
+    }
+    // Trail POP on line strips (Surface Type = Rows, verified in TD): every point drags its own open line
+    function strokesAll(cur){
+      if(byp.trail||!hist.length) return cur.map(s=>({s,fade:1}));
+      const res=[], old=hist.slice().reverse();
+      cur.forEach((str,k)=>str.forEach((p,j)=>{const line=old.map(h=>h[k]&&h[k][j]).filter(Boolean); line.push(p); res.push({s:line,fade:1,open:true});}));
+      return res;
+    }
+    function calc(all){
+      const cor=!byp.attr&&st.attr.corner==='1';
+      const strokes=all.map(o=>({pts:o.s.map(p=>[p.x,p.y,cor]),closed:!o.open,col:'g'}));
+      S=sim.compute({strokes,rate:30000,step:byp.laser?0.01:st.laser.step});
+      const pts=all.reduce((a,o)=>a+o.s.length,0), hz=S.R/S.N;
+      $('ng_pts').textContent=pts; $('ng_prims').textContent=all.length; $('ng_n').textContent=S.N; $('ng_hz').textContent=Math.round(hz)+' Hz';
+      $('ng_st').innerHTML=(hz>=50?chip(1,'穩定'):chip(0,'會閃'))+(byp.attr?' '+chip(0,'沒有 Color：全白最大亮度'):'');
+    }
+    function colorOf(p,fade){
+      if(byp.attr) return 'rgba(255,255,255,'+fade+')';
+      let r,g,b; const A=st.attr.color;
+      if(A==='rainbow'){const h=p.u*6, i=Math.floor(h), f=h-i, q=1-f; [r,g,b]=[[1,f,0],[q,1,0],[0,1,f],[0,q,1],[f,0,1],[1,0,q]][i%6];}
+      else if(A==='r'){[r,g,b]=[1,0.25,0.25];} else {[r,g,b]=[0.25,0.9,0.5];}
+      const k=p.b*fade; return 'rgb('+Math.round(r*255*k)+','+Math.round(g*255*k)+','+Math.round(b*255*k)+')';
+    }
+    function draw(now){
+      const t=now/1000, cur=build(t);
+      if(++frameN%4===0){hist.unshift(cur.map(s=>s.map(p=>({...p})))); hist.length=Math.min(hist.length,(st.trail.slices-1));}
+      const all=strokesAll(cur);
+      if(dirty||((!byp.noise||!byp.trail)&&now-lastCalc>150)){calc(all); dirty=false; lastCalc=now;}
+      const {x,M,MY}=V, hz=S?S.R/S.N:99, bad=Math.max(0,Math.min(1,(50-hz)/30));
+      x.fillStyle=css('--scope-bg'); x.fillRect(0,0,V.c.width,V.c.height);
+      x.globalAlpha=1-bad*0.8*(0.5+0.5*Math.sin(t*TAU*7)); x.lineWidth=2;
+      all.forEach(o=>{const s=o.s; for(let i=0;i<s.length-(o.open?1:0);i++){const p=s[i], q=s[(i+1)%s.length]; x.strokeStyle=colorOf(p,o.fade); x.beginPath(); x.moveTo(M(p.x),MY(p.y)); x.lineTo(M(q.x),MY(q.y)); x.stroke();}});
+      x.globalAlpha=0.5; x.strokeStyle=css('--blank'); x.setLineDash([4,5]); x.lineWidth=1;
+      for(let i=1;i<all.length;i++){const p=all[i-1].s[0], q=all[i].s[0]; x.beginPath(); x.moveTo(M(p.x),MY(p.y)); x.lineTo(M(q.x),MY(q.y)); x.stroke();}
+      x.setLineDash([]); x.globalAlpha=1;
+    }
+    function panel(){
+      const D=DEF[sel]; $('ng_title').textContent=D.title; $('ng_does').textContent=D.does;
+      const box=$('ng_pars'); box.innerHTML='';
+      D.pars.forEach(([k,label,type,a,b,step])=>{
+        const d=document.createElement('div'); d.className='ctrl';
+        if(type==='range'){
+          d.innerHTML='<div class="row"><label>'+label+'</label><output></output></div><input type="range" min="'+a+'" max="'+b+'" step="'+step+'" value="'+st[sel][k]+'">';
+          const inp=d.querySelector('input'), out=d.querySelector('output'), fmt=()=>out.textContent=step<1?(+inp.value).toFixed(step<0.01?3:2):inp.value;
+          fmt(); const node=sel; inp.addEventListener('input',()=>{st[node][k]=+inp.value; fmt(); if(k==='slices') hist.length=Math.min(hist.length,st.trail.slices-1); dirty=true;});
+        } else {
+          d.innerHTML='<div class="row"><span>'+label+'</span></div><div class="seg">'+a.map(([v,l])=>'<button type="button" data-v="'+v+'" aria-pressed="'+(String(st[sel][k])===v)+'">'+l+'</button>').join('')+'</div>';
+          const node=sel; d.querySelectorAll('button').forEach(bt=>bt.addEventListener('click',()=>{st[node][k]=bt.dataset.v; d.querySelectorAll('button').forEach(o=>o.setAttribute('aria-pressed',o===bt?'true':'false')); dirty=true;}));
+        }
+        box.appendChild(d);
+      });
+      const bb=$('ng_byp'); bb.hidden=!(sel in byp); bb.setAttribute('aria-pressed',String(!!byp[sel]));
+      document.querySelectorAll('#ng_graph .node').forEach(n=>{n.setAttribute('aria-pressed',String(n.dataset.n===sel)); n.classList.toggle('byp',!!byp[n.dataset.n]);});
+    }
+    document.querySelectorAll('#ng_graph .node').forEach(n=>n.addEventListener('click',()=>{sel=n.dataset.n; panel();}));
+    $('ng_byp').addEventListener('click',()=>{byp[sel]=!byp[sel]; if(sel==='trail') hist=[]; dirty=true; panel();});
+    panel();
+    addLoop(V.c,(dt,now)=>draw(now));
+  })();
+  requestAnimationFrame(tick);
+})();
+</script>
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  // pattern description inside the simulator
+  const PD={demo:['Circle + Rect','圓（導引點）加矩形（角點），用 Copy POP 複製。前面章節的實測圖形。'],
+    lissajous:['Lissajous','x、y 各是一個正弦，頻率比決定形狀。單筆封閉、全是導引點，最省時間。','218 sample · 138 Hz'],
+    rose:['Rose','r = cos(kθ)。所有花瓣都經過中心，中心會比較亮。','157 sample · 191 Hz'],
+    star:['Star / Polygon','每個頂點都是角點，停留讓尖角清楚。Inner Radius 設 1 就變多邊形。','160 sample · 188 Hz'],
+    spiral:['Spiral','開放路徑：畫到外圈後要關光跳回中心。','187 sample · 160 Hz'],
+    wave:['Wave','開放路徑：出光的線很短，關光跑回左端的時間佔很大比例。','100 sample · 300 Hz'],
+    tunnel:['Tunnel','每一圈是一筆，Rings 每多 1 就多一次 blanking。','291 sample · 103 Hz'],
+    fan:['Fan','7 道光束就是 7 筆，每一道都要關光回到底部。時間是 Rose 的將近三倍。','440 sample · 68 Hz']};
+  const pat=$('pattern'), box=$('patdesc');
+  if(pat&&box){
+    const upd=()=>{const b=pat.querySelector('[aria-pressed="true"]'); const d=PD[b?b.dataset.v:'demo']; if(!d) return;
+      box.innerHTML='<b>'+d[0]+'</b>　'+d[1]+(d[2]?'<br><span class="note">TD 實測（30 kHz）：'+d[2]+'</span>':'');};
+    new MutationObserver(upd).observe(pat,{subtree:true,attributes:true,attributeFilter:['aria-pressed']}); upd();
+  }
+  // Queue Time demo
+  const cv=$('qd_c'); if(!cv) return;
+  const x=cv.getContext('2d'), W=cv.width, H=cv.height, RATE=30000, CELL=0.01;
+  const COLS=['--g','--b','--r'];
+  let Q=0.1, q=[], cmd=0, out=null, stallUntil=0, drops=0, starved=false, vis=false, last=performance.now();
+  function ui(){$('qd_vq').textContent=Q.toFixed(2)+' s'; $('qd_ms').textContent=Math.round(Q*1000)+' ms'; $('qd_s').textContent=Math.round(Q*RATE).toLocaleString();}
+  $('qd_q').addEventListener('input',e=>{Q=+e.target.value; ui();});
+  $('qd_col').addEventListener('click',()=>{cmd=(cmd+1)%COLS.length;});
+  $('qd_lag').addEventListener('click',()=>{stallUntil=performance.now()+150;});
+  new IntersectionObserver(es=>{vis=es[0].isIntersecting;}).observe(cv);
+  let acc=0;
+  function step(now){
+    const dt=Math.min(0.05,(now-last)/1000); last=now;
+    if(vis){
+      acc+=dt;
+      while(acc>=CELL){acc-=CELL;
+        if(now>=stallUntil){while(q.length*CELL<Q) q.push(cmd);}       // TD tops the queue up to Queue Time
+        if(q.length){out=q.shift(); if(starved){starved=false;}} else {if(!starved){drops++; $('qd_drop').textContent=drops;} starved=true; out=null;}
+      }
+      draw(now);
+    }
+    requestAnimationFrame(step);
+  }
+  function draw(now){
+    x.fillStyle=css('--scope-bg'); x.fillRect(0,0,W,H);
+    const fg=css('--scope-fg'), stalled=now<stallUntil;
+    x.font='13px '+css('--mono'); x.fillStyle=fg;
+    // TD box
+    x.strokeStyle=stalled?css('--r'):fg; x.lineWidth=1.5; x.strokeRect(14,100,96,80);
+    x.fillText('TouchDesigner',20,96); x.fillStyle=css(COLS[cmd]); x.fillRect(38,118,48,44);
+    if(stalled){x.fillStyle=css('--r'); x.fillText('卡頓中',34,200);}
+    // queue pipe: 0.5 s max = full width
+    const px=130, pw=280, py=118, ph=44; x.strokeStyle=fg; x.strokeRect(px,py,pw,ph); x.fillStyle=fg; x.fillText('緩衝（右邊先送出）',px,py-10);
+    const cw=pw*CELL/0.5;
+    for(let i=0;i<q.length;i++){x.fillStyle=css(COLS[q[q.length-1-i]]); x.globalAlpha=0.85; x.fillRect(px+pw-(i+1)*cw,py+3,Math.max(1,cw-1),ph-6);}
+    x.globalAlpha=1; x.strokeStyle=css('--accent'); x.setLineDash([4,4]); x.beginPath(); x.moveTo(px+pw-Q/0.5*pw,py-4); x.lineTo(px+pw-Q/0.5*pw,py+ph+4); x.stroke(); x.setLineDash([]);
+    x.fillStyle=css('--accent'); x.fillText('Queue Time',px+pw-Q/0.5*pw-40,py+ph+22);
+    // laser output
+    x.fillStyle=fg; x.fillText('雷射輸出',440,96);
+    x.strokeStyle=out==null?css('--r'):css(COLS[out]); x.lineWidth=out==null?1:4; if(out==null) x.setLineDash([3,5]);
+    x.beginPath(); x.arc(490,140,36,0,Math.PI*2); x.stroke(); x.setLineDash([]);
+    if(out==null){x.fillStyle=css('--r'); x.fillText('斷光',474,200);}
+  }
+  ui(); requestAnimationFrame(step);
+})();
+</script>
+<script>
+(function(){
+  function load(box,start,auto){
+    const id=box.dataset.id, f=document.createElement('iframe');
+    f.src='https://www.youtube-nocookie.com/embed/'+id+'?rel=0&playsinline=1'+(auto?'&autoplay=1':'')+(start?'&start='+start:'');
+    f.title='YouTube 影片'; f.allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen'; f.allowFullscreen=true;
+    box.innerHTML=''; box.appendChild(f);
+  }
+  document.querySelectorAll('.yt button').forEach(b=>b.addEventListener('click',()=>load(b.parentElement,0,true)));
+  document.querySelectorAll('.chap').forEach(b=>b.addEventListener('click',()=>{const box=document.getElementById('talk_yt'); load(box,+b.dataset.t,true); box.scrollIntoView({block:'nearest'});}));
+})();
+</script>
+<script>
+// 09 path animation demo: Write-on / Comet on any pattern; hidden part cut vs only dimmed
+(function(){
+  const sim=window.LaserSim, $=id=>document.getElementById(id); if(!sim||!$('pa_c')) return;
+  const cv=$('pa_c'), x=cv.getContext('2d'), M=v=>(v*0.44+0.5)*cv.width, MY=v=>(0.5-v*0.44)*cv.height;
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const st={pattern:'star',mode:'comet',hide:'cut',len:0.25}, SP=0.02, SPEED=0.25, COS=Math.cos(30*Math.PI/180);
+  let base=[], phase=0, drag=false, vis=false, last=performance.now();
+  // resample every stroke into ~SP steps; keep original vertices so corners stay exact
+  function prep(){
+    base=sim.strokes({pattern:st.pattern,copies:1}).map(s=>{
+      const src=s.pts.slice(); if(s.closed) src.push(src[0]);
+      const pts=[]; let d=0;
+      for(let i=0;i<src.length;i++){
+        const p=src[i];
+        if(i>0){const a=src[i-1], L=Math.hypot(p[0]-a[0],p[1]-a[1]), n=Math.max(1,Math.ceil(L/SP));
+          for(let k=1;k<n;k++){const t=k/n; pts.push({x:a[0]+(p[0]-a[0])*t,y:a[1]+(p[1]-a[1])*t,d:d+L*t,c:false});}
+          d+=L;}
+        if(!(s.closed&&i===src.length-1)) pts.push({x:p[0],y:p[1],d,c:!!p[2]});
+      }
+      // corner only where the path really turns
+      const n=pts.length;
+      pts.forEach((p,i)=>{ if(!p.c) return; const a=pts[(i-1+n)%n], b=pts[(i+1)%n];
+        if(!s.closed&&(i===0||i===n-1)){p.c=false;return;}
+        const ax=p.x-a.x, ay=p.y-a.y, bx=b.x-p.x, by=b.y-p.y, la=Math.hypot(ax,ay), lb=Math.hypot(bx,by);
+        p.c = la>1e-6&&lb>1e-6&&(ax*bx+ay*by)/(la*lb)<COS; });
+      return {pts,closed:s.closed,L:d,col:s.col};
+    });
+  }
+  function at(s,d){ // point at distance d along stroke s
+    const P=s.pts, n=P.length; if(s.closed){d=((d%s.L)+s.L)%s.L;} else d=Math.max(0,Math.min(s.L,d));
+    for(let i=0;i<n;i++){const a=P[i], b=i+1<n?P[i+1]:(s.closed?{x:P[0].x,y:P[0].y,d:s.L}:null);
+      if(b&&d>=a.d&&d<=b.d){const t=(d-a.d)/Math.max(1e-9,b.d-a.d); return {x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t,c:false};}}
+    return {x:P[n-1].x,y:P[n-1].y,c:false};
+  }
+  function windowOf(s,head){ // visible [d0,d1] in distance, may exceed L for closed (wraps)
+    if(st.mode==='writeon') return [0, head*s.L];
+    if(s.closed) return [(head-st.len)*s.L, head*s.L];
+    const h=head*(1+st.len); return [Math.max(0,h-st.len)*s.L, Math.min(1,h)*s.L];
+  }
+  function visible(s,head){ // list of {x,y,c,f} along the window (f = brightness)
+    const [d0,d1]=windowOf(s,head); if(d1-d0<1e-6) return [];
+    const out=[], span=d1-d0, push=(p,d)=>out.push({x:p.x,y:p.y,c:p.c,f:st.mode==='comet'?1-0.8*(d1-d)/span:1});
+    push(at(s,d0),d0);
+    const wrap=s.closed&&d0<0;
+    const inWin=d=>wrap?(d>=d0+s.L||d<=d1):(d>d0&&d<d1);
+    const list=s.pts.filter(p=>inWin(p.d));
+    if(wrap){list.sort((a,b)=>((a.d-d0-s.L+s.L*2)%s.L)-((b.d-d0-s.L+s.L*2)%s.L));}
+    list.forEach(p=>{const dd=wrap&&p.d>d1?p.d-s.L:p.d; push(p,dd);});
+    push(at(s,d1),d1);
+    return out;
+  }
+  let cache=null;
+  function calc(head){
+    const key=[st.pattern,st.mode,st.hide,st.len,head.toFixed(3)].join();
+    if(cache&&cache.key===key) return cache;
+    const vis=base.map(s=>visible(s,head));
+    const litLen=vis.reduce((a,v)=>a+v.reduce((b,p,i)=>i?b+Math.hypot(p.x-v[i-1].x,p.y-v[i-1].y):0,0),0);
+    const total=base.reduce((a,s)=>a+s.L,0);
+    let strokes;
+    if(st.hide==='cut') strokes=vis.filter(v=>v.length>1).map(v=>({pts:v.map(p=>[p.x,p.y,p.c]),closed:false,col:'g'}));
+    else strokes=base.map(s=>({pts:s.pts.map(p=>[p.x,p.y,p.c]),closed:s.closed,col:'g'}));
+    const S=strokes.length?sim.compute({strokes,rate:30000}):{N:1,R:30000};
+    return cache={key,vis,S,lit:total?litLen/total:0};
+  }
+  function headNow(){ return st.mode==='writeon'?Math.min(1,phase*1.25):phase; }
+  function draw(){
+    const head=headNow(), r=calc(head);
+    $('pa_n').textContent=r.S.N; $('pa_hz').textContent=Math.round(r.S.R/r.S.N)+' Hz'; $('pa_lit').textContent=Math.round(r.lit*100)+'%';
+    if(!drag){$('pa_path').value=head.toFixed(3);} $('pa_vpath').textContent=(+$('pa_path').value).toFixed(2);
+    x.fillStyle=css('--scope-bg'); x.fillRect(0,0,cv.width,cv.height);
+    // the full path: faint reference (cut) or dashed grey = still scanned in the dark (dim)
+    x.lineWidth=st.hide==='dim'?1.5:1; x.strokeStyle=st.hide==='dim'?css('--blank'):'rgba(255,255,255,.12)'; x.setLineDash(st.hide==='dim'?[4,5]:[]);
+    base.forEach(s=>{x.beginPath(); s.pts.forEach((p,i)=>i?x.lineTo(M(p.x),MY(p.y)):x.moveTo(M(p.x),MY(p.y))); if(s.closed) x.closePath(); x.stroke();});
+    x.setLineDash([]); x.lineWidth=3; const g=css('--g');
+    r.vis.forEach(v=>{for(let i=1;i<v.length;i++){x.globalAlpha=Math.max(0.15,v[i].f); x.strokeStyle=g; x.beginPath(); x.moveTo(M(v[i-1].x),MY(v[i-1].y)); x.lineTo(M(v[i].x),MY(v[i].y)); x.stroke();}
+      if(v.length){const h=v[v.length-1]; x.globalAlpha=1; x.fillStyle=css('--accent'); x.beginPath(); x.arc(M(h.x),MY(h.y),5,0,Math.PI*2); x.fill();}});
+    x.globalAlpha=1;
+  }
+  function tick(now){
+    const dt=Math.min(0.1,(now-last)/1000); last=now;
+    if(vis){ if(!drag) phase=(phase+dt*SPEED)%1; draw(); }
+    requestAnimationFrame(tick);
+  }
+  function seg(id,key,after){document.querySelectorAll('#'+id+' button').forEach(b=>b.addEventListener('click',()=>{st[key]=b.dataset.v; document.querySelectorAll('#'+id+' button').forEach(o=>o.setAttribute('aria-pressed',o===b?'true':'false')); if(after) after(); cache=null; draw();}));}
+  seg('pa_pat','pattern',prep); seg('pa_mode','mode'); seg('pa_hide','hide');
+  const ps=$('pa_path');
+  ps.addEventListener('pointerdown',()=>{drag=true;}); ps.addEventListener('focus',()=>{drag=true;});
+  ps.addEventListener('input',()=>{const v=+ps.value; phase=st.mode==='writeon'?v/1.25:v; draw();});
+  const resume=()=>{drag=false;}; ps.addEventListener('pointerup',resume); ps.addEventListener('blur',resume); ps.addEventListener('change',resume);
+  $('pa_len').addEventListener('input',e=>{st.len=+e.target.value; $('pa_vlen').textContent=st.len.toFixed(2); cache=null; draw();});
+  $('pa_vlen').textContent=st.len.toFixed(2);
+  new IntersectionObserver(es=>{vis=es[0].isIntersecting;}).observe(cv);
+  prep(); draw(); requestAnimationFrame(tick);
+})();
+</script>
+
+
+
+
+
