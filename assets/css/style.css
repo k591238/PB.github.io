@@ -800,6 +800,8 @@ button {
   display: block;
   background: var(--surface);
   transition: transform 0.65s var(--ease), filter 0.65s var(--ease);
+  /* 右鍵時點到的是卡片連結而非圖片：選單只有「新分頁開啟」，沒有「另存圖片」 */
+  pointer-events: none;
 }
 
 .work:hover .work-thumb {

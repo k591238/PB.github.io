@@ -664,9 +664,9 @@ if (window.matchMedia('(pointer: fine)').matches) {
 /* ────────────────────────────────────────
    RIGHT-CLICK / DRAG PROTECTION
    ──────────────────────────────────────── */
-// 右鍵只在連結上開放（選單、作品卡片可在新分頁開啟），其他地方維持封鎖
+// 右鍵只在連結上開放（選單、作品卡片可在新分頁開啟），圖片、影片和其他地方維持封鎖
 document.addEventListener('contextmenu', (e) => {
-  if (!e.target.closest('a[href]')) e.preventDefault();
+  if (e.target.closest('img, video') || !e.target.closest('a[href]')) e.preventDefault();
 });
 document.addEventListener('dragstart', (e) => {
   if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') e.preventDefault();
