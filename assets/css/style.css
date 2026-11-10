@@ -1373,6 +1373,23 @@ button {
   aspect-ratio: 3/4;
 }
 
+/* 作品頁格線多為 inline style，窄螢幕要用 !important 才蓋得過 */
+@media (max-width: 799px) {
+  /* Instagram 嵌入最小寬度 326px，4 欄在平板會被擠壞 */
+  #project-detail-content div[style*="repeat(4, 1fr)"] {
+    grid-template-columns: minmax(0, 420px) !important;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 600px) {
+  #project-detail-content div[style*="grid-template-columns"],
+  #project-detail-content .detail-grid-2,
+  #project-detail-content .detail-grid-3 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 .credits-section {
   margin-top: var(--space-lg);
   margin-bottom: var(--space-lg);
