@@ -324,6 +324,48 @@ const projectsData = [
 
 ---
 
+## 🤝 新增作品的協作 SOP（跟使用者溝通的流程）
+
+> 給 AI Agent：使用者要新增作品時，照這個流程走。技術細節見下一節「新增作品的完整流程」。
+
+### 使用者會提供（或請他照這個範本填）
+
+```
+【新增作品】
+資料夾：source/
+中文標題：
+英文標題：
+年份：            分類：Performance / Exhibition / Case / Collaboration / Events
+演出日期：
+場地：
+主辦／補助單位：
+你的角色：
+作品簡介（中）：
+作品簡介（英）：
+Credits（角色｜姓名｜IG）：
+YouTube／IG 貼文連結：
+指定封面照／縮圖（可留空）：
+其他排版需求（可留空）：
+```
+
+- 照片放在 `source/{作品英文名}/`；沒指定 banner／thumb 時，挑幾張候選給使用者選
+- 影片優先用 YouTube 連結；一定要放 mp4 時先壓縮（720p、背景循環 10～20 秒、每支 5 MB 以下），並注意 repo 已經很大（見「影片」相關待辦）
+
+### Agent 的步驟
+
+1. 讀照片，分出直式／橫式，提出排版方式
+2. 檢查資料：**缺漏或不確定的（日期、場地、單位、人名、國外演出細節）一律先問，不可自己編寫或推測**
+3. 轉檔（`convert_project.py`）→ `projectsData` → `works-grid` 卡片 → `<template>`，三處一次改齊
+4. 本機截圖驗證（桌機 1280px、手機 390px）：列表有新卡片、作品頁沒破版、直式照片有併排縮小（截圖方法見「本機截圖驗證」）
+5. 把截圖和文字給使用者確認，確認後才 commit；**使用者明確說可以才 push**
+
+### 規則
+- 圖片一律 webp，`alt` 要具體描述畫面
+- 外部連結一律 `target="_blank" rel="noopener noreferrer"`
+- 文字以使用者提供的為準，可以調整排版，不改寫內容意思
+
+---
+
 ## 🖼 新增作品的完整流程
 
 ### Step 1：準備圖片
@@ -436,12 +478,24 @@ python scripts/convert_project.py --id px --source "source/{專案名}" \
 
 ## ⚠️ 已知待辦事項
 
+### 高優先（2026-11-10 架構盤點）
+
+| 作業 | 說明 |
+|------|------|
+| 影片瘦身 | 作品頁打開時所有 `<video autoplay>` 會同時下載：c1 約 79 MB、p2 約 52 MB（`p2/ig02.mp4` 單支）、e3 14 MB。建議壓縮剪短、改成捲到畫面才播放（IntersectionObserver＋`preload="none"`），長片改 YouTube。repo 的 `.git` 已約 632 MB（GitHub Pages 建議 1 GB 內），大檔一旦 commit 會永久留在歷史 |
+| 列表卡片自動產生 | `works-grid` 改由 `projectsData` 產生，新增作品從改三處變兩處，消除「漏加卡片」的 bug |
+| 照片格線共用 class | 80 多處 inline `display:grid` 改成 `gallery-2`／`gallery-3`／`gallery-portrait` 之類的 class，手機收欄的 `!important` 屬性選擇器可一併改乾淨 |
+| 作品獨立網址 | `#project/p4` 的 `#` 會被 Google 和社群平台忽略：分享單一作品時預覽卡片永遠是首頁，個別作品也幾乎搜不到。根本解法是每個作品做成獨立靜態頁（如 `projects/p4/`），屬大改版，等上面三項做完再規劃 |
+
 ### 中 / 低優先
 
 | 作業 | 說明 |
 |------|------|
 | 語義化 `<h3>` | 部分 template 用 `<h3>` 當標籤文字（如 `Date:`），可改 `<p class="detail-info-label">` |
 | `musicWidgets` 重構 | 目前掛在 `window` 全域，可改 module-level 變數 |
+| 選單改成真正的連結 | 選單是 `<button>`，不能右鍵開新分頁，螢幕閱讀器也較難辨識 |
+| 自製游標的備援 | `style.css` 用 `cursor: none !important` 隱藏系統游標，JS 沒載入時會完全沒有游標 |
+| 影片檔名空格 | `e3/bg with animal.mp4` 檔名有空格，可改成無空格檔名 |
 
 ---
 
