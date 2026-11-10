@@ -373,6 +373,29 @@ button {
   }
 }
 
+/* 作品頁：換頁轉場已經有淡入，不再疊加 .view 的 0.5 秒浮現動畫，內容立刻顯示 */
+.page-project .view.active {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+
+/* 作品頁照片：還沒讀完時透明（底下是深色背景），讀完後淡入，避免照片突然跳出來。
+   .img-loading 由 main.js 加在「還沒讀完」的圖片上，已經在快取裡的圖片不會閃 */
+#project-detail-content img {
+  transition: opacity 0.35s ease;
+}
+
+#project-detail-content img.img-loading {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #project-detail-content img {
+    transition: none;
+  }
+}
+
 /* ════════════════════════════════════════════════════
    SPA VIEWS
 ════════════════════════════════════════════════════ */

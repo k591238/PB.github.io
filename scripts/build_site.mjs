@@ -89,8 +89,16 @@ const person = {
 for (const p of projects) {
   const url = `${BASE}projects/${p.id}/`;
   const title = `${p.title}｜吳承儒 PB`;
-  const content = read(`content/projects/${p.id}.html`).replace(/\r\n/g, '\n').trimEnd()
-    .split('\n').map(l => (l ? '      ' + l : l)).join('\n');
+  let raw = read(`content/projects/${p.id}.html`).replace(/\r\n/g, '\n').trimEnd();
+  // 頁面最上方的第一個媒體如果是圖片（通常是橫幅大圖），改成最優先載入：
+  // 拿掉 loading="lazy"、加 fetchpriority="high"，讓主要畫面最快出現
+  const firstMedia = raw.match(/<(img|video|iframe)\b[^>]*>/);
+  if (firstMedia && firstMedia[1] === 'img') {
+    const tag = firstMedia[0];
+    const hero = tag.replace(/\s+loading="lazy"/, '').replace(/^<img\b/, '<img fetchpriority="high"');
+    raw = raw.replace(tag, hero);
+  }
+  const content = raw.split('\n').map(l => (l ? '      ' + l : l)).join('\n');
   const ld = {
     '@context': 'https://schema.org',
     '@type': 'CreativeWork',

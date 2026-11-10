@@ -122,6 +122,14 @@ window.addEventListener('popstate', e => {
       el.classList.toggle('active', el.dataset.view === 'projects');
     });
     document.querySelectorAll('#project-detail-content video[data-autoplay]').forEach(v => videoObserver.observe(v));
+    // 照片讀完才淡入（CSS .img-loading）；讀取失敗也要拿掉，避免永遠透明
+    document.querySelectorAll('#project-detail-content img').forEach(img => {
+      if (img.complete) return;
+      img.classList.add('img-loading');
+      const done = () => img.classList.remove('img-loading');
+      img.addEventListener('load', done, { once: true });
+      img.addEventListener('error', done, { once: true });
+    });
   } else if (redirectLegacyProjectHash()) {
     return;
   } else {
