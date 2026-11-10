@@ -329,11 +329,13 @@ function openProjectDetail(projectId, pushState = true) {
 // Handle browser back/forward buttons
 window.addEventListener('popstate', e => {
   const state = e.state;
+  const hash = location.hash.replace('#', '');
   if (state?.view === 'project-detail' && state.projectId) {
     openProjectDetail(state.projectId, false);
+  } else if (!state && hash.startsWith('project/')) {
+    openProjectDetail(hash.replace('project/', ''), false);
   } else {
-    const id = state?.view || location.hash.replace('#', '') || 'home';
-    navigateTo(id, false);
+    navigateTo(state?.view || hash || 'home', false);
   }
 });
 
@@ -456,7 +458,9 @@ document.querySelectorAll('.proj-filter-btn').forEach(btn => {
 
 // Project detail view triggers
 document.querySelectorAll('.work').forEach(card => {
-  card.addEventListener('click', () => {
+  card.addEventListener('click', e => {
+    if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+    e.preventDefault();
     openProjectDetail(card.dataset.project);
   });
 });
@@ -660,18 +664,10 @@ if (window.matchMedia('(pointer: fine)').matches) {
 /* ────────────────────────────────────────
    RIGHT-CLICK / DRAG PROTECTION
    ──────────────────────────────────────── */
-// 右鍵只在連結上開放（可在新分頁開啟），圖片、影片和其他地方維持封鎖
+// 右鍵只在連結上開放（選單、作品卡片可在新分頁開啟），其他地方維持封鎖
 document.addEventListener('contextmenu', (e) => {
-  if (e.target.closest('img, video') || !e.target.closest('a[href]')) e.preventDefault();
+  if (!e.target.closest('a[href]')) e.preventDefault();
 });
 document.addEventListener('dragstart', (e) => {
   if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') e.preventDefault();
-});
-
-// 基本屏蔽：F12、開發者工具與檢視原始碼的快捷鍵（擋不住瀏覽器選單，只是降低隨手查看）
-document.addEventListener('keydown', (e) => {
-  const mod = e.ctrlKey || e.metaKey;
-  const devtools = ['KeyI', 'KeyJ', 'KeyC'].includes(e.code) && ((mod && e.shiftKey) || (e.metaKey && e.altKey));
-  const viewSource = e.code === 'KeyU' && (e.ctrlKey || (e.metaKey && e.altKey));
-  if (e.key === 'F12' || devtools || viewSource) e.preventDefault();
 });

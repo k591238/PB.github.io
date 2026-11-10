@@ -165,7 +165,7 @@ openProjectDetail('p4')        // 開啟 project-detail view，載入 template-p
 
 ### ⚠️ `works-grid`（作品列表卡片）是手寫死的 HTML，不是從 projectsData 動態產生的
 
-這是最容易踩的坑：`index.html` 裡 `<div class="works-grid">`（約在 `#view-projects` 內）的每一張卡片都是手寫的 `<div class="work" data-project="{id}" data-category="{category}">...</div>`，**`projectsData` 只用在 `openProjectDetail()` 的 Generic Layout 備援（抓 `thumb`/`gallery`/`youtubeId`）跟文件標題，不會自動長出列表卡片。**
+這是最容易踩的坑：`index.html` 裡 `<div class="works-grid">`（約在 `#view-projects` 內）的每一張卡片都是手寫的 `<a class="work" href="#project/{id}" data-project="{id}" data-category="{category}">...</a>`（2026-11-10 起是連結，可右鍵開新分頁），**`projectsData` 只用在 `openProjectDetail()` 的 Generic Layout 備援（抓 `thumb`/`gallery`/`youtubeId`）跟文件標題，不會自動長出列表卡片。**
 
 只改 `projectsData` 新增一筆、template 也寫好了，作品還是不會出現在 `/#projects` 列表裡 —— 一定要同時手動在 `works-grid` 補上對應的 `.work` 卡片（見下方「新增作品的完整流程」Step 2.5）。篩選分類(`data-filter`/`data-category`)也是同樣邏輯：按鈕跟卡片都是手寫的純字串比對（`main.js` L391 附近），沒有白名單檢查，新分類只要按鈕跟卡片的字串一致就會動。
 
@@ -401,7 +401,7 @@ python scripts/convert_project.py --id px --source "source/{專案名}" \
 `projectsData` **不會**自動產生列表卡片（見前面「`works-grid` 是手寫死的 HTML」章節）。要在 `index.html` 的 `<div class="works-grid">` 裡，依年份分組（`<!-- 2026 -->` 等註解），手動加一張卡片：
 
 ```html
-<div class="work" data-project="px" data-category="performance">
+<a class="work" href="#project/px" data-project="px" data-category="performance">
   <div class="work-inner">
     <img class="work-thumb" src="assets/images/projects/px/thumb.webp" loading="lazy" alt="作品完整名稱">
   </div>
@@ -409,10 +409,10 @@ python scripts/convert_project.py --id px --source "source/{專案名}" \
     <div class="work-title">作品完整名稱</div>
     <div class="work-meta">2026 &nbsp;·&nbsp; Performance</div>
   </div>
-</div>
+</a>
 ```
 
-`data-project` 要精確對應 `projectsData.id`／`template-{id}`；`data-category` 要跟篩選按鈕的 `data-filter` 字串一致（純字串比對，見 `main.js` `proj-filter-btn` 的 click handler）。
+卡片外層一定要用 `<a>` 並寫上 `href="#project/{id}"`，否則不能右鍵／Ctrl＋點擊在新分頁開啟。`href` 和 `data-project` 的 id 要一致；`data-project` 要精確對應 `projectsData.id`／`template-{id}`；`data-category` 要跟篩選按鈕的 `data-filter` 字串一致（純字串比對，見 `main.js` `proj-filter-btn` 的 click handler）。
 
 **需要全新分類**（不屬於 Performance/Exhibition/Case/Collaboration/Events）時，要在篩選列再加一顆按鈕：
 
@@ -514,7 +514,6 @@ ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
 |------|------|
 | 語義化 `<h3>` | 部分 template 用 `<h3>` 當標籤文字（如 `Date:`），可改 `<p class="detail-info-label">` |
 | `musicWidgets` 重構 | 目前掛在 `window` 全域，可改 module-level 變數 |
-| 作品卡片改成連結 | `works-grid` 的 `.work` 是 `<div>`，無法右鍵／Ctrl＋點擊在新分頁開某個作品；可改成 `<a href="#project/{id}">`（卡片 CSS 要一起調整）。選單已於 2026-11-10 改成連結 |
 | 自製游標的備援 | `style.css` 用 `cursor: none !important` 隱藏系統游標，JS 沒載入時會完全沒有游標 |
 | 影片檔名空格 | `e3/bg with animal.mp4` 檔名有空格，可改成無空格檔名 |
 
@@ -532,8 +531,9 @@ ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
 | `window.musicWidgets` | `main.js` | 音樂播放器控制依賴 |
 | SoundCloud API `<script>` | `index.html` 尾部 | 外部依賴，與 music 頁強耦合 |
 | `google-site-verification` meta | `index.html` `<head>` | 刪除會讓 Search Console 失去網站擁有權驗證 |
-| contextmenu / dragstart / keydown 監聽 | `main.js` 尾部 | 基本防盜，**不是安全機制**（repo 公開，原始碼和圖片本來就能下載）：右鍵只在連結上開放（為了在新分頁開啟），圖片、影片、文字上封鎖；擋 F12、Ctrl＋Shift＋I／J／C、Ctrl＋U 與 Mac 對應快捷鍵，但瀏覽器選單仍可開開發者工具。不要改成「偵測開發者工具就 debugger 暫停」那種做法，會拖慢正常訪客 |
-| 選單連結的 click 處理 | `main.js` `[data-view]` | 選單和標題是 `<a href="#view" data-view>`：一般點擊 `preventDefault` 後走 SPA 切換；Ctrl／⌘／Shift＋點擊直接 return 交給瀏覽器開新分頁。拿掉 `preventDefault` 會造成重複切換 |
+| contextmenu / dragstart 監聽 | `main.js` 尾部 | 基本防盜，**不是安全機制**（repo 公開，原始碼和圖片本來就能下載）：右鍵只在連結上開放（選單、作品卡片可在新分頁開啟；卡片縮圖因此可右鍵），其他圖片、影片、文字上封鎖。**刻意不擋 F12／開發者工具快捷鍵**（2026-11-10 試過後還原：擋不住瀏覽器選單、妨礙自己維護），也不要用「偵測開發者工具就 debugger 暫停」的做法 |
+| 選單／卡片連結的 click 處理 | `main.js` `[data-view]`、`.work` | 選單、標題、作品卡片都是 `<a href="#...">`：一般點擊 `preventDefault` 後走 SPA 切換；Ctrl／⌘／Shift＋點擊直接 return 交給瀏覽器開新分頁。拿掉 `preventDefault` 會造成重複切換 |
+| `popstate` 處理 | `main.js` | 沒有 state 時（網址列手動改 hash）也要解析 `#project/{id}`，不然會被導回首頁 |
 
 ---
 
@@ -558,7 +558,10 @@ ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
 7. **影片瘦身**：c1 六支改 30fps／540p／去聲音，三支長片剪成 18 秒（L1040138 取 20–38 秒、L1040180 取 40–58 秒、L1040177 取前 18 秒），79→21 MB；p2 `ig02.mp4` 壓成 720×720 並改為自動循環（原本是要按播放鍵），52→3.1 MB。全站 12＋1 支影片改用 `data-autoplay`＋`videoObserver`，打開 c1 時的下載量從 30 MB 降到約 6 MB。
 8. **中文 Bio** 改為五段新版本；英文 Bio 依中文版翻譯更新；《聽說 Whisper》四處拼錯的 Wisper 修正。
 9. **選單改成真正的連結**：7 個選單按鈕和左上角標題改成 `<a href="#view">`，可右鍵／Ctrl＋點擊在新分頁開啟，外觀不變。
-10. **右鍵與開發者工具基本屏蔽**：右鍵改成只在連結上開放；新增 F12 等快捷鍵屏蔽（見「禁止輕易更動的項目」）。25 項行為測試全數通過（SPA 切換、上一頁、新分頁、直接開 `#music`、手機選單、各快捷鍵擋與不擋）。
+10. **作品卡片改成連結**：16 張 `.work` 從 `<div>` 改成 `<a href="#project/{id}">`，可右鍵／Ctrl＋點擊在新分頁開某個作品，外觀與分類篩選不變。
+11. **右鍵規則**：改成只在連結上開放。曾短暫加上 F12 等快捷鍵屏蔽，討論後還原（見「禁止輕易更動的項目」）。
+12. **修正 popstate**：網址列手動改成 `#project/{id}` 時會被導回首頁，現在會正確打開作品頁。
+13. 29 項行為測試全數通過（SPA 切換、上一頁、選單與卡片新分頁、直接開 `#music`／`#project/{id}`、手機選單、分類篩選、右鍵開放與封鎖範圍、快捷鍵不再攔截）。
 
 ### 2026-10-20（新增 3 個作品、Events 分類、通用轉換腳本、文件勘誤）
 
