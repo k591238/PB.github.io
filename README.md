@@ -534,7 +534,8 @@ ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
 
 | 作業 | 說明 |
 |------|------|
-| 影片瘦身（部分完成） | 2026-11-10 已完成：c1 六支壓縮剪短（79→21 MB）、p2 `ig02.mp4`（52→3.1 MB）、全站影片改成捲到畫面才播放（見「作品頁影片」）。**尚未處理**：e3 三支（約 27 MB，其中 `bg with animal.mp4` 12 MB）、p3 三支（約 7 MB）。repo 的 `.git` 約 632 MB（GitHub Pages 建議 1 GB 內），舊的大檔仍在歷史裡，之後新增影片務必先壓縮 |
+| 影片瘦身（大致完成） | 已完成：c1 六支（79→21 MB）、p2 `ig02.mp4`（52→3.1 MB）、e3 三支（27→7.4 MB）、全站影片改成捲到畫面才播放（見「作品頁影片」）。**p3 三支（約 7 MB）刻意不壓**：只省 2.6 MB，新檔反而讓 git 歷史再多 4.6 MB，划不來。舊的大檔仍在 git 歷史裡（見下一項），之後新增影片務必先壓縮再 commit |
+| git 歷史殘留大檔 | 換掉的舊影片仍在歷史裡，約 160 MB（p2 舊 `ig02.mp4` 52 MB、c1 舊檔約 77 MB、e3 舊檔約 27 MB）。只影響 repo 大小與 clone 時間，**不影響訪客**（網站只提供最新版檔案）。清除要改寫歷史並 force push（`git filter-repo`），所有本機 clone（含 TD_Laser_POP 同步用的 `_pages_pb/`）都要重新 clone。決定：先不清，等「作品獨立網址」大改版時一起做，或 repo 接近 1 GB 時再處理 |
 | 列表卡片自動產生 | `works-grid` 改由 `projectsData` 產生，新增作品從改三處變兩處，消除「漏加卡片」的 bug |
 | 照片格線共用 class | 80 多處 inline `display:grid` 改成 `gallery-2`／`gallery-3`／`gallery-portrait` 之類的 class，手機收欄的 `!important` 屬性選擇器可一併改乾淨 |
 | 作品獨立網址 | `#project/p4` 的 `#` 會被 Google 和社群平台忽略：分享單一作品時預覽卡片永遠是首頁，個別作品也幾乎搜不到。根本解法是每個作品做成獨立靜態頁（如 `projects/p4/`），屬大改版，等上面三項做完再規劃 |
@@ -546,7 +547,6 @@ ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
 | 語義化 `<h3>` | 部分 template 用 `<h3>` 當標籤文字（如 `Date:`），可改 `<p class="detail-info-label">` |
 | `musicWidgets` 重構 | 目前掛在 `window` 全域，可改 module-level 變數 |
 | 自製游標的備援 | `style.css` 用 `cursor: none !important` 隱藏系統游標，JS 沒載入時會完全沒有游標 |
-| 影片檔名空格 | `e3/bg with animal.mp4` 檔名有空格，可改成無空格檔名 |
 
 ---
 
@@ -595,6 +595,7 @@ ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
 13. 29 項行為測試全數通過（SPA 切換、上一頁、選單與卡片新分頁、直接開 `#music`／`#project/{id}`、手機選單、分類篩選、右鍵開放與封鎖範圍、快捷鍵不再攔截）。
 14. **CV PDF 下載**：About 頁新增「CV PDF ↓」，跟著 EN／CN 切換下載對應語言；PDF 由 `scripts/build_cv_pdf.mjs` 從網站內容自動產生（銀灰細雜訊底、個人照、內文 12pt；英文 2 頁、中文 4 頁）。
 15. **語言切換改成「EN／中文」**：原本的「CN」是中國的國家代碼，容易被當成簡體中文。中文按鈕與中文 Bio／CV 區塊加上 `lang="zh-Hant"`（字型選繁體字形、螢幕閱讀器用中文唸、搜尋引擎判斷語言），按鈕用 Noto Sans TC 顯示。程式內部代號仍是 `zh`，之後新增中文內容區塊也要加 `lang="zh-Hant"`。
+16. **e3 影片剪精華並壓縮**（27→7.4 MB）：`bg with animal.mp4` 改名 `bg_with_animal.mp4`，取 3–21 秒（蜥蜴、鴨子、植物依序出場，頭尾是空的海面，循環自然）；`l1010589.mp4` 取 8–26 秒（廣角互動畫面，避開觀眾擋鏡頭的段落）；`l1010586.mp4` 維持全長 21 秒。皆為 540p／30fps／無聲音／crf 27。p3 決定不壓（理由見待辦「影片瘦身」）。
 
 ### 2026-10-20（新增 3 個作品、Events 分類、通用轉換腳本、文件勘誤）
 
