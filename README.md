@@ -14,7 +14,7 @@
 | **技術棧** | 純 HTML + Vanilla CSS + Vanilla JS（無框架、無建置工具） |
 | **部署** | GitHub Pages（push 即生效，無需 build 流程） |
 | **正式網址** | `https://k591238.github.io/PB.github.io/` — repo 名稱是 `PB.github.io`，帳號是 `k591238`，兩者不相符，所以這是 **Project site**，不是 User site，網址一定要帶 `/PB.github.io/` 路徑，**不可省略** |
-| **主要檔案** | `index.html`（~2790行）、`assets/css/style.css`（~1930行）、`assets/js/main.js`（~650行） |
+| **主要檔案** | `index.html`（~1000行，首頁／列表／音樂／About）、`content/projects/*.html`（作品內容）、`assets/css/style.css`（~1930行）、`assets/js/main.js`（~650行） |
 | **語系** | 中英混排，介面部分英文，內容部分繁體中文 |
 
 ---
@@ -23,7 +23,9 @@
 
 ```
 PB.github.io/
-├── index.html                    ← 整個 SPA 的唯一 HTML 入口，含所有 View 和 Template
+├── index.html                    ← 首頁 SPA（home／projects／music／about 四個 View）
+├── projects/{id}/index.html       ← ⚠️ 作品獨立網頁，由 build_site.mjs 產生，不要手改
+├── content/projects/{id}.html     ← ★作品頁內容（要改作品頁就改這裡，再跑腳本）
 ├── .nojekyll                      ← 告訴 GitHub 不要跑 Jekyll build（本專案未使用 Jekyll）
 ├── robots.txt                     ← 搜尋引擎爬蟲規則（見下方「SEO / Search Console 設定」）
 ├── sitemap.xml                    ← 網站地圖（⚠️ 由 build_site.mjs 產生，不要手改）
@@ -38,7 +40,7 @@ PB.github.io/
 │   ├── css/
 │   │   └── style.css             ← 所有樣式（Design Tokens + 全部元件 CSS）
 │   ├── js/
-│   │   ├── main.js               ← SPA 路由器、projectsData（腳本產生）、SoundCloud 整合
+│   │   ├── main.js               ← SPA 路由器、SoundCloud 整合；作品頁也載入（body.page-project 時只跑共用功能）
 │   │   └── particle.js           ← 首頁粒子背景效果（獨立模組，勿修改）
 │   ├── images/
 │   │   ├── projects/
@@ -66,7 +68,8 @@ PB.github.io/
 │   │       └── e3/               ← 鹹淡適中 影片 (mp4)
 │   └── cv/                       ← ⚠️ 自動產生的 CV PDF（WuChengRu_CV_EN.pdf／_ZH.pdf），不要手改，見「📄 CV PDF」
 └── scripts/                      ← 開發用工具（不入 build）
-    ├── build_site.mjs            ← ★產生腳本：作品卡片、projectsData、sitemap（見「🛠 產生腳本」）
+    ├── build_site.mjs            ← ★產生腳本：作品頁、作品卡片、sitemap（見「🛠 產生腳本」）
+    ├── make_og_images.py         ← 產生作品的社群分享預覽圖 og.jpg（1200×630）
     ├── build_cv_pdf.mjs          ← 從 index.html 的 Bio／CV 產生 CV PDF（Node＋Edge）
     ├── cv/                       ← CV PDF 的排版模板（cv-print.html）、雜訊底紋、作品集 QR code
     ├── compress_images.py        ← 批次壓縮圖片
@@ -166,33 +169,24 @@ node scripts/build_cv_pdf.mjs
 
 ## 🏗 SPA 架構說明
 
-### View 系統
+### 兩種頁面（2026-11-11 起）
 
-網站共有 5 個 View，透過 JS 切換 CSS class `.active`：
+| 頁面 | 網址 | 說明 |
+|---|---|---|
+| 首頁 SPA | `/`、`/#projects`、`/#music`、`/#about` | `index.html`，四個 View 用 JS 切換 `.active`（`<section class="view" id="view-{id}">`） |
+| 作品頁 | `/projects/{id}/` | 每件作品一個獨立靜態網頁，由 `build_site.mjs` 產生。有自己的標題、簡介、canonical、分享預覽圖、JSON-LD |
 
-| View ID | 說明 |
-|---------|------|
-| `home` | 首頁（粒子背景 + 大標題） |
-| `projects` | 作品列表（JS 動態渲染 `.work` 卡片） |
-| `music` | 音樂頁（Vinyl 黑膠播放器 + SoundCloud embed） |
-| `about` | 關於（Bio + CV 分頁切換） |
-| `project-detail` | 個別作品詳細頁（載入 `<template>` 或 generic layout） |
+- 作品卡片是一般連結 `projects/{id}/`，點擊直接換頁。`style.css` 的 `@view-transition` 讓換頁淡入淡出（Chrome／Edge／Safari），`index.html` 的 `speculationrules` 讓滑鼠停在卡片上就預先載入（Chrome／Edge）
+- **舊網址 `#project/{id}` 會自動轉到 `projects/{id}/`**（`main.js` 的 `redirectLegacyProjectHash()`），以前分享出去的連結不會失效
+- 作品頁有 `<base href="../../">`：內容裡的 `assets/...` 相對路徑、選單的 `#projects` 等連結，都會以網站根目錄解析，所以作品內容的寫法跟以前的 template 完全一樣
+- 作品頁也載入 `main.js`。`body.page-project` 時不跑 SPA 路由，只跑游標、選單、影片捲到才播放、回到頂部、右鍵防護等共用功能；「Back to Projects」從列表點進來時用上一頁（保留列表捲動位置），直接開作品頁時連回首頁列表
+- 作品頁的選單與頁首是從 `index.html` 的 `<!-- SHARED:chrome:start -->` … `end` 之間複製的。改選單只要改 `index.html` 再跑腳本
 
-對應 HTML 結構：
-```html
-<section class="view" id="view-{id}">...</section>
-```
-
-### 核心路由（`main.js`）
+### 核心路由（`main.js`，只在首頁）
 
 ```javascript
 navigateTo('projects')         // 切換到 projects view（支援 browser history）
-openProjectDetail('p4')        // 開啟 project-detail view，載入 template-p4
 ```
-
-### 作品詳細頁
-
-`openProjectDetail(id)`：有 `<template id="template-{id}">` 就 clone template 內容（目前 16 件全部都有）；沒有的話用 `projectsData` 的標題、縮圖、`youtubeId` 產生簡易版面（備援，目前沒用到）。
 
 ---
 
@@ -204,28 +198,30 @@ openProjectDetail('p4')        // 開啟 project-detail view，載入 template-p
 node scripts/build_site.mjs
 ```
 
-腳本會更新三個地方（都是標記之間的內容，**每次都會被覆蓋，不要手改**）：
+腳本會產生（**每次都會被覆蓋，不要手改**）：
 
 | 產生的內容 | 位置 |
 |---|---|
+| 作品頁（每件作品一個） | `projects/{id}/index.html`（整個檔案；資料表裡刪掉的作品，對應的頁面也會刪掉） |
 | 作品列表卡片（`.work`，依年份加 `<!-- 2026 -->` 註解） | `index.html` 的 `<!-- BUILD:works-grid:start -->` … `end` 之間 |
-| `projectsData` | `assets/js/main.js` 的 `// BUILD:projects-data:start` … `end` 之間 |
-| `sitemap.xml` | 整個檔案 |
+| `sitemap.xml` | 整個檔案（首頁、講義、作品頁、CV PDF） |
 
 卡片是腳本寫成**靜態 HTML**，不是瀏覽器端用 JS 產生：AI 爬蟲多半不執行 JS，這樣它們才看得到作品清單。
 
-腳本會先檢查資料，有問題就**不寫入任何檔案**並列出原因：缺必填欄位、id 重複、縮圖檔不存在、`index.html` 沒有對應的 `<template id="template-{id}">`、分類沒有對應的篩選按鈕。重複執行結果相同（沒變動就顯示「沒有變動」）。
+腳本會先檢查資料，有問題就**不寫入任何檔案**並列出原因：缺必填欄位、id 格式不對（只能小寫英文、數字、連字號）、id 重複、縮圖檔不存在、沒有 `content/projects/{id}.html`、分類沒有對應的篩選按鈕。重複執行結果相同（沒變動就顯示「沒有變動」）。
 
 ### `data/projects.json` 欄位
 
 ```json
 {
-  "id": "p4",                                        // 必填，對應 template-{id}、圖片資料夾名、網址 #project/{id}
+  "id": "p4",                                        // 必填，對應 content/projects/{id}.html、圖片資料夾名、網址 projects/{id}/
   "title": "光之曲幕 X DJ Friday Night《聲．光．域》",  // 必填，卡片標題
   "year": 2026,                                      // 必填，數字
   "meta": "Performance",                             // 必填，卡片上顯示的分類文字
   "category": "performance",                         // 必填，篩選用，要跟篩選按鈕的 data-filter 一致
   "thumb": "assets/images/projects/p4/thumb.webp",  // 必填，列表縮圖
+  "description": "…",                                // 必填，作品頁簡介（Google 搜尋結果、分享預覽的說明文字），約 70～110 字
+  "ogSource": "assets/…/work_03.webp",              // 選填，指定分享預覽圖的來源圖（沒填用 banner.webp，再沒有用 thumb）
   "alt": "…",                                        // 選填，縮圖的替代文字，沒填就用 title
   "youtubeId": "TazR2qhRegI"                         // 選填，主要 YouTube 影片 ID
 }
@@ -235,7 +231,16 @@ node scripts/build_site.mjs
 
 ### `data/site.json`
 
-只有 `baseUrl`（正式網址，結尾要有 `/`）。換網域時改這裡再重跑腳本。（`index.html` `<head>` 裡的 canonical／og 網址目前仍是手寫，換網域時要一起改，之後大改版會納入腳本。）
+只有 `baseUrl`（正式網址，結尾要有 `/`）。作品頁的 canonical、og、JSON-LD 和 sitemap 都從這裡產生。換網域時改這裡再重跑腳本。（`index.html` `<head>` 裡的 canonical／og／JSON-LD 網址、CV PDF 與講義的 QR code 目前仍是手寫，換網域時要一起改。）
+
+### 分享預覽圖 `og.jpg`
+
+```bash
+python scripts/make_og_images.py          # 只產生還沒有 og.jpg 的作品
+python scripts/make_og_images.py p4       # 重新產生指定作品
+```
+
+輸出 `assets/images/projects/{id}/og.jpg`（1200×630，置中裁切）。WebP 在部分平台（如 LINE）不一定能顯示，所以另外產生 JPG。新增作品時要跑一次；想換構圖就在資料表填 `ogSource` 再重跑。
 
 ---
 
@@ -308,7 +313,7 @@ node scripts/build_site.mjs
 
 ## 📋 Template 撰寫標準規範
 
-新增作品時，在 `index.html` 尾部（`<!-- 懸浮回到頂部按鈕 -->` 之前）新增 `<template>`：
+新增作品時，建立 `content/projects/{id}.html`，內容就是作品頁 `#project-detail-content` 裡面的 HTML（以前寫在 `index.html` 的 `<template>` 裡，2026-11-11 搬出來；下面範例的 `<template>` 外框不用寫）。圖片、影片路徑照樣寫 `assets/...`：
 
 ```html
 <template id="template-{id}">
@@ -401,7 +406,7 @@ YouTube／IG 貼文連結：
 
 1. 讀照片，分出直式／橫式，提出排版方式
 2. 檢查資料：**缺漏或不確定的（日期、場地、單位、人名、國外演出細節）一律先問，不可自己編寫或推測**
-3. 轉檔（`convert_project.py`）→ `data/projects.json` 加一筆 → `index.html` 加 `<template>` → 執行 `node scripts/build_site.mjs`
+3. 轉檔（`convert_project.py`）→ `data/projects.json` 加一筆（含簡介）→ 寫 `content/projects/{id}.html` → `python scripts/make_og_images.py` → `node scripts/build_site.mjs`
 4. 本機截圖驗證（桌機 1280px、手機 390px）：列表有新卡片、作品頁沒破版、直式照片有併排縮小（截圖方法見「本機截圖驗證」）
 5. 把截圖和文字給使用者確認，確認後才 commit；**使用者明確說可以才 push**
 
@@ -452,9 +457,13 @@ python scripts/convert_project.py --id px --source "source/{專案名}" \
 
 **不要再手動加 `.work` 卡片、也不要手改 `main.js` 的 `projectsData`**，兩者都由 Step 3.5 的腳本產生。
 
-### Step 3：在 `index.html` 新增 `<template>`
+### Step 3：新增 `content/projects/{id}.html`
 
-位置：在最後一個 `</template>` 之後、`<!-- 懸浮回到頂部按鈕 -->` 之前。
+寫法見「📋 Template 撰寫標準規範」（不用 `<template>` 外框）。接著產生分享預覽圖：
+
+```bash
+python scripts/make_og_images.py
+```
 
 ### Step 3.5：執行產生腳本
 
@@ -462,11 +471,12 @@ python scripts/convert_project.py --id px --source "source/{專案名}" \
 node scripts/build_site.mjs
 ```
 
-卡片、`projectsData`、sitemap 會一起更新。腳本報錯時照訊息修正 `data/projects.json` 或 template 後重跑。
+作品頁 `projects/{id}/`、列表卡片、sitemap 會一起產生。腳本報錯時照訊息修正後重跑。**`projects/` 底下的檔案不要手改**，下次跑腳本會被覆蓋。
 
 ### Step 4：驗證
 
-- 產生腳本執行成功（它會檢查 template、縮圖、分類）
+- 產生腳本執行成功（它會檢查作品內容檔、縮圖、分類、簡介）
+- 打開 `projects/{id}/` 看作品頁，並從列表點進去、按 Back 回來
 - 所有圖片路徑確認存在
 - 用瀏覽器打開 `/#projects` 實際看一下新卡片有沒有出現、位置對不對、分類篩選正常
 - 直式照片有併排縮小處理，沒有單獨撐成一張大圖
@@ -506,7 +516,7 @@ node scripts/build_site.mjs
 </video>
 ```
 
-`main.js` 的 `videoObserver` 會在影片接近畫面（200px 內）時才播放、離開畫面就暫停；`openProjectDetail()` 載入作品頁後會自動掛上。寫成 `autoplay` 的話，打開作品頁就會同時下載所有影片（c1 改之前一打開就下載 30 MB）。
+`main.js` 的 `videoObserver` 會在影片接近畫面（200px 內）時才播放、離開畫面就暫停；作品頁載入時 `main.js` 會自動掛上。寫成 `autoplay` 的話，打開作品頁就會同時下載所有影片（c1 改之前一打開就下載 30 MB）。
 
 **上傳前先壓縮**（ffmpeg，網頁上一律靜音所以拿掉聲音）：
 
@@ -546,7 +556,7 @@ ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
 | 影片瘦身（大致完成） | 已完成：c1 六支（79→21 MB）、p2 `ig02.mp4`（52→3.1 MB）、e3 三支（27→7.4 MB）、全站影片改成捲到畫面才播放（見「作品頁影片」）。**p3 三支（約 7 MB）刻意不壓**：只省 2.6 MB，新檔反而讓 git 歷史再多 4.6 MB，划不來。舊的大檔仍在 git 歷史裡（見下一項），之後新增影片務必先壓縮再 commit |
 | git 歷史殘留大檔 | 換掉的舊影片仍在歷史裡，約 160 MB（p2 舊 `ig02.mp4` 52 MB、c1 舊檔約 77 MB、e3 舊檔約 27 MB）。只影響 repo 大小與 clone 時間，**不影響訪客**（網站只提供最新版檔案）。**⛔ 這一項只是紀錄，AI Agent 不可自行執行**（見「禁止輕易更動的項目」）。使用者決定：維持現狀；遇到大改版（如「作品獨立網址」）或 repo 接近 1 GB 時，**只提醒使用者有這件事**，由使用者決定要不要處理 |
 | 照片格線共用 class | 80 多處 inline `display:grid` 改成 `gallery-2`／`gallery-3`／`gallery-portrait` 之類的 class，手機收欄的 `!important` 屬性選擇器可一併改乾淨 |
-| 作品獨立網址 | `#project/p4` 的 `#` 會被 Google 和社群平台忽略：分享單一作品時預覽卡片永遠是首頁，個別作品也幾乎搜不到。根本解法是每個作品做成獨立靜態頁（如 `projects/p4/`），屬大改版，分三階段。**階段 1（產生腳本）2026-11-11 已完成**。階段 2：作品獨立網頁 `projects/{id}/`（作品內容搬到 `content/projects/{id}.html`，點卡片換頁、加 View Transitions 轉場與 Speculation Rules 預先載入，舊 `#project/{id}` 自動轉址）。階段 3：每件作品的 JSON-LD（日期、場地等資料整理成表格請使用者逐筆確認）。使用者已同意以上方向，作品簡介由 Agent 從作品頁擷取草稿、使用者修改 |
+| 作品獨立網址 | `#project/p4` 的 `#` 會被 Google 和社群平台忽略：分享單一作品時預覽卡片永遠是首頁，個別作品也幾乎搜不到。根本解法是每個作品做成獨立靜態頁（如 `projects/p4/`），屬大改版，分三階段。**階段 1（產生腳本）、階段 2（作品獨立網頁 `projects/{id}/`）2026-11-11 已完成**，上線後要到 Search Console 對作品頁要求建立索引。階段 3：每件作品的 JSON-LD（日期、場地等資料整理成表格請使用者逐筆確認）。使用者已同意以上方向，作品簡介由 Agent 從作品頁擷取草稿、使用者修改 |
 | 網址／網域（跟大改版一起決定） | Google 搜尋結果的網站名稱顯示成「GitHub Pages documentation」、網站圖示是預設的地球：Google 只支援網域層級的網站名稱和網站圖示（favicon），子資料夾（`/PB.github.io/`）無法自訂，網站內容怎麼改都修不了。解法二選一：①買自訂網域（最佳，使用者想等網站完整後再買）②repo 改名為 `k591238.github.io` 變成 user site（免費，也順便解決 robots.txt 問題）。兩者都要處理舊網址轉址、CV PDF 與講義 QR code 重新產生，所以要在做「作品獨立網址」時或之前決定 |
 
 ### 中 / 低優先
@@ -565,7 +575,9 @@ ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
 |------|------|------|
 | ⛔ **git 歷史（絕對禁止改寫）** | 整個 repo | **不可執行** `git filter-repo`、`git filter-branch`、BFG、`git push --force`／`--force-with-lease`、`git reset --hard` 到已 push 的 commit、刪除或重建 repo。即使看起來是在「清理大檔」「縮小 repo」，也一律不做，只能向使用者提起。改寫歷史會讓所有 clone（含 TD_Laser_POP 的自動同步）失效，而且無法復原 |
 | `navigateTo()` | `main.js` L100–158 | SPA 路由核心，修改影響所有頁面切換 |
-| `openProjectDetail()` | `main.js` | 作品詳細頁渲染邏輯；清空內容前的 `videoObserver.disconnect()` 和最後掛上 `video[data-autoplay]` 的那行不可拿掉 |
+| `initRouter()` 的作品頁分支 | `main.js` | 作品頁（`body.page-project`）不跑 SPA 路由，但要掛上 `video[data-autoplay]` 的 `videoObserver`，拿掉影片就不會播放 |
+| `<base href="../../">` | 作品頁（腳本產生） | 作品內容的 `assets/...` 路徑和選單連結都靠它解析到網站根目錄，拿掉整頁圖片會壞 |
+| `redirectLegacyProjectHash()` | `main.js` | 舊網址 `#project/{id}` 轉到 `projects/{id}/`，以前分享出去的連結靠它才不會失效 |
 | `scrollObserver` | `main.js` L91–98 | 所有 scroll-reveal 動畫依賴 |
 | `.detail-grid-2` / `.detail-grid-3` CSS | `style.css` | `template-c3` 仍在使用，刪除會破版 |
 | `particle.js` | `assets/js/particle.js` | 首頁背景獨立模組 |
@@ -573,8 +585,8 @@ ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
 | SoundCloud API `<script>` | `index.html` 尾部 | 外部依賴，與 music 頁強耦合 |
 | `google-site-verification` meta | `index.html` `<head>` | 刪除會讓 Search Console 失去網站擁有權驗證 |
 | contextmenu / dragstart 監聽 | `main.js` 尾部 | 基本防盜，**不是安全機制**（repo 公開，原始碼和圖片本來就能下載）：右鍵只在連結上開放（選單、作品卡片可在新分頁開啟），圖片、影片、文字上封鎖。卡片縮圖 `.work-thumb` 設了 `pointer-events: none`，右鍵時點到的是卡片連結而非圖片，所以選單只有「新分頁開啟」、沒有「另存圖片」——拿掉這行縮圖就能被右鍵另存。**刻意不擋 F12／開發者工具快捷鍵**（2026-11-10 試過後還原：擋不住瀏覽器選單、妨礙自己維護），也不要用「偵測開發者工具就 debugger 暫停」的做法 |
-| 選單／卡片連結的 click 處理 | `main.js` `[data-view]`、`.work` | 選單、標題、作品卡片都是 `<a href="#...">`：一般點擊 `preventDefault` 後走 SPA 切換；Ctrl／⌘／Shift＋點擊直接 return 交給瀏覽器開新分頁。拿掉 `preventDefault` 會造成重複切換 |
-| `popstate` 處理 | `main.js` | 沒有 state 時（網址列手動改 hash）也要解析 `#project/{id}`，不然會被導回首頁 |
+| 選單連結的 click 處理 | `main.js` `[data-view]` | 選單、標題都是 `<a href="#...">`：首頁上一般點擊 `preventDefault` 後走 SPA 切換；Ctrl／⌘／Shift＋點擊、或在作品頁上，直接交給瀏覽器（作品卡片是一般連結，不需要 JS） |
+| `popstate` 處理 | `main.js` | 網址列手動改成舊的 `#project/{id}` 時要轉址到作品頁，不然會被導回首頁 |
 
 ---
 
@@ -614,6 +626,10 @@ ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
 2. 資料以原本手寫卡片為準（卡片才是訪客看到的）：ev1 標題 `PXP 2026 Artist Talk`、e1 `聽說 Whisper`、p1 縮圖 `pic_15.webp`、co2 縮圖 `work_10.webp`，p5／c2／co1 的 alt 保留；`projectsData` 順序改成跟列表一致。拿掉沒有任何作品使用的 `gallery` 欄位。
 3. sitemap 改由腳本產生（使用者同意，取代 2026-11-10 換上的線上產生器版本），內容相同，拿掉 Google 不使用的 `priority`。
 4. 驗證：16 張卡片的連結、分類、縮圖、alt、標題、年份逐一比對與改版前完全一致；列表、四種分類篩選、點卡片、上一頁、直接開 `#project/p4` 測試通過，無 JS 錯誤。
+5. **階段 2：作品獨立網頁**。16 件作品的 `<template>` 搬到 `content/projects/{id}.html`，由腳本產生 `projects/{id}/index.html`（各自的 `<title>`、簡介、canonical、og／twitter 卡片、`CreativeWork` JSON-LD）；`index.html` 從 2905 行減為約 1000 行。作品卡片改連到 `projects/{id}/`，舊的 `#project/{id}` 自動轉址。加上換頁轉場（View Transitions）與滑過卡片預先載入（Speculation Rules）。`main.js` 拿掉 `openProjectDetail()`、`projectsData`、卡片 click 處理，新增作品頁模式。
+6. 新增 `scripts/make_og_images.py`，為 16 件作品產生 1200×630 的 `og.jpg`。
+7. 每件作品新增簡介 `description`（Agent 從作品頁原文擷取的草稿，請使用者確認）。
+8. 驗證：16 件作品在 1280／390px，改版前（`#project/{id}`）與改版後（`projects/{id}/`）的文字、圖片／影片／嵌入網址、內容高度逐一比對一致（p2 的 IG 嵌入每次載入高度不同，兩版都會浮動）；沒有壞圖、沒有 404、沒有 JS 錯誤。換頁操作 11 項測試通過（點卡片、影片播放、Back、作品頁選單與標題、直接開作品頁按 Back、舊網址轉址、手機選單）。
 
 ### 2026-10-20（新增 3 個作品、Events 分類、通用轉換腳本、文件勘誤）
 

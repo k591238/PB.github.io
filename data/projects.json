@@ -6,6 +6,7 @@
     "meta": "Exhibition",
     "category": "exhibition",
     "thumb": "assets/images/projects/e2/thumb.webp",
+    "description": "吳承儒（PB）個展《繫 Sync》。回應空間的既有結構與語彙，透過音像技術生成沉浸式現場，將影像、聲響與空間動線交織，打造一座異質化的感知風景。",
     "youtubeId": "j6Q909i4HB0"
   },
   {
@@ -15,6 +16,7 @@
     "meta": "Performance",
     "category": "performance",
     "thumb": "assets/images/projects/p4/thumb.webp",
+    "description": "光之曲幕 X DJ Friday Night《聲．光．域》，吳承儒 pen_bit 於歌劇院 2F 大劇前廳光之曲幕穹頂空間的音像演出，分別與宋義威 ALLO WILL、吳道勳 WU TAO HSUN 同台。",
     "youtubeId": "TazR2qhRegI"
   },
   {
@@ -24,6 +26,7 @@
     "meta": "Performance",
     "category": "performance",
     "thumb": "assets/images/projects/p5/thumb.webp",
+    "description": "《Thiann》聽，吳承儒（PB）於奧地利林茲 Ars Electronica Festival「Sound Campus 26 – Listening Underground」的音像演出，負責聲音與影像。",
     "alt": "《Thiann》聽 — Sound Campus 26 演出紀錄"
   },
   {
@@ -32,7 +35,8 @@
     "year": 2026,
     "meta": "Case",
     "category": "case",
-    "thumb": "assets/images/projects/c1/thumb.webp"
+    "thumb": "assets/images/projects/c1/thumb.webp",
+    "description": "101 手錶發表會商業演出紀錄（2026 年 6 月 10 日），吳承儒（pen_bit）擔任 VJ，與 DJ 達巴斯胡祕 Tapas Humi 合作演出。"
   },
   {
     "id": "co3",
@@ -40,7 +44,8 @@
     "year": 2026,
     "meta": "Collaboration",
     "category": "collaboration",
-    "thumb": "assets/images/projects/co3/thumb.webp"
+    "thumb": "assets/images/projects/co3/thumb.webp",
+    "description": "樓頂小隊《自動販賣機》，第四屆桃園科技表演藝術獎科藝獎競賽作品，結合即時影像生成、新媒體藝術與劇場表演，獲文化部 115 年度扶植青年藝術發展補助支持。"
   },
   {
     "id": "ev1",
@@ -48,7 +53,8 @@
     "year": 2026,
     "meta": "Events",
     "category": "events",
-    "thumb": "assets/images/projects/ev1/thumb.webp"
+    "thumb": "assets/images/projects/ev1/thumb.webp",
+    "description": "吳承儒（PB）於 PXP 2026 音像藝術節擔任藝術家短講講者與工作坊助教，以《創作過程中的思考：從觀察到呈現》為題，分享從日常觀察到作品呈現的創作脈絡。"
   },
   {
     "id": "p6",
@@ -56,7 +62,8 @@
     "year": 2026,
     "meta": "Performance",
     "category": "performance",
-    "thumb": "assets/images/projects/p6/thumb.webp"
+    "thumb": "assets/images/projects/p6/thumb.webp",
+    "description": "《視感認知 Visual Cognition》，吳承儒（PB）於 2026 新響藝術季《新聲複樂之夜》（C-LAB 臺灣聲響實驗室）的音像演出，探討數位影像中像素與認知投射之間的觀看經驗。"
   },
   {
     "id": "p1",
@@ -65,6 +72,7 @@
     "meta": "Performance",
     "category": "performance",
     "thumb": "assets/images/projects/p1/pic_15.webp",
+    "description": "《視感認知 Mind Fluid》，吳承儒（PB）於台北流行音樂中心 Live House D 的音像演出，以段落式呈現探討數位影像由像素構成的觀看方式。",
     "youtubeId": "MoqFfofD9oY"
   },
   {
@@ -73,7 +81,8 @@
     "year": 2025,
     "meta": "Exhibition",
     "category": "exhibition",
-    "thumb": "assets/images/projects/e3/thumb.webp"
+    "thumb": "assets/images/projects/e3/thumb.webp",
+    "description": "吳承儒、胡貽斐互動影像作品《鹹淡適中 Glub Glub》。將水域帶入城市，當觀眾靠近時，水邊的動植物隨身影浮現並隨動作變化，於金車文藝中心承德館及臺北白晝之夜展出。"
   },
   {
     "id": "c2",
@@ -82,6 +91,7 @@
     "meta": "Case",
     "category": "case",
     "thumb": "assets/images/projects/c2/thumb.webp",
+    "description": "BLND Academy × 透視音像 Perspectives「Live VJ Lab 即時影像演出工作營」，吳承儒擔任講師，以 Resolume Arena 與 TouchDesigner 帶領即時影像創作、視覺演出與系統整合。",
     "alt": "Live VJ Lab"
   },
   {
@@ -91,6 +101,7 @@
     "meta": "Case",
     "category": "case",
     "thumb": "assets/images/projects/c3/work_01.webp",
+    "description": "蔡昱廷《離水山：再臨 Shuishan: Returnings》，2025 臺灣美術雙年展「黑水」三頻道影像與聲音裝置，吳承儒（PB）擔任 AI Visual Programmer。",
     "youtubeId": "EtbHRLqTuyA"
   },
   {
@@ -100,6 +111,7 @@
     "meta": "Performance",
     "category": "performance",
     "thumb": "assets/images/projects/p2/thumb.webp",
+    "description": "吳承儒（PB）主要創作《認夢 Dream Percept》，FUTURE VISION LAB 於 C-LAB 穹頂劇場的演出。表演者在現場透過對話引導 AI 做夢，探討 AI 與人類的自我意識。",
     "youtubeId": "VWdl_gF3HBw"
   },
   {
@@ -109,6 +121,7 @@
     "meta": "Exhibition",
     "category": "exhibition",
     "thumb": "assets/images/projects/e1/thumb.webp",
+    "description": "吳承儒（PB）聲音裝置《聽說 Whisper》，2024 關渡光藝術節 X 後花園實驗場《燒聲》。資訊來源只有來自水管內的聲音，卻無法確定其真實性與具體內容。",
     "youtubeId": "3zMIU6YjPEk"
   },
   {
@@ -118,6 +131,7 @@
     "meta": "Collaboration",
     "category": "collaboration",
     "thumb": "assets/images/projects/co1/thumb.webp",
+    "description": "明白實驗所《翼手龍摩天劇院 The Archaeology of Wonderland》，2024 臺北藝穗節，吳承儒（PB）擔任技術統籌暨執行與 AI 影像設計，打造一座關於記憶考古的飛行劇院。",
     "alt": "翼手龍摩天劇院",
     "youtubeId": "1NetdkQiMT4"
   },
@@ -128,6 +142,7 @@
     "meta": "Collaboration",
     "category": "collaboration",
     "thumb": "assets/images/projects/co2/work_10.webp",
+    "description": "VIVIDO: re-Action，XTRUX VIVIDO 創作計畫最終章，於臺北數位藝術中心（DAC）。吳承儒以 Pen Bit 身分與 Sandy's Trace 合作 live A/V 演出。",
     "youtubeId": "K276uwK-u5A"
   },
   {
@@ -136,6 +151,7 @@
     "year": 2023,
     "meta": "Performance",
     "category": "performance",
-    "thumb": "assets/images/projects/p3/thumb.webp"
+    "thumb": "assets/images/projects/p3/thumb.webp",
+    "description": "FUTURE VISION LAB 2023《未來視覺派對》，C-LAB 戶外穹頂劇場（DOME）的音像演出，吳承儒（pen_bit）為參與藝術家並擔任技術執行。"
   }
 ]

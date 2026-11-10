@@ -1,151 +1,22 @@
 /* ────────────────────────────────────────
    DATA
 ──────────────────────────────────────── */
-// BUILD:projects-data:start（由 scripts/build_site.mjs 產生，不要手改）
-const projectsData = [
-  {
-    "id": "e2",
-    "title": "繫 Sync",
-    "year": 2026,
-    "meta": "Exhibition",
-    "category": "exhibition",
-    "thumb": "assets/images/projects/e2/thumb.webp",
-    "youtubeId": "j6Q909i4HB0"
-  },
-  {
-    "id": "p4",
-    "title": "光之曲幕 X DJ Friday Night《聲．光．域》",
-    "year": 2026,
-    "meta": "Performance",
-    "category": "performance",
-    "thumb": "assets/images/projects/p4/thumb.webp",
-    "youtubeId": "TazR2qhRegI"
-  },
-  {
-    "id": "p5",
-    "title": "《Thiann》聽",
-    "year": 2026,
-    "meta": "Performance",
-    "category": "performance",
-    "thumb": "assets/images/projects/p5/thumb.webp"
-  },
-  {
-    "id": "c1",
-    "title": "101 手錶發表會商演",
-    "year": 2026,
-    "meta": "Case",
-    "category": "case",
-    "thumb": "assets/images/projects/c1/thumb.webp"
-  },
-  {
-    "id": "co3",
-    "title": "樓頂《自動販賣機》",
-    "year": 2026,
-    "meta": "Collaboration",
-    "category": "collaboration",
-    "thumb": "assets/images/projects/co3/thumb.webp"
-  },
-  {
-    "id": "ev1",
-    "title": "PXP 2026 Artist Talk",
-    "year": 2026,
-    "meta": "Events",
-    "category": "events",
-    "thumb": "assets/images/projects/ev1/thumb.webp"
-  },
-  {
-    "id": "p6",
-    "title": "視感認知 Visual Cognition",
-    "year": 2026,
-    "meta": "Performance",
-    "category": "performance",
-    "thumb": "assets/images/projects/p6/thumb.webp"
-  },
-  {
-    "id": "p1",
-    "title": "視感認知 Mind Fluid",
-    "year": 2025,
-    "meta": "Performance",
-    "category": "performance",
-    "thumb": "assets/images/projects/p1/pic_15.webp",
-    "youtubeId": "MoqFfofD9oY"
-  },
-  {
-    "id": "e3",
-    "title": "鹹淡適中 Glub Glub",
-    "year": 2025,
-    "meta": "Exhibition",
-    "category": "exhibition",
-    "thumb": "assets/images/projects/e3/thumb.webp"
-  },
-  {
-    "id": "c2",
-    "title": "Live VJ Lab 即時影像演出工作營",
-    "year": 2025,
-    "meta": "Case",
-    "category": "case",
-    "thumb": "assets/images/projects/c2/thumb.webp"
-  },
-  {
-    "id": "c3",
-    "title": "離水山：再臨 Shuishan: Returnings",
-    "year": 2025,
-    "meta": "Case",
-    "category": "case",
-    "thumb": "assets/images/projects/c3/work_01.webp",
-    "youtubeId": "EtbHRLqTuyA"
-  },
-  {
-    "id": "p2",
-    "title": "認夢 Dream Percept",
-    "year": 2024,
-    "meta": "Performance",
-    "category": "performance",
-    "thumb": "assets/images/projects/p2/thumb.webp",
-    "youtubeId": "VWdl_gF3HBw"
-  },
-  {
-    "id": "e1",
-    "title": "聽說 Whisper",
-    "year": 2024,
-    "meta": "Exhibition",
-    "category": "exhibition",
-    "thumb": "assets/images/projects/e1/thumb.webp",
-    "youtubeId": "3zMIU6YjPEk"
-  },
-  {
-    "id": "co1",
-    "title": "翼手龍摩天劇院 The Archaeology of Wonderland",
-    "year": 2024,
-    "meta": "Collaboration",
-    "category": "collaboration",
-    "thumb": "assets/images/projects/co1/thumb.webp",
-    "youtubeId": "1NetdkQiMT4"
-  },
-  {
-    "id": "co2",
-    "title": "VIVIDO: re-Action",
-    "year": 2024,
-    "meta": "Collaboration",
-    "category": "collaboration",
-    "thumb": "assets/images/projects/co2/work_10.webp",
-    "youtubeId": "K276uwK-u5A"
-  },
-  {
-    "id": "p3",
-    "title": "FUTURE VISION LAB 2023 《未來視覺派對》",
-    "year": 2023,
-    "meta": "Performance",
-    "category": "performance",
-    "thumb": "assets/images/projects/p3/thumb.webp"
-  }
-];
-// BUILD:projects-data:end
+// 作品資料在 data/projects.json，作品頁由 scripts/build_site.mjs 產生成 projects/{id}/index.html
+// 作品頁（body.page-project）也載入這支 main.js，SPA 切換相關的程式只在首頁執行
+const IS_PROJECT_PAGE = document.body.classList.contains('page-project');
+
+// 舊網址 #project/{id} → 新網址 projects/{id}/
+function redirectLegacyProjectHash() {
+  const m = location.hash.match(/^#project\/([a-z0-9-]+)$/);
+  if (!m) return false;
+  location.replace(`projects/${m[1]}/`);
+  return true;
+}
 
 /* ────────────────────────────────────────
    CORE FUNCTIONS
 ──────────────────────────────────────── */
-const VIEWS = ['home', 'projects', 'music', 'about', 'project-detail'];
+const VIEWS = ['home', 'projects', 'music', 'about'];
 const menuContainer = document.getElementById('menu_mobile');
 
 function closeMenu() {
@@ -234,114 +105,27 @@ function navigateTo(id, pushState = true) {
   }
 }
 
-function openProjectDetail(projectId, pushState = true) {
-  const project = projectsData.find(p => p.id === projectId);
-  if (!project) return;
-
-  const detailView = document.getElementById('view-project-detail');
-  const contentContainer = document.getElementById('project-detail-content');
-  if (!contentContainer) return;
-
-  // Clear previous content
-  videoObserver.disconnect();
-  contentContainer.innerHTML = '';
-
-  // Check if a specific template exists for this project
-  const template = document.getElementById(`template-${projectId}`);
-
-  if (template) {
-    // === CUSTOM LAYOUT MODE ===
-    // Clone the template content and append it
-    const clone = template.content.cloneNode(true);
-    contentContainer.appendChild(clone);
-  } else {
-    // === GENERIC LAYOUT MODE ===
-    // Build the generic HTML structure
-    const titleEl = document.createElement('h1');
-    titleEl.className = 'detail-title';
-    titleEl.textContent = project.title;
-
-    const thumbImg = document.createElement('img');
-    thumbImg.className = 'detail-thumb';
-    if (project.thumb) {
-      thumbImg.src = project.thumb;
-      thumbImg.alt = project.title;
-    } else {
-      thumbImg.style.display = 'none';
-    }
-
-    const metaEl = document.createElement('div');
-    metaEl.className = 'detail-meta';
-    metaEl.textContent = `${project.year} · ${project.meta}`;
-
-    contentContainer.appendChild(titleEl);
-    contentContainer.appendChild(thumbImg);
-    contentContainer.appendChild(metaEl);
-
-    // YouTube video
-    if (project.youtubeId) {
-      const videoContainer = document.createElement('div');
-      videoContainer.className = 'detail-video';
-      const iframe = document.createElement('iframe');
-      iframe.title = 'YouTube video player';
-      iframe.frameBorder = '0';
-      iframe.allowFullscreen = true;
-      iframe.src = `https://www.youtube.com/embed/${project.youtubeId}`;
-      videoContainer.appendChild(iframe);
-      contentContainer.appendChild(videoContainer);
-    }
-
-    // Gallery
-    if (project.gallery && project.gallery.length > 0) {
-      const galleryContainer = document.createElement('div');
-      galleryContainer.className = 'detail-gallery';
-      project.gallery.forEach(imgSrc => {
-        const img = document.createElement('img');
-        img.src = imgSrc;
-        img.alt = `${project.title} gallery image`;
-        img.loading = 'lazy';
-        galleryContainer.appendChild(img);
-      });
-      contentContainer.appendChild(galleryContainer);
-    }
-  }
-
-  contentContainer.querySelectorAll('video[data-autoplay]').forEach(v => videoObserver.observe(v));
-
-  // Push state for browser back support
-  if (pushState) {
-    history.pushState({ view: 'project-detail', projectId }, '', '#project/' + projectId);
-  }
-
-  navigateTo('project-detail', false);
-}
-
 /* ────────────────────────────────────────
    INITIALIZATION & LISTENERS
 ──────────────────────────────────────── */
 
 // Handle browser back/forward buttons
 window.addEventListener('popstate', e => {
-  const state = e.state;
-  const hash = location.hash.replace('#', '');
-  if (state?.view === 'project-detail' && state.projectId) {
-    openProjectDetail(state.projectId, false);
-  } else if (!state && hash.startsWith('project/')) {
-    openProjectDetail(hash.replace('project/', ''), false);
-  } else {
-    navigateTo(state?.view || hash || 'home', false);
-  }
+  if (IS_PROJECT_PAGE || redirectLegacyProjectHash()) return;
+  navigateTo(e.state?.view || location.hash.replace('#', '') || 'home', false);
 });
 
 // Set initial view on page load
 (function initRouter() {
-  const hash = location.hash.replace('#', '');
-  // Handle #project/xxx deep links
-  if (hash.startsWith('project/')) {
-    const projectId = hash.replace('project/', '');
-    openProjectDetail(projectId, false);
+  if (IS_PROJECT_PAGE) {
+    document.querySelectorAll('[data-view]').forEach(el => {
+      el.classList.toggle('active', el.dataset.view === 'projects');
+    });
+    document.querySelectorAll('#project-detail-content video[data-autoplay]').forEach(v => videoObserver.observe(v));
+  } else if (redirectLegacyProjectHash()) {
+    return;
   } else {
-    navigateTo(hash || 'home', false);
+    navigateTo(location.hash.replace('#', '') || 'home', false);
   }
   // Restore scrolling after JS resolves the initial view
   // (body overflow-y: hidden prevents the flash of scrollbar on page load)
@@ -349,10 +133,11 @@ window.addEventListener('popstate', e => {
 })();
 
 // Main navigation buttons
+// 作品頁上的選單是一般連結（<base> 讓 #projects 指向首頁），直接換頁
 document.querySelectorAll('[data-view]').forEach(el => {
   el.addEventListener('click', e => {
     // Ctrl／⌘／Shift＋點擊交給瀏覽器開新分頁或新視窗
-    if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+    if (IS_PROJECT_PAGE || e.ctrlKey || e.metaKey || e.shiftKey) return;
     e.preventDefault();
     navigateTo(el.dataset.view);
   });
@@ -454,22 +239,25 @@ document.querySelectorAll('.proj-filter-btn').forEach(btn => {
   });
 });
 
-// Project detail view triggers
-document.querySelectorAll('.work').forEach(card => {
-  card.addEventListener('click', e => {
-    if (e.ctrlKey || e.metaKey || e.shiftKey) return;
-    e.preventDefault();
-    openProjectDetail(card.dataset.project);
-  });
-});
+// 作品卡片是一般連結（projects/{id}/），點擊直接換頁，不需要 JS 處理
 
-// Project detail back button
-document.querySelector('.btn-back').addEventListener('click', () => {
-  // Clear generic iframe if it exists to stop audio
-  const iframes = document.querySelectorAll('#view-project-detail iframe');
-  iframes.forEach(iframe => iframe.src = '');
-  navigateTo('projects');
-});
+// 作品頁的「Back to Projects」：從作品列表點進來的就用上一頁（保留列表捲動位置），
+// 直接開作品頁的人則照連結回到首頁的作品列表
+const backLink = document.querySelector('.page-project .btn-back');
+if (backLink) {
+  backLink.addEventListener('click', e => {
+    if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+    let fromList = false;
+    try {
+      const ref = new URL(document.referrer);
+      fromList = ref.origin === location.origin && new URL(backLink.href).pathname === ref.pathname;
+    } catch { /* 沒有 referrer */ }
+    if (fromList && history.length > 1) {
+      e.preventDefault();
+      history.back();
+    }
+  });
+}
 
 /* ────────────────────────────────────────
    NAV SCROLL STATE (Optimized with RAF)

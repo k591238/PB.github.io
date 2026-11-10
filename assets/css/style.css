@@ -354,6 +354,26 @@ button {
 }
 
 /* ════════════════════════════════════════════════════
+   換頁轉場（首頁 ↔ 作品頁 projects/{id}/）
+   支援的瀏覽器（Chrome／Edge／Safari）換頁時淡入淡出，不會閃白；
+   不支援的瀏覽器照常換頁
+════════════════════════════════════════════════════ */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}
+
+/* ════════════════════════════════════════════════════
    SPA VIEWS
 ════════════════════════════════════════════════════ */
 .view {
@@ -1269,6 +1289,8 @@ button {
 }
 
 .btn-back {
+  display: inline-block;
+  text-decoration: none;
   background: none;
   border: none;
   color: var(--text-secondary);
