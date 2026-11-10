@@ -991,6 +991,15 @@ button {
   margin-bottom: 0.4rem;
 }
 
+.about-alias {
+  font-family: 'Noto Sans TC', var(--font);
+  font-size: var(--text-sm);
+  letter-spacing: 0.12em;
+  color: var(--text);
+  margin-bottom: 0.9rem;
+  font-weight: 400;
+}
+
 .about-role {
   font-size: var(--text-xs);
   letter-spacing: 0.22em;

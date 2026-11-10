@@ -597,6 +597,7 @@ ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
 14. **CV PDF 下載**：About 頁新增「CV PDF ↓」，跟著 EN／CN 切換下載對應語言；PDF 由 `scripts/build_cv_pdf.mjs` 從網站內容自動產生（銀灰細雜訊底、個人照、內文 12pt；英文 2 頁、中文 4 頁）。
 15. **語言切換改成「EN／中文」**：原本的「CN」是中國的國家代碼，容易被當成簡體中文。中文按鈕與中文 Bio／CV 區塊加上 `lang="zh-Hant"`（字型選繁體字形、螢幕閱讀器用中文唸、搜尋引擎判斷語言），按鈕用 Noto Sans TC 顯示。程式內部代號仍是 `zh`，之後新增中文內容區塊也要加 `lang="zh-Hant"`。
 16. **e3 影片剪精華並壓縮**（27→7.4 MB）：`bg with animal.mp4` 改名 `bg_with_animal.mp4`，取 3–21 秒（蜥蜴、鴨子、植物依序出場，頭尾是空的海面，循環自然）；`l1010589.mp4` 取 8–26 秒（廣角互動畫面，避開觀眾擋鏡頭的段落）；`l1010586.mp4` 維持全長 21 秒。皆為 540p／30fps／無聲音／crf 27。p3 決定不壓（理由見待辦「影片瘦身」）。
+17. **SEO 小幅修正**（目標：搜名字「吳承儒／PB／Pen_bit／penbit」要找得到）：網頁標題與 og／twitter 標題改為「吳承儒 Wu Cheng-Ru（PB / Pen_bit）｜新媒體・音像藝術家 Audiovisual Artist」；About 頁名字下方新增 `.about-alias`（`吳承儒 · PB / Pen_bit`，原本畫面上完全沒有中文名和 PB）；職稱 `AV Performer` 改為 `Audiovisual Artist`；簡介補上 penbit 拼法；JSON-LD 補別名（含外部網站常見的 Cheng-Ru Wu、ChengRu Wu）、學歷、獲獎、職稱。名字主要用「PB」，帳號類的寫法是 penbit／pen_bit（使用者確認）。Bio 內文維持使用者原文不動。已重新產生 CV PDF。
 
 ### 2026-10-20（新增 3 個作品、Events 分類、通用轉換腳本、文件勘誤）
 
