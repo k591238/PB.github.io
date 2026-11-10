@@ -49,93 +49,18 @@
 }
 
 /* ════════════════════════════════════════════════════
-   CUSTOM CURSOR (desktop only)
+   游標：使用系統游標（2026-11-11 拿掉自製游標）
+   可點擊的元素一律顯示手指游標
 ════════════════════════════════════════════════════ */
-@media (pointer: fine) {
-  * {
-    cursor: none !important;
-  }
-
-  body.hide-custom-cursor,
-  body.hide-custom-cursor * {
-    cursor: auto !important;
-  }
-
-  .cursor-dot {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 5px;
-    height: 5px;
-    background: var(--text);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    transition: background 0.2s, width 0.2s, height 0.2s;
-    will-change: transform;
-  }
-
-  .cursor-ring {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 28px;
-    height: 28px;
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9998;
-    transform: translate(-50%, -50%);
-    transition: width 0.25s var(--ease), height 0.25s var(--ease), border-color 0.2s, background 0.2s;
-    will-change: transform;
-  }
-
-  /* 還不知道滑鼠位置時先隱藏（不然會停在左上角），main.js 知道位置後加上 body.cursor-ready。
-     view-transition-name：換頁淡入淡出時游標獨立一層、停在原位，不會出現新舊兩個游標 */
-  .cursor-dot,
-  .cursor-ring {
-    opacity: 0;
-  }
-
-  body.cursor-ready .cursor-dot,
-  body.cursor-ready .cursor-ring {
-    opacity: 1;
-  }
-
-  /* 換頁轉場時瀏覽器會在最上層蓋一層轉場畫面，* 選不到它，要另外藏起系統游標 */
-  ::view-transition,
-  ::view-transition-group(*),
-  ::view-transition-image-pair(*),
-  ::view-transition-old(*),
-  ::view-transition-new(*) {
-    cursor: none;
-  }
-
-  .cursor-dot {
-    view-transition-name: cursor-dot;
-  }
-
-  .cursor-ring {
-    view-transition-name: cursor-ring;
-  }
-
-  /* Hover state — ring expands + goes accent */
-  .cursor-ring.hovering {
-    width: 44px;
-    height: 44px;
-    border-color: var(--accent);
-    background: rgba(200, 238, 96, 0.06);
-  }
-
-  /* On clickable: dot goes accent */
-  .cursor-dot.hovering {
-    background: var(--accent);
-    width: 4px;
-    height: 4px;
-  }
+a[href],
+button,
+label[for],
+select,
+summary,
+.vinyl-sleeve,
+.music-play-btn {
+  cursor: pointer;
 }
-
 
 html {
   overflow-x: hidden;
@@ -1994,7 +1919,7 @@ button {
   align-items: center;
   justify-content: center;
   z-index: 90;
-  cursor: none;
+  cursor: pointer;
   opacity: 0;
   pointer-events: none;
   transform: translateY(15px);

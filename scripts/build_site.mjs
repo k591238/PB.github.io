@@ -142,17 +142,12 @@ for (const p of projects) {
 ${JSON.stringify(ld, null, 2).replace(/</g, '\\u003c').split('\n').map(l => '  ' + l).join('\n')}
   </script>
 
-  <!-- 換頁時 style.css 還沒載入前就先藏起系統游標，避免點擊後閃出原本的游標（規則與 style.css 相同） -->
-  <style>@media (pointer: fine) { * { cursor: none !important; } }</style>
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
   ${fontsLink}
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 
 <body class="page-project" data-project-id="${p.id}">
-
-  <div class="cursor-dot" id="cursor-dot"></div>
-  <div class="cursor-ring" id="cursor-ring"></div>
 
 ${chrome}
 
