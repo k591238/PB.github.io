@@ -1,152 +1,146 @@
 /* ────────────────────────────────────────
    DATA
 ──────────────────────────────────────── */
+// BUILD:projects-data:start（由 scripts/build_site.mjs 產生，不要手改）
 const projectsData = [
   {
-    id: 'p1',
-    title: '視感認知 Mind Fluid',
-    year: 2025,
-    meta: 'Performance',
-    category: 'performance',
-    thumb: 'assets/images/projects/p1/banner.webp',
-    youtubeId: 'MoqFfofD9oY'
+    "id": "e2",
+    "title": "繫 Sync",
+    "year": 2026,
+    "meta": "Exhibition",
+    "category": "exhibition",
+    "thumb": "assets/images/projects/e2/thumb.webp",
+    "youtubeId": "j6Q909i4HB0"
   },
   {
-    id: 'p2',
-    title: '認夢 Dream Percept',
-    year: 2024,
-    meta: 'Performance',
-    category: 'performance',
-    thumb: 'assets/images/projects/p2/thumb.webp',
-    youtubeId: 'VWdl_gF3HBw'
+    "id": "p4",
+    "title": "光之曲幕 X DJ Friday Night《聲．光．域》",
+    "year": 2026,
+    "meta": "Performance",
+    "category": "performance",
+    "thumb": "assets/images/projects/p4/thumb.webp",
+    "youtubeId": "TazR2qhRegI"
   },
   {
-    id: 'p3',
-    title: 'FUTURE VISION LAB 2023 《未來視覺派對》',
-    year: 2023,
-    meta: 'Performance',
-    category: 'performance',
-    thumb: 'assets/images/projects/p3/thumb.webp',
-    youtubeId: ''
+    "id": "p5",
+    "title": "《Thiann》聽",
+    "year": 2026,
+    "meta": "Performance",
+    "category": "performance",
+    "thumb": "assets/images/projects/p5/thumb.webp"
   },
   {
-    id: 'p4',
-    title: '光之曲幕 X DJ Friday Night《聲．光．域》',
-    year: 2026,
-    meta: 'Performance',
-    category: 'performance',
-    thumb: 'assets/images/projects/p4/thumb.webp',
-    youtubeId: 'TazR2qhRegI'
+    "id": "c1",
+    "title": "101 手錶發表會商演",
+    "year": 2026,
+    "meta": "Case",
+    "category": "case",
+    "thumb": "assets/images/projects/c1/thumb.webp"
   },
   {
-    id: 'p5',
-    title: '《Thiann》聽',
-    year: 2026,
-    meta: 'Performance',
-    category: 'performance',
-    thumb: 'assets/images/projects/p5/thumb.webp',
-    youtubeId: ''
+    "id": "co3",
+    "title": "樓頂《自動販賣機》",
+    "year": 2026,
+    "meta": "Collaboration",
+    "category": "collaboration",
+    "thumb": "assets/images/projects/co3/thumb.webp"
   },
   {
-    id: 'p6',
-    title: '視感認知 Visual Cognition',
-    year: 2026,
-    meta: 'Performance',
-    category: 'performance',
-    thumb: 'assets/images/projects/p6/thumb.webp',
-    youtubeId: ''
+    "id": "ev1",
+    "title": "PXP 2026 Artist Talk",
+    "year": 2026,
+    "meta": "Events",
+    "category": "events",
+    "thumb": "assets/images/projects/ev1/thumb.webp"
   },
   {
-    id: 'e1',
-    title: '《 聽 說 Whisper 》',
-    year: 2024,
-    meta: 'Exhibition',
-    category: 'exhibition',
-    thumb: 'assets/images/projects/e1/thumb.webp',
-    youtubeId: '3zMIU6YjPEk'
+    "id": "p6",
+    "title": "視感認知 Visual Cognition",
+    "year": 2026,
+    "meta": "Performance",
+    "category": "performance",
+    "thumb": "assets/images/projects/p6/thumb.webp"
   },
   {
-    id: 'e2',
-    title: '繫 Sync',
-    year: 2026,
-    meta: 'Exhibition',
-    category: 'exhibition',
-    thumb: 'assets/images/projects/e2/thumb.webp',
-    youtubeId: 'j6Q909i4HB0'
+    "id": "p1",
+    "title": "視感認知 Mind Fluid",
+    "year": 2025,
+    "meta": "Performance",
+    "category": "performance",
+    "thumb": "assets/images/projects/p1/pic_15.webp",
+    "youtubeId": "MoqFfofD9oY"
   },
   {
-    id: 'e3',
-    title: '鹹淡適中 Glub Glub',
-    year: 2025,
-    meta: 'Exhibition',
-    category: 'exhibition',
-    thumb: 'assets/images/projects/e3/thumb.webp',
-    youtubeId: ''
+    "id": "e3",
+    "title": "鹹淡適中 Glub Glub",
+    "year": 2025,
+    "meta": "Exhibition",
+    "category": "exhibition",
+    "thumb": "assets/images/projects/e3/thumb.webp"
   },
   {
-    id: 'c1',
-    title: '101 手錶發表會商演',
-    year: 2026,
-    meta: 'Case',
-    category: 'case',
-    thumb: 'assets/images/projects/c1/thumb.webp',
-    youtubeId: ''
+    "id": "c2",
+    "title": "Live VJ Lab 即時影像演出工作營",
+    "year": 2025,
+    "meta": "Case",
+    "category": "case",
+    "thumb": "assets/images/projects/c2/thumb.webp"
   },
   {
-    id: 'c2',
-    title: 'Live VJ Lab 即時影像演出工作營',
-    year: 2025,
-    meta: 'Case',
-    category: 'case',
-    thumb: 'assets/images/projects/c2/thumb.webp',
-    youtubeId: ''
+    "id": "c3",
+    "title": "離水山：再臨 Shuishan: Returnings",
+    "year": 2025,
+    "meta": "Case",
+    "category": "case",
+    "thumb": "assets/images/projects/c3/work_01.webp",
+    "youtubeId": "EtbHRLqTuyA"
   },
   {
-    id: 'c3',
-    title: '離水山：再臨 Shuishan: Returnings',
-    year: 2025,
-    meta: 'Case',
-    category: 'case',
-    thumb: 'assets/images/projects/c3/work_01.webp',
-    youtubeId: 'EtbHRLqTuyA'
+    "id": "p2",
+    "title": "認夢 Dream Percept",
+    "year": 2024,
+    "meta": "Performance",
+    "category": "performance",
+    "thumb": "assets/images/projects/p2/thumb.webp",
+    "youtubeId": "VWdl_gF3HBw"
   },
   {
-    id: 'co1',
-    title: '翼手龍摩天劇院 The Archaeology of Wonderland',
-    year: 2024,
-    meta: 'Collaboration',
-    category: 'collaboration',
-    thumb: 'assets/images/projects/co1/thumb.webp',
-    youtubeId: '1NetdkQiMT4'
+    "id": "e1",
+    "title": "聽說 Whisper",
+    "year": 2024,
+    "meta": "Exhibition",
+    "category": "exhibition",
+    "thumb": "assets/images/projects/e1/thumb.webp",
+    "youtubeId": "3zMIU6YjPEk"
   },
   {
-    id: 'co2',
-    title: 'VIVIDO: re-Action',
-    year: 2024,
-    meta: 'Collaboration',
-    category: 'collaboration',
-    thumb: 'assets/images/projects/co2/banner.webp',
-    youtubeId: 'K276uwK-u5A'
+    "id": "co1",
+    "title": "翼手龍摩天劇院 The Archaeology of Wonderland",
+    "year": 2024,
+    "meta": "Collaboration",
+    "category": "collaboration",
+    "thumb": "assets/images/projects/co1/thumb.webp",
+    "youtubeId": "1NetdkQiMT4"
   },
   {
-    id: 'co3',
-    title: '樓頂《自動販賣機》',
-    year: 2026,
-    meta: 'Collaboration',
-    category: 'collaboration',
-    thumb: 'assets/images/projects/co3/thumb.webp',
-    youtubeId: ''
+    "id": "co2",
+    "title": "VIVIDO: re-Action",
+    "year": 2024,
+    "meta": "Collaboration",
+    "category": "collaboration",
+    "thumb": "assets/images/projects/co2/work_10.webp",
+    "youtubeId": "K276uwK-u5A"
   },
   {
-    id: 'ev1',
-    title: 'PXP 2026 藝術家短講暨工作坊助教',
-    year: 2026,
-    meta: 'Events',
-    category: 'events',
-    thumb: 'assets/images/projects/ev1/thumb.webp',
-    youtubeId: ''
+    "id": "p3",
+    "title": "FUTURE VISION LAB 2023 《未來視覺派對》",
+    "year": 2023,
+    "meta": "Performance",
+    "category": "performance",
+    "thumb": "assets/images/projects/p3/thumb.webp"
   }
 ];
+// BUILD:projects-data:end
 
 /* ────────────────────────────────────────
    CORE FUNCTIONS

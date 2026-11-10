@@ -1,30 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-
+<!-- 由 scripts/build_site.mjs 產生，不要手改 -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-       <loc>https://k591238.github.io/PB.github.io/</loc>
-       <lastmod>2026-11-10T14:16:04+00:00</lastmod>
-       <priority>1.0000</priority>
+    <loc>https://k591238.github.io/PB.github.io/</loc>
+    <lastmod>2026-11-10</lastmod>
   </url>
   <url>
-       <loc>https://k591238.github.io/PB.github.io/handouts/</loc>
-       <lastmod>2026-11-10T14:16:03+00:00</lastmod>
-       <priority>0.8000</priority>
+    <loc>https://k591238.github.io/PB.github.io/handouts/</loc>
+    <lastmod>2026-11-10</lastmod>
   </url>
   <url>
-       <loc>https://k591238.github.io/PB.github.io/assets/cv/WuChengRu_CV_EN.pdf</loc>
-       <lastmod>2026-11-10T14:16:04+00:00</lastmod>
-       <priority>0.8000</priority>
+    <loc>https://k591238.github.io/PB.github.io/handouts/laser-pop/</loc>
+    <lastmod>2026-11-10</lastmod>
   </url>
   <url>
-       <loc>https://k591238.github.io/PB.github.io/assets/cv/WuChengRu_CV_ZH.pdf</loc>
-       <lastmod>2026-11-10T14:16:04+00:00</lastmod>
-       <priority>0.8000</priority>
+    <loc>https://k591238.github.io/PB.github.io/assets/cv/WuChengRu_CV_EN.pdf</loc>
+    <lastmod>2026-11-10</lastmod>
   </url>
   <url>
-       <loc>https://k591238.github.io/PB.github.io/handouts/laser-pop/</loc>
-       <lastmod>2026-11-10T14:16:03+00:00</lastmod>
-       <priority>0.6400</priority>
+    <loc>https://k591238.github.io/PB.github.io/assets/cv/WuChengRu_CV_ZH.pdf</loc>
+    <lastmod>2026-11-10</lastmod>
   </url>
 </urlset>

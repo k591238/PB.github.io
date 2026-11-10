@@ -26,7 +26,10 @@ PB.github.io/
 ├── index.html                    ← 整個 SPA 的唯一 HTML 入口，含所有 View 和 Template
 ├── .nojekyll                      ← 告訴 GitHub 不要跑 Jekyll build（本專案未使用 Jekyll）
 ├── robots.txt                     ← 搜尋引擎爬蟲規則（見下方「SEO / Search Console 設定」）
-├── sitemap.xml                    ← 網站地圖，提交給 Google Search Console 用
+├── sitemap.xml                    ← 網站地圖（⚠️ 由 build_site.mjs 產生，不要手改）
+├── data/                          ← ★作品資料（產生腳本的資料來源，見「🛠 產生腳本」）
+│   ├── site.json                 ← 網站網址（換網域時只改這裡）
+│   └── projects.json             ← 作品資料表，陣列順序＝列表顯示順序
 ├── handouts/                      ← 講義區（獨立靜態頁，不經過 SPA，見下方「📚 講義區」）
 │   ├── index.html                ← 講義列表頁（手寫，新增講義要在這裡加一筆）
 │   └── laser-pop/                ← 雷射 POP 講義（⚠️ 由 TD_Laser_POP 自動同步，不要在這裡直接改）
@@ -35,7 +38,7 @@ PB.github.io/
 │   ├── css/
 │   │   └── style.css             ← 所有樣式（Design Tokens + 全部元件 CSS）
 │   ├── js/
-│   │   ├── main.js               ← SPA 路由器、projectsData、SoundCloud 整合
+│   │   ├── main.js               ← SPA 路由器、projectsData（腳本產生）、SoundCloud 整合
 │   │   └── particle.js           ← 首頁粒子背景效果（獨立模組，勿修改）
 │   ├── images/
 │   │   ├── projects/
@@ -63,6 +66,7 @@ PB.github.io/
 │   │       └── e3/               ← 鹹淡適中 影片 (mp4)
 │   └── cv/                       ← ⚠️ 自動產生的 CV PDF（WuChengRu_CV_EN.pdf／_ZH.pdf），不要手改，見「📄 CV PDF」
 └── scripts/                      ← 開發用工具（不入 build）
+    ├── build_site.mjs            ← ★產生腳本：作品卡片、projectsData、sitemap（見「🛠 產生腳本」）
     ├── build_cv_pdf.mjs          ← 從 index.html 的 Bio／CV 產生 CV PDF（Node＋Edge）
     ├── cv/                       ← CV PDF 的排版模板（cv-print.html）、雜訊底紋、作品集 QR code
     ├── compress_images.py        ← 批次壓縮圖片
@@ -91,6 +95,8 @@ PB.github.io/
 `robots.txt` 依照協定規範**只在網域根目錄有效**（`https://k591238.github.io/robots.txt`）。因為本專案是 Project site，實際內容跑在 `/PB.github.io/` 路徑下，repo 裡的 `robots.txt` 只會被服務在 `https://k591238.github.io/PB.github.io/robots.txt`——**這不是搜尋引擎承認的正式位置，形同無效**。要讓它真正生效，必須另外建立一個名稱完全是 `k591238.github.io` 的新 repo 來佔用網域根目錄，目前尚未執行這一步。
 
 ### sitemap.xml 的協定限制
+
+sitemap.xml 由 `scripts/build_site.mjs` 自動產生（首頁、`handouts/` 底下每份講義、`assets/cv/` 的 PDF，`lastmod` 取該檔案最後一次 commit 的日期），不要手改。
 
 Sitemap 只能列出「跟自己同層或更深層」的網址，**不可以搬進子資料夾**（會因為列出的網址層級比 sitemap 本身高而判定無效）。必須維持在 repo 根目錄。新增講義時記得把網址加進 sitemap。
 
@@ -154,7 +160,7 @@ node scripts/build_cv_pdf.mjs
 2. 講義裡的資源一律用**相對路徑**，不可寫 `/images/...` 這種從根目錄開始的路徑（專案網址帶 `/PB.github.io/`，會失效）
 3. 建議在講義裡放回到作品集的連結：`../../`（作品集）、`../`（講義列表）
 4. 在 `handouts/index.html` 的 `<ul>` 加一筆
-5. 把網址加進 `sitemap.xml`
+5. 執行 `node scripts/build_site.mjs`，sitemap 會自動加入新講義（不用手改 sitemap）
 
 ---
 
@@ -184,42 +190,52 @@ navigateTo('projects')         // 切換到 projects view（支援 browser histo
 openProjectDetail('p4')        // 開啟 project-detail view，載入 template-p4
 ```
 
-### 作品詳細頁兩種模式
+### 作品詳細頁
 
-`openProjectDetail(id)` 的判斷邏輯：
-
-1. **自訂 Template 模式**（有 `<template id="template-{id}">`）→ 直接 clone template 內容
-2. **Generic Layout 模式**（無對應 template）→ 用 `projectsData` 的 `gallery[]` 自動生成
-
-目前所有主要作品都已有自訂 Template，Generic Layout 為備援。
-
-### ⚠️ `works-grid`（作品列表卡片）是手寫死的 HTML，不是從 projectsData 動態產生的
-
-這是最容易踩的坑：`index.html` 裡 `<div class="works-grid">`（約在 `#view-projects` 內）的每一張卡片都是手寫的 `<a class="work" href="#project/{id}" data-project="{id}" data-category="{category}">...</a>`（2026-11-10 起是連結，可右鍵開新分頁），**`projectsData` 只用在 `openProjectDetail()` 的 Generic Layout 備援（抓 `thumb`/`gallery`/`youtubeId`）跟文件標題，不會自動長出列表卡片。**
-
-只改 `projectsData` 新增一筆、template 也寫好了，作品還是不會出現在 `/#projects` 列表裡 —— 一定要同時手動在 `works-grid` 補上對應的 `.work` 卡片（見下方「新增作品的完整流程」Step 2.5）。篩選分類(`data-filter`/`data-category`)也是同樣邏輯：按鈕跟卡片都是手寫的純字串比對（`main.js` L391 附近），沒有白名單檢查，新分類只要按鈕跟卡片的字串一致就會動。
+`openProjectDetail(id)`：有 `<template id="template-{id}">` 就 clone template 內容（目前 16 件全部都有）；沒有的話用 `projectsData` 的標題、縮圖、`youtubeId` 產生簡易版面（備援，目前沒用到）。
 
 ---
 
-## 📊 projectsData 說明（`main.js` 頂部）
+## 🛠 產生腳本 `scripts/build_site.mjs`（2026-11-11 起）
 
-```javascript
-const projectsData = [
-  {
-    id: 'p4',                                         // 必填，對應 template id 和圖片資料夾名
-    title: '光之曲幕 X DJ Friday Night《聲．光．域》',  // 卡片顯示的標題
-    year: 2026,                                       // 年份
-    meta: 'Performance',                              // 副標（Performance/Exhibition/Case/Collaboration）
-    category: 'performance',                          // 篩選分類（小寫）
-    thumb: 'assets/images/projects/p4/thumb.webp',   // 作品列表縮圖（必要）
-    gallery: ['assets/.../work_01.webp', ...],        // Generic layout 用（有自訂 template 可省略）
-    youtubeId: 'TazR2qhRegI'                          // Generic layout 用（可留空 ''）
-  },
-  ...
-]
+作品資料**只寫一份**在 `data/projects.json`，執行：
+
+```bash
+node scripts/build_site.mjs
 ```
 
-> ✅ 2026-07 已將全部作品的 `thumb`／中文標題換成真實內容，`placehold.co` 佔位圖已清除。新增作品請直接比照既有筆目格式。
+腳本會更新三個地方（都是標記之間的內容，**每次都會被覆蓋，不要手改**）：
+
+| 產生的內容 | 位置 |
+|---|---|
+| 作品列表卡片（`.work`，依年份加 `<!-- 2026 -->` 註解） | `index.html` 的 `<!-- BUILD:works-grid:start -->` … `end` 之間 |
+| `projectsData` | `assets/js/main.js` 的 `// BUILD:projects-data:start` … `end` 之間 |
+| `sitemap.xml` | 整個檔案 |
+
+卡片是腳本寫成**靜態 HTML**，不是瀏覽器端用 JS 產生：AI 爬蟲多半不執行 JS，這樣它們才看得到作品清單。
+
+腳本會先檢查資料，有問題就**不寫入任何檔案**並列出原因：缺必填欄位、id 重複、縮圖檔不存在、`index.html` 沒有對應的 `<template id="template-{id}">`、分類沒有對應的篩選按鈕。重複執行結果相同（沒變動就顯示「沒有變動」）。
+
+### `data/projects.json` 欄位
+
+```json
+{
+  "id": "p4",                                        // 必填，對應 template-{id}、圖片資料夾名、網址 #project/{id}
+  "title": "光之曲幕 X DJ Friday Night《聲．光．域》",  // 必填，卡片標題
+  "year": 2026,                                      // 必填，數字
+  "meta": "Performance",                             // 必填，卡片上顯示的分類文字
+  "category": "performance",                         // 必填，篩選用，要跟篩選按鈕的 data-filter 一致
+  "thumb": "assets/images/projects/p4/thumb.webp",  // 必填，列表縮圖
+  "alt": "…",                                        // 選填，縮圖的替代文字，沒填就用 title
+  "youtubeId": "TazR2qhRegI"                         // 選填，主要 YouTube 影片 ID
+}
+```
+
+**陣列順序就是列表的顯示順序**（目前依年份由新到舊）。新作品插在想要的位置即可。
+
+### `data/site.json`
+
+只有 `baseUrl`（正式網址，結尾要有 `/`）。換網域時改這裡再重跑腳本。（`index.html` `<head>` 裡的 canonical／og 網址目前仍是手寫，換網域時要一起改，之後大改版會納入腳本。）
 
 ---
 
@@ -385,7 +401,7 @@ YouTube／IG 貼文連結：
 
 1. 讀照片，分出直式／橫式，提出排版方式
 2. 檢查資料：**缺漏或不確定的（日期、場地、單位、人名、國外演出細節）一律先問，不可自己編寫或推測**
-3. 轉檔（`convert_project.py`）→ `projectsData` → `works-grid` 卡片 → `<template>`，三處一次改齊
+3. 轉檔（`convert_project.py`）→ `data/projects.json` 加一筆 → `index.html` 加 `<template>` → 執行 `node scripts/build_site.mjs`
 4. 本機截圖驗證（桌機 1280px、手機 390px）：列表有新卡片、作品頁沒破版、直式照片有併排縮小（截圖方法見「本機截圖驗證」）
 5. 把截圖和文字給使用者確認，確認後才 commit；**使用者明確說可以才 push**
 
@@ -413,53 +429,46 @@ python scripts/convert_project.py --id px --source "source/{專案名}" \
 
 輸出位置：`assets/images/projects/{id}/`，依序產生 `banner.webp`、`thumb.webp`、`work_01.webp`、`work_02.webp`...（quality 80、長邊最大 1920px、已修正 EXIF 方向）。不給 `--gallery` 就只處理 banner/thumb；不給 `--banner`/`--thumb` 就把 `--source` 資料夾裡所有圖片依檔名排序通通轉成 work_NN。`scripts/convert_p4.py` 等舊的一次性腳本是各專案的歷史處理紀錄，新專案不用再模仿著寫一支新的。
 
-### Step 2：更新 `main.js` 的 `projectsData`
+### Step 2：在 `data/projects.json` 加一筆
 
-```javascript
+欄位見「🛠 產生腳本」。放在陣列裡想要顯示的位置（列表依陣列順序排列）：
+
+```json
 {
-  id: 'px',
-  title: '作品完整名稱',
-  year: 2026,
-  meta: 'Performance',        // Performance / Exhibition / Case / Collaboration / Events（或新分類，見下）
-  category: 'performance',    // 小寫，對應篩選按鈕的 data-filter
-  thumb: 'assets/images/projects/px/thumb.webp',
-  youtubeId: ''               // 有 YouTube 影片則填 ID，無則留空（非 YouTube 的影片崁入寫在 template 裡，不用這欄）
+  "id": "px",
+  "title": "作品完整名稱",
+  "year": 2026,
+  "meta": "Performance",
+  "category": "performance",
+  "thumb": "assets/images/projects/px/thumb.webp"
 }
 ```
 
-### Step 2.5：⚠️ 在 `works-grid` 新增 `.work` 卡片（容易漏掉，漏了作品不會出現在列表）
-
-`projectsData` **不會**自動產生列表卡片（見前面「`works-grid` 是手寫死的 HTML」章節）。要在 `index.html` 的 `<div class="works-grid">` 裡，依年份分組（`<!-- 2026 -->` 等註解），手動加一張卡片：
-
-```html
-<a class="work" href="#project/px" data-project="px" data-category="performance">
-  <div class="work-inner">
-    <img class="work-thumb" src="assets/images/projects/px/thumb.webp" loading="lazy" alt="作品完整名稱">
-  </div>
-  <div class="work-info">
-    <div class="work-title">作品完整名稱</div>
-    <div class="work-meta">2026 &nbsp;·&nbsp; Performance</div>
-  </div>
-</a>
-```
-
-卡片外層一定要用 `<a>` 並寫上 `href="#project/{id}"`，否則不能右鍵／Ctrl＋點擊在新分頁開啟。`href` 和 `data-project` 的 id 要一致；`data-project` 要精確對應 `projectsData.id`／`template-{id}`；`data-category` 要跟篩選按鈕的 `data-filter` 字串一致（純字串比對，見 `main.js` `proj-filter-btn` 的 click handler）。
-
-**需要全新分類**（不屬於 Performance/Exhibition/Case/Collaboration/Events）時，要在篩選列再加一顆按鈕：
+`meta` 常用值：Performance / Exhibition / Case / Collaboration / Events。**需要全新分類**時，要先在 `index.html` 篩選列加一顆按鈕（腳本會檢查分類有沒有對應按鈕）：
 
 ```html
 <button class="proj-filter-btn" data-filter="你的分類">你的分類顯示文字</button>
 ```
 
+**不要再手動加 `.work` 卡片、也不要手改 `main.js` 的 `projectsData`**，兩者都由 Step 3.5 的腳本產生。
+
 ### Step 3：在 `index.html` 新增 `<template>`
 
 位置：在最後一個 `</template>` 之後、`<!-- 懸浮回到頂部按鈕 -->` 之前。
 
+### Step 3.5：執行產生腳本
+
+```bash
+node scripts/build_site.mjs
+```
+
+卡片、`projectsData`、sitemap 會一起更新。腳本報錯時照訊息修正 `data/projects.json` 或 template 後重跑。
+
 ### Step 4：驗證
 
-- `<template id="template-{id}">` 的 id 必須精確對應 `projectsData.id` 跟 `.work` 卡片的 `data-project`
+- 產生腳本執行成功（它會檢查 template、縮圖、分類）
 - 所有圖片路徑確認存在
-- `works-grid` 裡的卡片有加（Step 2.5）—— 用瀏覽器打開 `/#projects` 實際看一下新卡片有沒有出現，不要只靠改 code 判斷
+- 用瀏覽器打開 `/#projects` 實際看一下新卡片有沒有出現、位置對不對、分類篩選正常
 - 直式照片有併排縮小處理，沒有單獨撐成一張大圖
 - 手機版（375px 寬）格線應該自動變成單欄、沒有圖片超出畫面（見「手機版自動收欄」）
 
@@ -536,10 +545,9 @@ ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
 |------|------|
 | 影片瘦身（大致完成） | 已完成：c1 六支（79→21 MB）、p2 `ig02.mp4`（52→3.1 MB）、e3 三支（27→7.4 MB）、全站影片改成捲到畫面才播放（見「作品頁影片」）。**p3 三支（約 7 MB）刻意不壓**：只省 2.6 MB，新檔反而讓 git 歷史再多 4.6 MB，划不來。舊的大檔仍在 git 歷史裡（見下一項），之後新增影片務必先壓縮再 commit |
 | git 歷史殘留大檔 | 換掉的舊影片仍在歷史裡，約 160 MB（p2 舊 `ig02.mp4` 52 MB、c1 舊檔約 77 MB、e3 舊檔約 27 MB）。只影響 repo 大小與 clone 時間，**不影響訪客**（網站只提供最新版檔案）。**⛔ 這一項只是紀錄，AI Agent 不可自行執行**（見「禁止輕易更動的項目」）。使用者決定：維持現狀；遇到大改版（如「作品獨立網址」）或 repo 接近 1 GB 時，**只提醒使用者有這件事**，由使用者決定要不要處理 |
-| 列表卡片自動產生 | `works-grid` 改由 `projectsData` 產生，新增作品從改三處變兩處，消除「漏加卡片」的 bug |
 | 照片格線共用 class | 80 多處 inline `display:grid` 改成 `gallery-2`／`gallery-3`／`gallery-portrait` 之類的 class，手機收欄的 `!important` 屬性選擇器可一併改乾淨 |
-| 作品獨立網址 | `#project/p4` 的 `#` 會被 Google 和社群平台忽略：分享單一作品時預覽卡片永遠是首頁，個別作品也幾乎搜不到。根本解法是每個作品做成獨立靜態頁（如 `projects/p4/`），屬大改版。2026-11-10 決定：「列表卡片自動產生」併入這項一起做，改用**產生腳本**（類似 `build_cv_pdf.mjs`）把卡片和作品頁寫成靜態 HTML，**不要用 JS 在瀏覽器端產生卡片**（AI 爬蟲多半不執行 JS，手寫卡片目前是它們唯一看得到的作品清單）。卡片標題以現行卡片為準（ev1 維持 `PXP 2026 Artist Talk`、e1 維持 `聽說 Whisper`） |
-| 網址／網域（跟大改版一起決定） | Google 搜尋結果的網站名稱顯示成「GitHub Pages documentation」：Google 只支援網域層級的網站名稱，子資料夾（`/PB.github.io/`）無法自訂，網站內容怎麼改都修不了。解法二選一：①買自訂網域（最佳，使用者想等網站完整後再買）②repo 改名為 `k591238.github.io` 變成 user site（免費，也順便解決 robots.txt 問題）。兩者都要處理舊網址轉址、CV PDF 與講義 QR code 重新產生，所以要在做「作品獨立網址」時或之前決定 |
+| 作品獨立網址 | `#project/p4` 的 `#` 會被 Google 和社群平台忽略：分享單一作品時預覽卡片永遠是首頁，個別作品也幾乎搜不到。根本解法是每個作品做成獨立靜態頁（如 `projects/p4/`），屬大改版，分三階段。**階段 1（產生腳本）2026-11-11 已完成**。階段 2：作品獨立網頁 `projects/{id}/`（作品內容搬到 `content/projects/{id}.html`，點卡片換頁、加 View Transitions 轉場與 Speculation Rules 預先載入，舊 `#project/{id}` 自動轉址）。階段 3：每件作品的 JSON-LD（日期、場地等資料整理成表格請使用者逐筆確認）。使用者已同意以上方向，作品簡介由 Agent 從作品頁擷取草稿、使用者修改 |
+| 網址／網域（跟大改版一起決定） | Google 搜尋結果的網站名稱顯示成「GitHub Pages documentation」、網站圖示是預設的地球：Google 只支援網域層級的網站名稱和網站圖示（favicon），子資料夾（`/PB.github.io/`）無法自訂，網站內容怎麼改都修不了。解法二選一：①買自訂網域（最佳，使用者想等網站完整後再買）②repo 改名為 `k591238.github.io` 變成 user site（免費，也順便解決 robots.txt 問題）。兩者都要處理舊網址轉址、CV PDF 與講義 QR code 重新產生，所以要在做「作品獨立網址」時或之前決定 |
 
 ### 中 / 低優先
 
@@ -599,6 +607,13 @@ ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
 15. **語言切換改成「EN／中文」**：原本的「CN」是中國的國家代碼，容易被當成簡體中文。中文按鈕與中文 Bio／CV 區塊加上 `lang="zh-Hant"`（字型選繁體字形、螢幕閱讀器用中文唸、搜尋引擎判斷語言），按鈕用 Noto Sans TC 顯示。程式內部代號仍是 `zh`，之後新增中文內容區塊也要加 `lang="zh-Hant"`。
 16. **e3 影片剪精華並壓縮**（27→7.4 MB）：`bg with animal.mp4` 改名 `bg_with_animal.mp4`，取 3–21 秒（蜥蜴、鴨子、植物依序出場，頭尾是空的海面，循環自然）；`l1010589.mp4` 取 8–26 秒（廣角互動畫面，避開觀眾擋鏡頭的段落）；`l1010586.mp4` 維持全長 21 秒。皆為 540p／30fps／無聲音／crf 27。p3 決定不壓（理由見待辦「影片瘦身」）。
 17. **SEO 小幅修正**（目標：搜名字「吳承儒／PB／Pen_bit／penbit」要找得到）：網頁標題與 og／twitter 標題改為「吳承儒 Wu Cheng-Ru（PB / Pen_bit）｜新媒體・音像藝術家 Audiovisual Artist」；About 頁名字下方新增 `.about-alias`（`吳承儒 · PB / Pen_bit`，原本畫面上完全沒有中文名和 PB）；職稱 `AV Performer` 改為 `Audiovisual Artist`；簡介補上 penbit 拼法；JSON-LD 補別名（含外部網站常見的 Cheng-Ru Wu、ChengRu Wu）、學歷、獲獎、職稱。名字主要用「PB」，帳號類的寫法是 penbit／pen_bit（使用者確認）。Bio 內文維持使用者原文不動。已重新產生 CV PDF。
+
+### 2026-11-11（大改版階段 1：產生腳本）
+
+1. 新增 `scripts/build_site.mjs`、`data/projects.json`、`data/site.json`（見「🛠 產生腳本」）。作品列表卡片、`main.js` 的 `projectsData`、`sitemap.xml` 改由腳本產生，作品資料只寫一份。
+2. 資料以原本手寫卡片為準（卡片才是訪客看到的）：ev1 標題 `PXP 2026 Artist Talk`、e1 `聽說 Whisper`、p1 縮圖 `pic_15.webp`、co2 縮圖 `work_10.webp`，p5／c2／co1 的 alt 保留；`projectsData` 順序改成跟列表一致。拿掉沒有任何作品使用的 `gallery` 欄位。
+3. sitemap 改由腳本產生（使用者同意，取代 2026-11-10 換上的線上產生器版本），內容相同，拿掉 Google 不使用的 `priority`。
+4. 驗證：16 張卡片的連結、分類、縮圖、alt、標題、年份逐一比對與改版前完全一致；列表、四種分類篩選、點卡片、上一頁、直接開 `#project/p4` 測試通過，無 JS 錯誤。
 
 ### 2026-10-20（新增 3 個作品、Events 分類、通用轉換腳本、文件勘誤）
 
