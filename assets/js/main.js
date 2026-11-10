@@ -308,34 +308,77 @@ if (window.matchMedia('(pointer: fine)').matches) {
   const ring = document.getElementById('cursor-ring');
 
   if (dot && ring) {
-    // Both follow instantly in the same mousemove
+    const INTERACTIVE = 'a, button, [data-project], .proj-filter-btn, .work, .menu_link, .tab-btn, .lang-btn, .scroll-to-top';
+    const POS_KEY = 'cursor-pos';
+    let pos = null;
+
+    // 游標移到 (x, y)；第一次知道位置後才顯示（CSS body.cursor-ready），避免停在左上角
+    const place = (x, y) => {
+      pos = { x, y };
+      const t = `translate(calc(${x}px - 50%), calc(${y}px - 50%))`;
+      dot.style.transform = t;
+      ring.style.transform = t;
+      document.body.classList.add('cursor-ready');
+    };
+
+    // 依游標底下的元素重新判斷 hover 狀態。
+    // 換頁、SPA 切換、捲動時，滑鼠沒動就不會觸發 mouseover／mouseout，要主動檢查
+    const refreshHover = () => {
+      if (!pos) return;
+      const el = document.elementFromPoint(pos.x, pos.y);
+      const on = !!(el && el.closest(INTERACTIVE));
+      dot.classList.toggle('hovering', on);
+      ring.classList.toggle('hovering', on);
+    };
+
+    // 換頁時記住位置，新頁面一載入就把游標放回原位（10 秒內有效，避免用到很久以前的位置）
+    const savePos = () => {
+      if (!pos) return;
+      try { sessionStorage.setItem(POS_KEY, JSON.stringify({ ...pos, t: Date.now() })); } catch { /* 無痕模式等無法存取時略過 */ }
+    };
+    const restorePos = () => {
+      try {
+        const saved = JSON.parse(sessionStorage.getItem(POS_KEY));
+        if (saved && Date.now() - saved.t < 10000) place(saved.x, saved.y);
+      } catch { /* 沒有存過或無法讀取 */ }
+      refreshHover();
+    };
+    restorePos();
+    window.addEventListener('load', refreshHover, { once: true });
+    document.addEventListener('click', () => { savePos(); setTimeout(refreshHover, 400); }, true);
+    window.addEventListener('pagehide', savePos);
+    // 按上一頁回來時，瀏覽器會還原舊頁面（連同舊的游標位置），要改用換頁前存的位置
+    window.addEventListener('pageshow', e => { if (e.persisted) restorePos(); });
+
+    let hoverTick = false;
+    window.addEventListener('scroll', () => {
+      if (hoverTick) return;
+      hoverTick = true;
+      requestAnimationFrame(() => { refreshHover(); hoverTick = false; });
+    }, { passive: true });
+
+    // 跟著滑鼠移動；hover 狀態每次都依游標底下的元素重新判斷，
+    // 不靠 mouseover／mouseout 成對觸發（換頁後瀏覽器可能只補送其中一個，會卡在放大狀態）
     document.addEventListener('mousemove', e => {
-      const x = e.clientX, y = e.clientY;
-      const pos = `translate(calc(${x}px - 50%), calc(${y}px - 50%))`;
-      dot.style.transform = pos;
-      ring.style.transform = pos;
+      place(e.clientX, e.clientY);
+      const on = !!(e.target.closest && e.target.closest(INTERACTIVE));
+      dot.classList.toggle('hovering', on);
+      ring.classList.toggle('hovering', on);
     });
 
-    // Hover detection
-    const INTERACTIVE = 'a, button, [data-project], .proj-filter-btn, .work, .menu_link, .tab-btn, .lang-btn, .scroll-to-top';
+    // 移到 iframe（YouTube、IG 嵌入）上時，iframe 裡收不到滑鼠位置，改顯示系統游標
     document.addEventListener('mouseover', e => {
-      if (e.target.tagName === 'IFRAME' || e.target.closest('iframe')) {
+      if (e.target.tagName === 'IFRAME') {
         document.body.classList.add('hide-custom-cursor');
         dot.style.opacity = '0';
         ring.style.opacity = '0';
-      } else if (e.target.closest(INTERACTIVE)) {
-        dot.classList.add('hovering');
-        ring.classList.add('hovering');
       }
     });
     document.addEventListener('mouseout', e => {
-      if (e.target.tagName === 'IFRAME' || e.target.closest('iframe')) {
+      if (e.target.tagName === 'IFRAME') {
         document.body.classList.remove('hide-custom-cursor');
         dot.style.opacity = '1';
         ring.style.opacity = '1';
-      } else if (e.target.closest(INTERACTIVE)) {
-        dot.classList.remove('hovering');
-        ring.classList.remove('hovering');
       }
     });
 

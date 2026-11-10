@@ -91,6 +91,26 @@
     will-change: transform;
   }
 
+  /* 還不知道滑鼠位置時先隱藏（不然會停在左上角），main.js 知道位置後加上 body.cursor-ready。
+     view-transition-name：換頁淡入淡出時游標獨立一層、停在原位，不會出現新舊兩個游標 */
+  .cursor-dot,
+  .cursor-ring {
+    opacity: 0;
+  }
+
+  body.cursor-ready .cursor-dot,
+  body.cursor-ready .cursor-ring {
+    opacity: 1;
+  }
+
+  .cursor-dot {
+    view-transition-name: cursor-dot;
+  }
+
+  .cursor-ring {
+    view-transition-name: cursor-ring;
+  }
+
   /* Hover state — ring expands + goes accent */
   .cursor-ring.hovering {
     width: 44px;

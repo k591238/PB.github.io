@@ -147,7 +147,7 @@ ${JSON.stringify(ld, null, 2).replace(/</g, '\\u003c').split('\n').map(l => '  '
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 
-<body class="page-project" data-project="${p.id}">
+<body class="page-project" data-project-id="${p.id}">
 
   <div class="cursor-dot" id="cursor-dot"></div>
   <div class="cursor-ring" id="cursor-ring"></div>
