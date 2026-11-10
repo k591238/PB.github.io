@@ -1100,6 +1100,11 @@ button {
   color: var(--text);
 }
 
+.lang-btn:lang(zh-Hant) {
+  font-family: var(--font-tc);
+  letter-spacing: 0.06em;
+}
+
 /* Bio text */
 .bio-text {
   display: none;
