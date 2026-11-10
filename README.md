@@ -192,6 +192,7 @@ node scripts/build_cv_pdf.mjs
   - 游標有 `view-transition-name`，換頁轉場時獨立一層停在原位
   - hover 放大狀態在每次 `mousemove`、捲動、點擊後依「游標底下的元素」重新判斷，不靠 mouseover／mouseout 成對觸發（換頁後瀏覽器可能只補送其中一個，會卡在放大）
   - 作品頁 `<body>` 的作品 id 屬性叫 `data-project-id`，**不可改成 `data-project`**：游標把 `[data-project]` 當成可點擊元素，會讓整頁都變成 hover 狀態
+  - 「隱藏系統游標」的規則除了 `style.css`，`index.html` 和每個作品頁的 `<head>` 也有一行內嵌 `<style>`：換頁時 `style.css` 還沒載入完之前就先藏起系統游標，否則點擊後會閃出原本的游標。換頁轉場的 `::view-transition*` 也另外設了 `cursor: none`。改游標規則時兩處要一起改
 
 ### 核心路由（`main.js`，只在首頁）
 

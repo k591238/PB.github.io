@@ -103,6 +103,15 @@
     opacity: 1;
   }
 
+  /* 換頁轉場時瀏覽器會在最上層蓋一層轉場畫面，* 選不到它，要另外藏起系統游標 */
+  ::view-transition,
+  ::view-transition-group(*),
+  ::view-transition-image-pair(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    cursor: none;
+  }
+
   .cursor-dot {
     view-transition-name: cursor-dot;
   }
