@@ -56,12 +56,15 @@ PB.github.io/
 │   │   │   ├── co3/              ← 樓頂《自動販賣機》（work_*.webp, thumb.webp）
 │   │   │   └── ev1/              ← PXP 2026 藝術家短講暨工作坊助教（work_*.webp, banner.webp, thumb.webp）
 │   │   └── about/                ← 關於頁照片
-│   └── videos/
-│       └── projects/
-│           ├── p3/               ← FUTURE VISION LAB 影片 (mp4)
-│           ├── c1/               ← 101 商演影片 (mp4)
-│           └── e3/               ← 鹹淡適中 影片 (mp4)
-└── scripts/                      ← Python 圖片轉換工具（開發用，不入 build）
+│   ├── videos/
+│   │   └── projects/
+│   │       ├── p3/               ← FUTURE VISION LAB 影片 (mp4)
+│   │       ├── c1/               ← 101 商演影片 (mp4)
+│   │       └── e3/               ← 鹹淡適中 影片 (mp4)
+│   └── cv/                       ← ⚠️ 自動產生的 CV PDF（WuChengRu_CV_EN.pdf／_ZH.pdf），不要手改，見「📄 CV PDF」
+└── scripts/                      ← 開發用工具（不入 build）
+    ├── build_cv_pdf.mjs          ← 從 index.html 的 Bio／CV 產生 CV PDF（Node＋Edge）
+    ├── cv/                       ← CV PDF 的排版模板（cv-print.html）、雜訊底紋、作品集 QR code
     ├── compress_images.py        ← 批次壓縮圖片
     ├── convert_project.py        ← ★通用轉換腳本，新專案一律用這支（見下方說明），取代「每個專案寫一支 .py」
     └── convert_{id}.py ...       ← 舊專案一次性腳本（已執行過，保留當處理紀錄，不須再用）
@@ -90,6 +93,31 @@ PB.github.io/
 ### sitemap.xml 的協定限制
 
 Sitemap 只能列出「跟自己同層或更深層」的網址，**不可以搬進子資料夾**（會因為列出的網址層級比 sitemap 本身高而判定無效）。必須維持在 repo 根目錄。新增講義時記得把網址加進 sitemap。
+
+---
+
+## 📄 CV PDF（About 頁「CV PDF ↓」）
+
+About 頁 BIO／CV 分頁列右側有「CV PDF ↓」，下載目前所選語言的 PDF（`main.js` 語言切換時會改 `[data-cv-pdf]` 的 `href`）。
+
+- 檔案：`assets/cv/WuChengRu_CV_EN.pdf`、`WuChengRu_CV_ZH.pdf`（A4，銀灰細雜訊底，頁首有聯絡方式與作品集 QR code，頁尾有更新年月）
+- **內容只有一份來源**：排版模板 `scripts/cv/cv-print.html` 執行時直接讀 `index.html` 的 `.about-name`、`.about-role`、`.bio-text.{en|zh}`、`.cv-content.{en|zh}`、社群連結裡的 Email／Instagram、`<link rel="canonical">`。PDF 裡不要另外手打內容
+- 聯絡資訊只放網站上已公開的（Email、IG、網站），**不放電話、地址**
+- 英文 CV 刻意維持「Selected Works」精選形式（使用者決定），中文版是完整版
+
+### ⚠️ 改了 Bio／CV／聯絡方式之後，一定要重新產生 PDF
+
+```bash
+node scripts/build_cv_pdf.mjs
+```
+
+需要 Node 18+ 與 Microsoft Edge（路徑不同時設定 `EDGE_PATH`）。腳本會自己開本機伺服器和 headless Edge、輸出兩份 PDF、結束時自動關閉。產生後用 PDF 閱讀器打開檢查分頁（目前英文 1 頁、中文 3 頁），再跟網站修改一起 commit。忘記重跑的話 PDF 會跟網站內容不一致。
+
+**排版技術備忘**：
+- `@page { margin: 0 }` 才能讓底色滿版；每頁的上下留白靠 `body` padding＋`box-decoration-break: clone`
+- 底紋與頁尾是 `position: fixed`，列印時會在每頁重複出現；Chrome 不支援在內容裡顯示頁碼，所以沒有頁碼
+- 雜訊貼圖 `noise.png` 用 320px、`background-size` 整數 px，太小或非整數會在 PDF 裡出現接縫細線
+- QR code（`scripts/cv/qr.svg`）用 segno 產生，必須有 `xmlns` 才能當圖片載入；作品集網址改了要重新產生
 
 ---
 
@@ -363,6 +391,7 @@ YouTube／IG 貼文連結：
 - 圖片一律 webp，`alt` 要具體描述畫面
 - 外部連結一律 `target="_blank" rel="noopener noreferrer"`
 - 文字以使用者提供的為準，可以調整排版，不改寫內容意思
+- 新增作品時如果也要更新 About 的 CV，改完後要跑 `node scripts/build_cv_pdf.mjs` 重新產生 PDF（見「📄 CV PDF」）
 
 ---
 
@@ -562,6 +591,7 @@ ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
 11. **右鍵規則**：改成只在連結上開放；卡片縮圖加 `pointer-events: none`，右鍵卡片只能開新分頁、不能另存縮圖。曾短暫加上 F12 等快捷鍵屏蔽，討論後還原（見「禁止輕易更動的項目」）。
 12. **修正 popstate**：網址列手動改成 `#project/{id}` 時會被導回首頁，現在會正確打開作品頁。
 13. 29 項行為測試全數通過（SPA 切換、上一頁、選單與卡片新分頁、直接開 `#music`／`#project/{id}`、手機選單、分類篩選、右鍵開放與封鎖範圍、快捷鍵不再攔截）。
+14. **CV PDF 下載**：About 頁新增「CV PDF ↓」，跟著 EN／CN 切換下載對應語言；PDF 由 `scripts/build_cv_pdf.mjs` 從網站內容自動產生（英文 1 頁、中文 3 頁，銀灰細雜訊底）。
 
 ### 2026-10-20（新增 3 個作品、Events 分類、通用轉換腳本、文件勘誤）
 

@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>WU CHENG-RU — CV</title>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500&family=Noto+Sans+TC:wght@400;500;700&display=block" />
+  <style>
+    /* 頁邊距設 0 才能讓銀灰底滿版；留白改由 body padding＋box-decoration-break: clone 在每頁重複 */
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    :root {
+      --paper: #e9e9e6;
+      --ink: #161616;
+      --ink-2: #3c3c3a;
+      --muted: #74746f;
+      --line: rgba(22, 22, 22, 0.14);
+      --accent: #c8ee60;
+      --sans: 'Inter', 'Noto Sans TC', sans-serif;
+      --heading: 'Space Grotesk', 'Noto Sans TC', sans-serif;
+    }
+
+    html[lang="zh-Hant"] {
+      --sans: 'Noto Sans TC', 'Inter', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    body {
+      font-family: var(--sans);
+      font-size: 9.2pt;
+      line-height: 1.6;
+      color: var(--ink-2);
+      padding: 18mm 18mm 24mm;
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
+    }
+
+    /* 銀灰底＋細雜訊：position: fixed 在列印時會重複出現在每一頁 */
+    .paper {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-color: var(--paper);
+      background-image:
+        url("noise.png"),
+        radial-gradient(120% 80% at 15% 0%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 60%),
+        linear-gradient(165deg, #ececea 0%, #e3e4e1 60%, #e9e9e6 100%);
+      /* 貼圖尺寸用整數 px，避免 PDF 裡出現接縫細線 */
+      background-size: 320px 320px, 100% 100%, 100% 100%;
+    }
+
+    .foot {
+      position: fixed;
+      left: 18mm;
+      right: 18mm;
+      bottom: 10mm;
+      display: flex;
+      justify-content: space-between;
+      padding-top: 2mm;
+      border-top: 0.4pt solid var(--line);
+      font-size: 6.4pt;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10mm;
+      align-items: end;
+      padding-bottom: 7mm;
+      border-bottom: 0.6pt solid var(--ink);
+    }
+
+    h1 {
+      white-space: nowrap;
+      font-family: var(--heading);
+      font-weight: 700;
+      font-size: 25pt;
+      line-height: 1;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+
+    h1 .tc {
+      font-family: 'Noto Sans TC', sans-serif;
+      font-weight: 500;
+      font-size: 15pt;
+      letter-spacing: 0.08em;
+      margin-left: 3mm;
+      color: var(--ink-2);
+    }
+
+    .role {
+      margin-top: 3mm;
+      font-size: 7.4pt;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .contact {
+      display: grid;
+      grid-template-columns: auto 19mm;
+      gap: 5mm;
+      align-items: end;
+    }
+
+    .contact dl {
+      display: grid;
+      grid-template-columns: auto auto;
+      gap: 1.2mm 4mm;
+      font-size: 8pt;
+      line-height: 1.35;
+    }
+
+    .contact dt {
+      font-size: 6.6pt;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      align-self: center;
+    }
+
+    .contact dd {
+      color: var(--ink);
+    }
+
+    .qr {
+      display: block;
+      width: 19mm;
+      height: 19mm;
+    }
+
+    section {
+      margin-top: 6.5mm;
+    }
+
+    .label {
+      display: flex;
+      align-items: center;
+      gap: 2.4mm;
+      font-family: var(--heading);
+      font-weight: 500;
+      font-size: 7.4pt;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--ink);
+      padding-bottom: 1.8mm;
+      margin-bottom: 3.2mm;
+      border-bottom: 0.4pt solid var(--line);
+      break-after: avoid;
+    }
+
+    .label::before {
+      content: '';
+      width: 1.6mm;
+      height: 1.6mm;
+      background: var(--accent);
+      outline: 0.3pt solid rgba(22, 22, 22, 0.35);
+      flex: none;
+    }
+
+    .bio p {
+      max-width: 150mm;
+      margin-bottom: 2mm;
+      color: var(--ink-2);
+    }
+
+    .bio em,
+    .cv em {
+      font-style: italic;
+    }
+
+    /* CV（沿用網站的 class，從 index.html 讀進來） */
+    .cv-section {
+      margin-top: 6mm;
+    }
+
+    .cv-section-title {
+      display: flex;
+      align-items: center;
+      gap: 2.4mm;
+      font-family: var(--heading);
+      font-weight: 500;
+      font-size: 7.4pt;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--ink);
+      padding-bottom: 1.8mm;
+      margin-bottom: 3.2mm;
+      border-bottom: 0.4pt solid var(--line);
+      break-after: avoid;
+    }
+
+    .cv-section-title::before {
+      content: '';
+      width: 1.6mm;
+      height: 1.6mm;
+      background: var(--accent);
+      outline: 0.3pt solid rgba(22, 22, 22, 0.35);
+      flex: none;
+    }
+
+    .cv-row {
+      display: grid;
+      grid-template-columns: 17mm 1fr;
+      gap: 0 2.5mm;
+      margin-bottom: 1.25mm;
+      align-items: baseline;
+      break-inside: avoid;
+    }
+
+    .cv-year {
+      white-space: nowrap;
+      font-size: 7.8pt;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .cv-detail,
+    .cv-edu {
+      font-size: 8.8pt;
+      line-height: 1.55;
+      color: var(--ink-2);
+    }
+
+    .cv-bold {
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    .cv-sub {
+      color: var(--muted);
+      font-size: 7.8pt;
+    }
+
+    .text-link {
+      color: var(--ink);
+      border-bottom: 0.4pt solid rgba(22, 22, 22, 0.3);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="paper"></div>
+  <div class="foot"><span id="foot-title"></span><span id="foot-web"></span></div>
+
+  <header>
+    <div>
+      <h1><span id="name"></span><span class="tc">吳承儒</span></h1>
+      <p class="role" id="role"></p>
+    </div>
+    <div class="contact">
+      <dl>
+        <dt>Email</dt>
+        <dd><a id="email"></a></dd>
+        <dt>Instagram</dt>
+        <dd><a id="ig"></a></dd>
+        <dt>Portfolio</dt>
+        <dd><a id="web"></a></dd>
+      </dl>
+      <img class="qr" src="qr.svg" alt="Portfolio QR code" />
+    </div>
+  </header>
+
+  <section class="bio">
+    <p class="label" id="bio-label"></p>
+    <div id="bio"></div>
+  </section>
+
+  <section class="cv" id="cv"></section>
+
+  <script>
+    (async () => {
+      const lang = new URLSearchParams(location.search).get('lang') === 'zh' ? 'zh' : 'en';
+      document.documentElement.lang = lang === 'zh' ? 'zh-Hant' : 'en';
+      const html = await (await fetch('../../index.html')).text();
+      const site = new DOMParser().parseFromString(html, 'text/html');
+      const $ = sel => site.querySelector(sel);
+
+      document.getElementById('name').textContent = $('.about-name').textContent.trim();
+      document.getElementById('role').textContent = $('.about-role').textContent.replace(/\s+/g, ' ').trim();
+
+      const mail = $('.social-list a[href^="mailto:"]').getAttribute('href');
+      const email = document.getElementById('email');
+      email.href = mail;
+      email.textContent = mail.replace('mailto:', '');
+
+      const igUrl = $('.social-list a[href*="instagram.com"]').getAttribute('href');
+      const ig = document.getElementById('ig');
+      ig.href = igUrl;
+      ig.textContent = '@' + igUrl.replace(/\/$/, '').split('/').pop();
+
+      const webUrl = $('link[rel="canonical"]').getAttribute('href');
+      const web = document.getElementById('web');
+      web.href = webUrl;
+      web.textContent = webUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
+
+      const updated = new URLSearchParams(location.search).get('updated') || '';
+      document.getElementById('foot-title').textContent =
+        `WU CHENG-RU — ${lang === 'zh' ? '簡歷' : 'Curriculum Vitae'}${updated ? ' · Updated ' + updated : ''}`;
+      document.getElementById('foot-web').textContent = web.textContent;
+
+      document.getElementById('bio-label').textContent = lang === 'zh' ? '簡介' : 'Bio';
+      document.getElementById('bio').innerHTML = $(`.bio-text.${lang}`).innerHTML;
+      document.getElementById('cv').innerHTML = $(`.cv-content.${lang}`).innerHTML;
+      document.querySelectorAll('#cv a, #bio a').forEach(a => a.removeAttribute('target'));
+
+      await document.fonts.ready;
+      await Promise.all([...document.images].map(img => img.complete ? null : new Promise(r => { img.onload = img.onerror = r; })));
+      window.__cvReady = true;
+    })();
+  </script>
+</body>
+
+</html>

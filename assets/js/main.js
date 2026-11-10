@@ -393,6 +393,10 @@ document.querySelectorAll('[data-bio-lang], [data-cv-lang]').forEach(btn => {
     const isBio = btn.hasAttribute('data-bio-lang');
     const lang = isBio ? btn.dataset.bioLang : btn.dataset.cvLang;
 
+    document.querySelectorAll('[data-cv-pdf]').forEach(a => {
+      a.href = `assets/cv/WuChengRu_CV_${lang.toUpperCase()}.pdf`;
+    });
+
     // 1. 同步 Bio 切換按鈕與內容
     const bioSwitch = document.getElementById('lang-switch-bio');
     if (bioSwitch) {
