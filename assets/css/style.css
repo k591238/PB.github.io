@@ -220,6 +220,7 @@ button {
 }
 
 .menu_link {
+  display: inline-block;
   color: var(--text-secondary);
   transition: color 0.25s;
   background: none;
@@ -317,7 +318,7 @@ button {
   text-transform: uppercase;
 }
 
-.menu_mobile_list button {
+.menu_mobile_list .menu_link {
   color: var(--text-secondary);
   background: none;
   border: none;
@@ -328,8 +329,8 @@ button {
   text-transform: inherit;
 }
 
-.menu_mobile_list button:hover,
-.menu_mobile_list button.active {
+.menu_mobile_list .menu_link:hover,
+.menu_mobile_list .menu_link.active {
   color: var(--text);
 }
 

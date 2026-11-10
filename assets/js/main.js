@@ -354,7 +354,12 @@ window.addEventListener('popstate', e => {
 
 // Main navigation buttons
 document.querySelectorAll('[data-view]').forEach(el => {
-  el.addEventListener('click', () => navigateTo(el.dataset.view));
+  el.addEventListener('click', e => {
+    // Ctrl／⌘／Shift＋點擊交給瀏覽器開新分頁或新視窗
+    if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+    e.preventDefault();
+    navigateTo(el.dataset.view);
+  });
 });
 
 // Mobile menu buttons
@@ -655,7 +660,18 @@ if (window.matchMedia('(pointer: fine)').matches) {
 /* ────────────────────────────────────────
    RIGHT-CLICK / DRAG PROTECTION
    ──────────────────────────────────────── */
-document.addEventListener('contextmenu', (e) => e.preventDefault());
+// 右鍵只在連結上開放（可在新分頁開啟），圖片、影片和其他地方維持封鎖
+document.addEventListener('contextmenu', (e) => {
+  if (e.target.closest('img, video') || !e.target.closest('a[href]')) e.preventDefault();
+});
 document.addEventListener('dragstart', (e) => {
   if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') e.preventDefault();
+});
+
+// 基本屏蔽：F12、開發者工具與檢視原始碼的快捷鍵（擋不住瀏覽器選單，只是降低隨手查看）
+document.addEventListener('keydown', (e) => {
+  const mod = e.ctrlKey || e.metaKey;
+  const devtools = ['KeyI', 'KeyJ', 'KeyC'].includes(e.code) && ((mod && e.shiftKey) || (e.metaKey && e.altKey));
+  const viewSource = e.code === 'KeyU' && (e.ctrlKey || (e.metaKey && e.altKey));
+  if (e.key === 'F12' || devtools || viewSource) e.preventDefault();
 });

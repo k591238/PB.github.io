@@ -514,7 +514,7 @@ ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
 |------|------|
 | 語義化 `<h3>` | 部分 template 用 `<h3>` 當標籤文字（如 `Date:`），可改 `<p class="detail-info-label">` |
 | `musicWidgets` 重構 | 目前掛在 `window` 全域，可改 module-level 變數 |
-| 選單改成真正的連結 | 選單是 `<button>`，不能右鍵開新分頁，螢幕閱讀器也較難辨識 |
+| 作品卡片改成連結 | `works-grid` 的 `.work` 是 `<div>`，無法右鍵／Ctrl＋點擊在新分頁開某個作品；可改成 `<a href="#project/{id}">`（卡片 CSS 要一起調整）。選單已於 2026-11-10 改成連結 |
 | 自製游標的備援 | `style.css` 用 `cursor: none !important` 隱藏系統游標，JS 沒載入時會完全沒有游標 |
 | 影片檔名空格 | `e3/bg with animal.mp4` 檔名有空格，可改成無空格檔名 |
 
@@ -532,7 +532,8 @@ ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
 | `window.musicWidgets` | `main.js` | 音樂播放器控制依賴 |
 | SoundCloud API `<script>` | `index.html` 尾部 | 外部依賴，與 music 頁強耦合 |
 | `google-site-verification` meta | `index.html` `<head>` | 刪除會讓 Search Console 失去網站擁有權驗證 |
-| contextmenu / dragstart 監聽 | `main.js` 尾部 | 右鍵與拖曳圖片防護，僅供基本防盜用，非安全機制 |
+| contextmenu / dragstart / keydown 監聽 | `main.js` 尾部 | 基本防盜，**不是安全機制**（repo 公開，原始碼和圖片本來就能下載）：右鍵只在連結上開放（為了在新分頁開啟），圖片、影片、文字上封鎖；擋 F12、Ctrl＋Shift＋I／J／C、Ctrl＋U 與 Mac 對應快捷鍵，但瀏覽器選單仍可開開發者工具。不要改成「偵測開發者工具就 debugger 暫停」那種做法，會拖慢正常訪客 |
+| 選單連結的 click 處理 | `main.js` `[data-view]` | 選單和標題是 `<a href="#view" data-view>`：一般點擊 `preventDefault` 後走 SPA 切換；Ctrl／⌘／Shift＋點擊直接 return 交給瀏覽器開新分頁。拿掉 `preventDefault` 會造成重複切換 |
 
 ---
 
@@ -555,7 +556,9 @@ ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
 5. **手機版作品頁格線自動收欄**：見「圖片格線」章節。16 個作品頁在 390／700／1280px 寬度都驗證過：手機全單欄、沒有圖片超出畫面，桌機版不變。
 6. 刪除根目錄未追蹤的舊講義副本 `laser-pop-handout.html`（跟 TD_Laser_POP@130dba1 版本相同，可從那邊歷史找回）。
 7. **影片瘦身**：c1 六支改 30fps／540p／去聲音，三支長片剪成 18 秒（L1040138 取 20–38 秒、L1040180 取 40–58 秒、L1040177 取前 18 秒），79→21 MB；p2 `ig02.mp4` 壓成 720×720 並改為自動循環（原本是要按播放鍵），52→3.1 MB。全站 12＋1 支影片改用 `data-autoplay`＋`videoObserver`，打開 c1 時的下載量從 30 MB 降到約 6 MB。
-8. **中文 Bio** 改為五段新版本。
+8. **中文 Bio** 改為五段新版本；英文 Bio 依中文版翻譯更新；《聽說 Whisper》四處拼錯的 Wisper 修正。
+9. **選單改成真正的連結**：7 個選單按鈕和左上角標題改成 `<a href="#view">`，可右鍵／Ctrl＋點擊在新分頁開啟，外觀不變。
+10. **右鍵與開發者工具基本屏蔽**：右鍵改成只在連結上開放；新增 F12 等快捷鍵屏蔽（見「禁止輕易更動的項目」）。25 項行為測試全數通過（SPA 切換、上一頁、新分頁、直接開 `#music`、手機選單、各快捷鍵擋與不擋）。
 
 ### 2026-10-20（新增 3 個作品、Events 分類、通用轉換腳本、文件勘誤）
 
