@@ -535,7 +535,7 @@ ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
 | 作業 | 說明 |
 |------|------|
 | 影片瘦身（大致完成） | 已完成：c1 六支（79→21 MB）、p2 `ig02.mp4`（52→3.1 MB）、e3 三支（27→7.4 MB）、全站影片改成捲到畫面才播放（見「作品頁影片」）。**p3 三支（約 7 MB）刻意不壓**：只省 2.6 MB，新檔反而讓 git 歷史再多 4.6 MB，划不來。舊的大檔仍在 git 歷史裡（見下一項），之後新增影片務必先壓縮再 commit |
-| git 歷史殘留大檔 | 換掉的舊影片仍在歷史裡，約 160 MB（p2 舊 `ig02.mp4` 52 MB、c1 舊檔約 77 MB、e3 舊檔約 27 MB）。只影響 repo 大小與 clone 時間，**不影響訪客**（網站只提供最新版檔案）。清除要改寫歷史並 force push（`git filter-repo`），所有本機 clone（含 TD_Laser_POP 同步用的 `_pages_pb/`）都要重新 clone。決定：先不清，等「作品獨立網址」大改版時一起做，或 repo 接近 1 GB 時再處理 |
+| git 歷史殘留大檔 | 換掉的舊影片仍在歷史裡，約 160 MB（p2 舊 `ig02.mp4` 52 MB、c1 舊檔約 77 MB、e3 舊檔約 27 MB）。只影響 repo 大小與 clone 時間，**不影響訪客**（網站只提供最新版檔案）。**⛔ 這一項只是紀錄，AI Agent 不可自行執行**（見「禁止輕易更動的項目」）。使用者決定：維持現狀；遇到大改版（如「作品獨立網址」）或 repo 接近 1 GB 時，**只提醒使用者有這件事**，由使用者決定要不要處理 |
 | 列表卡片自動產生 | `works-grid` 改由 `projectsData` 產生，新增作品從改三處變兩處，消除「漏加卡片」的 bug |
 | 照片格線共用 class | 80 多處 inline `display:grid` 改成 `gallery-2`／`gallery-3`／`gallery-portrait` 之類的 class，手機收欄的 `!important` 屬性選擇器可一併改乾淨 |
 | 作品獨立網址 | `#project/p4` 的 `#` 會被 Google 和社群平台忽略：分享單一作品時預覽卡片永遠是首頁，個別作品也幾乎搜不到。根本解法是每個作品做成獨立靜態頁（如 `projects/p4/`），屬大改版，等上面三項做完再規劃 |
@@ -554,6 +554,7 @@ ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
 
 | 項目 | 位置 | 原因 |
 |------|------|------|
+| ⛔ **git 歷史（絕對禁止改寫）** | 整個 repo | **不可執行** `git filter-repo`、`git filter-branch`、BFG、`git push --force`／`--force-with-lease`、`git reset --hard` 到已 push 的 commit、刪除或重建 repo。即使看起來是在「清理大檔」「縮小 repo」，也一律不做，只能向使用者提起。改寫歷史會讓所有 clone（含 TD_Laser_POP 的自動同步）失效，而且無法復原 |
 | `navigateTo()` | `main.js` L100–158 | SPA 路由核心，修改影響所有頁面切換 |
 | `openProjectDetail()` | `main.js` | 作品詳細頁渲染邏輯；清空內容前的 `videoObserver.disconnect()` 和最後掛上 `video[data-autoplay]` 的那行不可拿掉 |
 | `scrollObserver` | `main.js` L91–98 | 所有 scroll-reveal 動畫依賴 |
