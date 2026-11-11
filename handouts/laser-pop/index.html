@@ -305,6 +305,8 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
   <symbol id="i-key" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><circle cx="15" cy="24" r="8"/><circle cx="15" cy="24" r="2.5"/><path d="M23 24h20M36 24v7M42 24v5"/></symbol>
   <symbol id="i-tripod" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="15" y="5" width="18" height="10" rx="2"/><path d="M24 15v7M24 22L11 43M24 22l13 21M24 22v21"/></symbol>
   <symbol id="i-cube" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="9" y="9" width="30" height="30" rx="5"/><circle cx="24" cy="24" r="6"/><circle cx="24" cy="24" r="1.5"/></symbol>
+  <symbol id="i-router" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="5" y="22" width="38" height="14" rx="3"/><path d="M12 29h.5M18 29h.5M24 29h.5"/><path d="M14 22l-3-10M34 22l3-10"/><path d="M30 29h8"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="13" y="14" width="22" height="16" rx="3"/><path d="M19 14V6M29 14V6M24 30v8c0 4-3 6-7 6"/></symbol>
 </defs></svg>
 
 <section id="cases">
@@ -416,6 +418,32 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
   </div>
   <p class="note">ILDA 接頭和舊式印表機線外型一樣（DB-25），但印表機線不保證每一腳都有接通，請用 ILDA 專用線。</p>
   <h3>兩種 DAC：Helios 與 EtherDream</h3>
+  <figure class="diagram">
+    <svg viewBox="0 0 760 330" role="img" aria-label="接線比較：Helios 用 USB 接電腦並由 USB 供電；EtherDream 用網路線接路由器或電腦，另外接電源">
+      <text class="t" x="8" y="22">Helios：USB</text>
+      <use href="#i-laptop" class="ico" x="10" y="36" width="66" height="66"/><text class="s" x="14" y="118">電腦</text>
+      <path class="cable" d="M80,70 L170,70"/><text class="q" x="96" y="60">USB（傳資料＋供電）</text>
+      <use href="#i-dac" class="ico hwc" x="174" y="36" width="66" height="66"/><text class="s" x="178" y="118">Helios</text>
+      <path class="cable" d="M244,70 L330,70"/><text class="q" x="262" y="60">ILDA 線</text>
+      <use href="#i-proj" class="ico hwc" x="334" y="30" width="72" height="72"/><text class="s" x="338" y="118">投影機</text>
+      <text class="s" x="440" y="62">一條 USB 就能用；電腦要放在 DAC 旁邊</text>
+      <text class="s" x="440" y="80">TD：Type = Helios，Device 自動列出</text>
+      <path d="M8,140 L752,140" style="stroke:var(--line);stroke-width:1"/>
+      <text class="t" x="8" y="168">EtherDream：網路</text>
+      <use href="#i-laptop" class="ico" x="10" y="180" width="66" height="66"/><text class="s" x="14" y="262">電腦</text>
+      <path class="cable" d="M80,214 L150,214"/><text class="q" x="90" y="204">網路線</text>
+      <use href="#i-router" class="ico" x="152" y="182" width="60" height="60"/><text class="s" x="150" y="262">路由器／交換器</text>
+      <path class="cable" d="M214,214 L290,214"/><text class="q" x="224" y="204">網路線</text>
+      <use href="#i-dac" class="ico hwc" x="292" y="180" width="66" height="66"/><text class="s" x="290" y="262">EtherDream</text>
+      <path class="cable" d="M325,236 L325,282" style="stroke-dasharray:4 4"/>
+      <use href="#i-plug" class="ico" x="306" y="280" width="40" height="40"/><text class="s" x="352" y="306">另外接電源（DC 變壓器或 USB-C）</text>
+      <path class="cable" d="M362,214 L440,214"/><text class="q" x="380" y="204">ILDA 線</text>
+      <use href="#i-proj" class="ico hwc" x="444" y="174" width="72" height="72"/><text class="s" x="448" y="262">投影機</text>
+      <text class="s" x="540" y="206">網路線可以拉長</text>
+      <text class="s" x="540" y="224">TD：Type = EtherDream</text>
+      <text class="s" x="540" y="242">IP 由 EtherDream DAT 列出</text>
+    </svg>
+  </figure>
   <div class="tbl"><table>
     <thead><tr><th>項目</th><th>Helios（USB）</th><th>EtherDream（網路）</th></tr></thead>
     <tbody>
