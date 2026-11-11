@@ -305,6 +305,8 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
   <symbol id="i-key" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><circle cx="15" cy="24" r="8"/><circle cx="15" cy="24" r="2.5"/><path d="M23 24h20M36 24v7M42 24v5"/></symbol>
   <symbol id="i-tripod" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="15" y="5" width="18" height="10" rx="2"/><path d="M24 15v7M24 22L11 43M24 22l13 21M24 22v21"/></symbol>
   <symbol id="i-cube" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="9" y="9" width="30" height="30" rx="5"/><circle cx="24" cy="24" r="6"/><circle cx="24" cy="24" r="1.5"/></symbol>
+  <symbol id="i-router" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="5" y="22" width="38" height="14" rx="3"/><path d="M12 29h.5M18 29h.5M24 29h.5"/><path d="M14 22l-3-10M34 22l3-10"/><path d="M30 29h8"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="13" y="14" width="22" height="16" rx="3"/><path d="M19 14V6M29 14V6M24 30v8c0 4-3 6-7 6"/></symbol>
 </defs></svg>
 
 <section id="cases">
@@ -313,7 +315,7 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
   <p>同樣是一顆光點沿路徑跑，可以打在牆上、打在空間裡、和投影疊合，也能和舞者同台。每支影片下面寫了「看什麼」，對應到講義的章節。</p>
   <div class="vids">
     <div class="vid"><div class="yt" data-id="xY_4i_SS-jg"><button type="button" aria-label="播放：MIMIC" style="background-image:url(https://i.ytimg.com/vi/xY_4i_SS-jg/hqdefault.jpg)"></button></div>
-      <b>MIMIC</b><span class="by">MEDIA TRIBE</span><p>雷射和投影機疊在一起。看兩者怎麼對位：這就是第 04 章 mapping 要解決的事。</p><a class="yt-link" href="https://www.youtube.com/watch?v=xY_4i_SS-jg" target="_blank" rel="noopener">在 YouTube 觀看 ↗</a></div>
+      <b>MIMIC</b><span class="by">MEDIA TRIBE</span><p>雷射和影像投影機疊在一起。看兩者怎麼對位：這就是第 04 章 mapping 要解決的事。</p><a class="yt-link" href="https://www.youtube.com/watch?v=xY_4i_SS-jg" target="_blank" rel="noopener">在 YouTube 觀看 ↗</a></div>
     <div class="vid"><div class="yt" data-id="b34OVhcwlFY"><button type="button" aria-label="播放：NOMAD live" style="background-image:url(https://i.ytimg.com/vi/b34OVhcwlFY/hqdefault.jpg)"></button></div>
       <b>NOMAD live</b><span class="by">TUNDRA</span><p>生成式的雷射影音現場演出。看圖形一直變化卻不閃：每秒重畫要穩（第 05、06 章）。</p><a class="yt-link" href="https://www.youtube.com/watch?v=b34OVhcwlFY" target="_blank" rel="noopener">在 YouTube 觀看 ↗</a></div>
     <div class="vid"><div class="yt" data-id="XjlYLSjDZnE"><button type="button" aria-label="播放：AIR" style="background-image:url(https://i.ytimg.com/vi/XjlYLSjDZnE/hqdefault.jpg)"></button></div>
@@ -355,8 +357,8 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
     <ol>
       <li>光束永遠不對著人：投射區域內不能有人，也不能有鏡面或會反光的東西。</li>
       <li>急停開關放在操作者手邊，並指定一位安全負責人。</li>
-      <li>接線、拔線前，先關掉投影機或按下急停。</li>
-      <li>每次開機先測：按下急停，投影機要立刻熄光。</li>
+      <li>接線、拔線前，先關掉雷射機或按下急停。</li>
+      <li>每次開機先測：按下急停，雷射機要立刻熄光。</li>
       <li>暗光開場：RGB Scale 先調到 0.1～0.2。POP 沒有 Color 屬性時，輸出是全白最大亮度。</li>
       <li>光束不動時能量集中在一點：避免單點圖形與很長的角點停留。</li>
       <li>有人在場時，雷射動作要固定、可預期、排練過，不要即興。表演者知道光何時在哪裡，才能避開。</li>
@@ -370,9 +372,9 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
 <section id="system">
   <div class="sec-no"><b>02</b>硬體 · 系統</div>
   <h2>一台雷射怎麼動起來</h2>
-  <p>TouchDesigner 算出每個點的位置和顏色，DAC 把數字變成電壓，投影機裡的兩面振鏡再依電壓轉動，推著光點跑。</p>
+  <p>TouchDesigner 算出每個點的位置和顏色，DAC 把數字變成電壓，雷射機裡的兩面振鏡再依電壓轉動，推著光點跑。</p>
   <figure class="diagram">
-    <svg viewBox="0 0 760 290" role="img" aria-label="系統圖：電腦經 USB 接到 DAC，DAC 經 ILDA 線接到雷射投影機，投影機裡 RGB 雷射經兩面振鏡把光點打到牆上">
+    <svg viewBox="0 0 760 290" role="img" aria-label="系統圖：電腦經 USB 接到 DAC，DAC 經 ILDA 線接到雷射機，雷射機裡 RGB 雷射經兩面振鏡把光點打到牆上">
       <defs><marker id="ah1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0,0L10,5L0,10z"/></marker></defs>
       <use href="#i-laptop" class="ico" x="18" y="52" width="80" height="80"/>
       <text class="t" x="20" y="158">電腦</text><text class="s" x="20" y="176">TouchDesigner</text><text class="s" x="20" y="192">算出點和顏色</text>
@@ -381,7 +383,7 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
       <text class="t" x="174" y="158">DAC</text><text class="s" x="174" y="176">Helios</text><text class="s" x="174" y="192">數字 → 電壓</text>
       <path class="cable" d="M256,92 L340,92"/><text class="q" x="262" y="82">ILDA 線</text>
       <rect class="bx hw" x="342" y="28" width="268" height="184" rx="10"/>
-      <text class="t" x="356" y="52">雷射投影機</text>
+      <text class="t" x="356" y="52">雷射機</text>
       <circle cx="372" cy="96" r="7" style="fill:var(--r)"/><circle cx="372" cy="120" r="7" style="fill:var(--g)"/><circle cx="372" cy="144" r="7" style="fill:var(--b)"/>
       <path class="ar" d="M379,96 L420,120 M379,120 L420,120 M379,144 L420,120"/><path class="ar" d="M420,120 L486,120"/>
       <text class="s" x="356" y="176">RGB 雷射</text>
@@ -407,14 +409,62 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
     <div class=""><svg aria-hidden="true"><use href="#i-laptop"/></svg><b>電腦</b><span>跑 TouchDesigner，先確認能穩定 60 fps</span></div>
     <div class=""><svg aria-hidden="true"><use href="#i-usb"/></svg><b>USB 線</b><span>電腦接 DAC。USB 不適合拉長，電腦放在 DAC 旁邊</span></div>
     <div class="hw"><svg aria-hidden="true"><use href="#i-dac"/></svg><b>DAC（Helios）</b><span>把數字變成電壓。包裝只附 USB 線</span></div>
-    <div class="hw"><svg aria-hidden="true"><use href="#i-db25"/></svg><b>ILDA 線（DB-25）</b><span>DAC 接投影機。要用 ILDA 專用線，長距離走這條</span></div>
-    <div class="hw"><svg aria-hidden="true"><use href="#i-proj"/></svg><b>雷射投影機</b><span>要有 ILDA 輸入；看清楚掃描速度與功率</span></div>
-    <div class="warn"><svg aria-hidden="true"><use href="#i-estop"/></svg><b>急停開關</b><span>接在投影機的 Interlock 上，一按就熄光</span></div>
-    <div class="warn"><svg aria-hidden="true"><use href="#i-key"/></svg><b>鑰匙</b><span>投影機的總開關，不用時拔走</span></div>
-    <div class=""><svg aria-hidden="true"><use href="#i-tripod"/></svg><b>腳架、安全鋼索</b><span>投影機一動 mapping 就要重做；吊掛一定加鋼索</span></div>
+    <div class="hw"><svg aria-hidden="true"><use href="#i-db25"/></svg><b>ILDA 線（DB-25）</b><span>DAC 接雷射機。要用 ILDA 專用線，長距離走這條</span></div>
+    <div class="hw"><svg aria-hidden="true"><use href="#i-proj"/></svg><b>雷射機</b><span>要有 ILDA 輸入；看清楚掃描速度與功率</span></div>
+    <div class="warn"><svg aria-hidden="true"><use href="#i-estop"/></svg><b>急停開關</b><span>接在雷射機的 Interlock 上，一按就熄光</span></div>
+    <div class="warn"><svg aria-hidden="true"><use href="#i-key"/></svg><b>鑰匙</b><span>雷射機的總開關，不用時拔走</span></div>
+    <div class=""><svg aria-hidden="true"><use href="#i-tripod"/></svg><b>腳架、安全鋼索</b><span>雷射機一動 mapping 就要重做；吊掛一定加鋼索</span></div>
     <div class=""><svg aria-hidden="true"><use href="#i-cube"/></svg><b>LaserCube</b><span>DAC 做在機身裡，USB 或網路直連，不需要 ILDA 線</span></div>
   </div>
   <p class="note">ILDA 接頭和舊式印表機線外型一樣（DB-25），但印表機線不保證每一腳都有接通，請用 ILDA 專用線。</p>
+  <h3>兩種 DAC：Helios 與 EtherDream</h3>
+  <figure class="diagram">
+    <svg viewBox="0 0 760 370" role="img" aria-label="接線比較：Helios 用 USB 接電腦並由 USB 供電；EtherDream 用網路線接路由器或電腦，另外用 DC 變壓器或 USB 線供電">
+      <text class="t" x="8" y="22">Helios：USB</text>
+      <use href="#i-laptop" class="ico" x="10" y="40" width="66" height="66"/><text class="s" x="22" y="122">電腦</text>
+      <path class="cable" d="M80,74 L168,74"/><text class="q" x="108" y="64">USB</text>
+      <use href="#i-dac" class="ico hwc" x="172" y="40" width="66" height="66"/><text class="s" x="180" y="122">Helios</text>
+      <path class="cable" d="M242,74 L328,74"/><text class="q" x="262" y="64">ILDA 線</text>
+      <use href="#i-proj" class="ico hwc" x="332" y="34" width="72" height="72"/><text class="s" x="346" y="122">雷射機</text>
+      <text class="s" x="440" y="58">USB 同時傳資料、供電，不用變壓器</text>
+      <text class="s" x="440" y="76">USB 線短：電腦放在 DAC 旁邊</text>
+      <text class="s" x="440" y="94">TD：Type = Helios，Device 自動列出</text>
+      <path d="M8,146 L752,146" style="stroke:var(--line);stroke-width:1"/>
+      <text class="t" x="8" y="176">EtherDream：網路</text>
+      <text class="s" x="300" y="186">EtherDream</text>
+      <use href="#i-laptop" class="ico" x="10" y="196" width="66" height="66"/><text class="s" x="22" y="278">電腦</text>
+      <path class="cable" d="M80,230 L150,230"/><text class="q" x="92" y="220">網路線</text>
+      <use href="#i-router" class="ico" x="152" y="198" width="60" height="60"/><text class="s" x="140" y="278">路由器／交換器</text>
+      <path class="cable" d="M214,230 L292,230"/><text class="q" x="226" y="220">網路線</text>
+      <use href="#i-dac" class="ico hwc" x="294" y="196" width="66" height="66"/>
+      <path class="cable" d="M314,252 L264,300" style="stroke-dasharray:4 4"/>
+      <path class="cable" d="M340,252 L390,300" style="stroke-dasharray:4 4"/>
+      <use href="#i-plug" class="ico" x="230" y="298" width="40" height="40"/><text class="s" x="168" y="358">DC 變壓器（圓孔）</text>
+      <use href="#i-usb" class="ico" x="376" y="298" width="40" height="40"/><text class="s" x="372" y="358">或 USB 線供電</text>
+      <text class="s" x="282" y="324">供電擇一</text>
+      <path class="cable" d="M362,230 L440,230"/><text class="q" x="380" y="220">ILDA 線</text>
+      <use href="#i-proj" class="ico hwc" x="444" y="190" width="72" height="72"/><text class="s" x="458" y="278">雷射機</text>
+      <text class="s" x="548" y="214">網路線可以拉長</text>
+      <text class="s" x="548" y="232">TD：Type = EtherDream</text>
+      <text class="s" x="548" y="250">IP 由 EtherDream DAT 列出</text>
+      <text class="s" x="548" y="268">USB 只負責供電，資料走網路</text>
+    </svg>
+  </figure>
+  <div class="tbl"><table>
+    <thead><tr><th>項目</th><th>Helios（USB）</th><th>EtherDream（網路）</th></tr></thead>
+    <tbody>
+      <tr><td>接電腦</td><td>USB 線</td><td>網路線，接路由器／交換器或直接接電腦</td></tr>
+      <tr><td>供電</td><td>USB 供電，不用變壓器</td><td>舊款用圓孔 DC 變壓器；Ether Dream 4 用 USB-C 供電</td></tr>
+      <tr><td>距離</td><td>USB 線短，電腦要放在 DAC 旁</td><td>網路線可以拉長，電腦離雷射遠也沒關係</td></tr>
+      <tr><td>多台</td><td>每台一條 USB</td><td>同一個網路接多台，靠 IP 區分</td></tr>
+      <tr><td>TD 設定</td><td>Type = Helios，Device 自動列出，沒出現按 Scan</td><td>Type = EtherDream，填 IP，Port 7765</td></tr>
+    </tbody>
+  </table></div>
+  <div class="grid2">
+    <div class="card"><div class="lbl">Helios 接線</div><p>電腦 → USB → Helios → ILDA 線 → 雷射機（切到 ILDA 模式）。電源燈亮就可以在 TD 裡找到。</p></div>
+    <div class="card"><div class="lbl">EtherDream 接線</div><p>① 接電源 ② 網路線接到和電腦同一個網路 ③ ILDA 線接雷射機。IP 不用自己查：TD 的 <b>EtherDream DAT</b> 會列出網路上找到的機器和 IP。直接接電腦時，IP 會是 169.254 開頭，屬正常。</p></div>
+    <div class="card"><div class="lbl">EtherDream 找不到時</div><p>確認同一個網路；Windows 防火牆要允許 TouchDesigner（第一次跳出詢問時按允許）；再按一次搜尋。</p></div>
+  </div>
 </section>
 
 <section id="multi">
@@ -422,7 +472,7 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
   <h2>一台 DAC，一路訊號</h2>
   <p>要分開控制兩台雷射（畫不同內容、各自 mapping），就需要兩台 DAC，TD 裡也要有兩條輸出。</p>
   <figure class="diagram">
-    <svg viewBox="0 0 760 250" role="img" aria-label="兩台雷射：電腦裡兩條輸出，各自經 USB 接一台 DAC，再經 ILDA 線接一台雷射投影機">
+    <svg viewBox="0 0 760 250" role="img" aria-label="兩台雷射：電腦裡兩條輸出，各自經 USB 接一台 DAC，再經 ILDA 線接一台雷射機">
       <defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0,0L10,5L0,10z"/></marker></defs>
       <use href="#i-laptop" class="ico" x="10" y="78" width="74" height="74"/>
       <text class="t" x="14" y="172">電腦</text><text class="s" x="14" y="190">同一個 pattern</text>
@@ -446,11 +496,11 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
     <li><b>全部接好再掃描</b>：所有 Helios 插上後只按一次 Scan。演出中不要按，它會斷開使用中的連線。</li>
     <li><b>每台一個 Laser Device CHOP</b>：Type 選 Helios，Device 各選一台。</li>
     <li><b>一台一台確認</b>：先開 #1，確認是哪台出光、方向對不對，再開 #2。</li>
-    <li><b>亮度、mapping 分開調</b>：每台投影機功率不同，同樣的 RGB Scale 亮度不會一樣。</li>
+    <li><b>亮度、mapping 分開調</b>：每台雷射機功率不同，同樣的 RGB Scale 亮度不會一樣。</li>
   </ol>
   <div class="grid2">
     <div class="card"><div class="lbl">台數多、距離遠</div><p>4 台以內、離電腦近，用 USB 的 Helios 最省。更多或更遠時，改用網路 DAC（例如 EtherDream），Laser Device CHOP 一樣支援。</p></div>
-    <div class="card"><div class="lbl">線怎麼拉</div><p>USB 短、ILDA 長：電腦和 DAC 放一起，再用 ILDA 線拉到投影機。線長依投影機規格，訊號線不要和電源線綁在一起。</p></div>
+    <div class="card"><div class="lbl">線怎麼拉</div><p>USB 短、ILDA 長：電腦和 DAC 放一起，再用 ILDA 線拉到雷射機。線長依雷射機規格，訊號線不要和電源線綁在一起。</p></div>
   </div>
   <p class="note">兩台畫一模一樣的內容時，一個 Laser CHOP 可以同時接兩個 Laser Device CHOP。</p>
 </section>
@@ -528,7 +578,7 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
   </div>
   <div class="grid2">
     <div class="card"><div class="lbl">備註 · LasCorner 是什麼</div><p>Laser CHOP 指定讀取的點屬性，不是自訂名稱。1 = 角點（原地停留），0 = 導引點（只輸出一次、直接滑過）。可以逐點設定。沒設時全部當角點；2025.30000 以前的版本沒有導引點，所以舊的 SOP 流程不會碰到它。</p></div>
-    <div class="card"><div class="lbl">備註 · 怎麼設</div><p><b>真正的尖角設 1</b>：矩形四角、星形頂點、折線轉折。<b>曲線設 0</b>：圓、弧線、Lissajous。全部設 1 不會比較穩：曲線上每點都停，一圈變長、容易閃，還會出現一串亮點。想要圓角請把幾何做成弧線，不要靠導引點讓振鏡「切圓」，那個弧度會隨投影機改變。</p></div>
+    <div class="card"><div class="lbl">備註 · 怎麼設</div><p><b>真正的尖角設 1</b>：矩形四角、星形頂點、折線轉折。<b>曲線設 0</b>：圓、弧線、Lissajous。全部設 1 不會比較穩：曲線上每點都停，一圈變長、容易閃，還會出現一串亮點。想要圓角請把幾何做成弧線，不要靠導引點讓振鏡「切圓」，那個弧度會隨雷射機改變。</p></div>
   </div>
   <h3>省時間的方法，依效果排序</h3>
   <ul class="points">
@@ -668,7 +718,7 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
         <small>Auto：只有 Star 的頂點是角點。改成 All Corner，看曲線圖形的 sample 數增加多少。</small></div>
       <div class="group-t">Laser CHOP › Laser 頁</div>
       <div class="ctrl"><div class="row"><label for="rate">Output Sample Rate <code>outputrate</code></label><output id="v_rate"></output></div>
-        <input type="range" id="rate" min="10000" max="65500" step="500" value="30000"><small>TD 預設 48000。Helios 上限 65500；實際要配合投影機的掃描速度。</small></div>
+        <input type="range" id="rate" min="10000" max="65500" step="500" value="30000"><small>TD 預設 48000。Helios 上限 65500；實際要配合雷射機的掃描速度。</small></div>
       <div class="group-t">Laser CHOP › Scanning 頁</div>
       <div class="ctrl"><div class="row"><label for="step">Step Size <code>stepsize</code></label><output id="v_step"></output></div>
         <input type="range" id="step" min="0.003" max="0.03" step="0.001" value="0.01"><small>出光時每個 sample 能移動的距離。越大一圈越快，但線變暗、變不直。預設 0.01。</small></div>
@@ -689,12 +739,12 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
         <input type="range" id="poboff" min="0" max="0.5" step="0.005" value="0.074"><small>開光後，在起點亮著停留的 ms。預設 0.074。</small></div>
       <div class="ctrl"><div class="row"><label for="cdelay">Color Delay <code>colordelay</code></label><output id="v_cdelay"></output></div>
         <input type="range" id="cdelay" min="-0.4" max="0.4" step="0.01" value="0"><small>顏色通道相對於位置的延遲（ms）。不為 0 時線段頭尾會出現拖尾或缺口。預設 0。</small></div>
-      <div class="group-t">投影機（不是 TD 參數，示意）</div>
+      <div class="group-t">雷射機（不是 TD 參數，示意）</div>
       <div class="ctrl"><div class="row"><label for="galvo">振鏡速度</label><output id="v_galvo"></output></div>
         <input type="range" id="galvo" min="8000" max="60000" step="1000" value="30000"><small>振鏡追不上指令時，轉角變圓。角點停留就是在等它追上。</small></div>
     </div>
   </div>
-  <p class="note">模擬器依實測校準：TD 中半徑 1 的圓加 1×1 矩形，48 kHz 預設參數時每圈約 340 sample。振鏡慣性是示意模型，實際行為依投影機而定。</p>
+  <p class="note">模擬器依實測校準：TD 中半徑 1 的圓加 1×1 矩形，48 kHz 預設參數時每圈約 340 sample。振鏡慣性是示意模型，實際行為依雷射機而定。</p>
   <details>
     <summary>TD 範例 laser_patterns 的參數與內部</summary>
     <div class="tbl"><table>
@@ -773,28 +823,28 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
 </section>
 
 <section id="helios">
-  <div class="sec-no"><b>10</b>軟體 · 接上 Helios</div>
-  <h2>從 TouchDesigner 送到 Helios</h2>
-  <p>Laser CHOP 後面接 <b>Laser Device CHOP</b>，Type 選 Helios。Output Sample Rate 依投影機的掃描速度設定，不超過 Helios 的 65,500。</p>
+  <div class="sec-no"><b>10</b>軟體 · 接上 DAC</div>
+  <h2>從 TouchDesigner 送到 Helios / EtherDream</h2>
+  <p>Laser CHOP 後面接 <b>Laser Device CHOP</b>，Type 選 Helios。Output Sample Rate 依雷射機的掃描速度設定，不超過 Helios 的 65,500。</p>
   <h3>TouchDesigner 設定步驟</h3>
   <ol class="steps">
-    <li><b>投影機先不要出光</b>：鑰匙關閉或在急停狀態，確認投射方向沒有人。</li>
+    <li><b>雷射機先不要出光</b>：鑰匙關閉或在急停狀態，確認投射方向沒有人。</li>
     <li><b>接 USB</b>：Helios 的電源燈亮起。Windows 8 以上會自動安裝驅動；更舊的系統用 Zadig 安裝 WinUSB 驅動。</li>
-    <li><b>接 ILDA 線</b>：Helios 的 DB25 接到投影機的 ILDA 輸入。投影機要切到 <b>ILDA 模式</b>，不是自走或聲控模式。</li>
-    <li><b>Laser CHOP</b>：Source = POP，Output Sample Rate 設成投影機規格的掃描速度（例如投影機標示 30K，就設 30000），不超過 65500。</li>
+    <li><b>接 ILDA 線</b>：Helios 的 DB25 接到雷射機的 ILDA 輸入。雷射機要切到 <b>ILDA 模式</b>，不是自走或聲控模式。</li>
+    <li><b>Laser CHOP</b>：Source = POP，Output Sample Rate 設成雷射機規格的掃描速度（例如雷射機標示 30K，就設 30000），不超過 65500。</li>
     <li><b>Laser Device CHOP</b>：接在 Laser CHOP 後面，<b>Type 選 Helios</b>，Device 選單會自動列出接上的 Helios。沒出現時按 Scan。</li>
     <li><b>先調暗</b>：Red / Green / Blue Scale 調到 0.1～0.2，再把 Active 打開。</li>
-    <li><b>確認路徑後才加亮度</b>：圖形方向不對時，用 X Scale 或 Y Scale 設 −1 翻轉。</li>
+    <li><b>確認路徑後才加亮度</b>：圖形方向不對時，在送進 Laser Device CHOP 之前用 Math CHOP 把 x 或 y 乘上 −1（或在 POP 用 Transform POP 翻轉）。<b>不要</b>把 Laser Device CHOP 的 X/Y Scale 設成負數：實測 Helios 會卡在角落、只剩一個點。</li>
   </ol>
   <div class="grid2">
-    <div class="card"><div class="lbl">Type 要選對</div><p>Type 選 <b>EtherDream</b> 時（網路型 DAC，要填 IP 和 Port），找不到裝置節點就會變紅。使用 Helios 時 Type 選 <b>Helios</b>，不需要填 IP。</p></div>
+    <div class="card"><div class="lbl">改用 EtherDream</div><p>Laser Device CHOP 的 <b>Type 選 EtherDream</b>，Network Address 填 EtherDream DAT 列出的 IP，Port 維持 7765，其餘步驟和 Helios 相同。Type 選錯時節點會變紅。</p></div>
     <div class="card"><div class="lbl">Scan 的注意事項</div><p>Scan 時不能有使用中的 Helios 連線，否則會被關掉。實測：沒接裝置時切換 Active 或 Scan，TD 會短暫掉幀（60 → 23 fps），之後恢復，屬正常現象。</p></div>
     <div class="card"><div class="lbl">舊節點</div><p>Helios DAC CHOP 已標示為 deprecated，請統一使用 Laser Device CHOP。</p></div>
   </div>
 
   <h3>上機後的實務觀念</h3>
   <div class="grid2">
-    <div class="card"><div class="lbl">顏色不是線性的</div><p>雷射二極體的亮度和輸入值不成比例，紅、綠、藍三色反應也不同：輸入 0.1 可能幾乎不亮，白色在低亮度時容易偏色。專業做法是每台投影機各做一條「色彩曲線」校正。先有這個觀念，看到淡出不平順或白色偏色時，就知道原因。</p></div>
+    <div class="card"><div class="lbl">顏色不是線性的</div><p>雷射二極體的亮度和輸入值不成比例，紅、綠、藍三色反應也不同：輸入 0.1 可能幾乎不亮，白色在低亮度時容易偏色。專業做法是每台雷射機各做一條「色彩曲線」校正。先有這個觀念，看到淡出不平順或白色偏色時，就知道原因。</p></div>
     <div class="card"><div class="lbl">總亮度與平滑</div><p>演出時準備一個總亮度推桿（Dimmer），隨時可以整體調暗。用 MIDI 控制器時，數值只有 0～127 階，先接 <b>Filter CHOP</b> 平滑，雷射動作才不會一格一格跳。</p></div>
     <div class="card"><div class="lbl">換場館</div><p>每個場館的投影位置都不一樣。把整體的位移、縮放、旋轉集中在一組參數（或 mapping），換場地時只調這一組，不用動每個圖形。</p></div>
   </div>
@@ -822,10 +872,10 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
     <thead><tr><th>症狀</th><th>先檢查</th></tr></thead>
     <tbody>
       <tr><td>Device 選單是空的</td><td>USB 有沒有接好、電源燈有沒有亮；先關掉其他使用中的 Laser Device CHOP，再按 Scan；舊版 Windows 要裝 WinUSB 驅動</td></tr>
-      <tr><td>TD 沒錯誤，但完全沒光</td><td>投影機是否在 ILDA 模式、鑰匙與 interlock、RGB Scale 是否為 0、Laser CHOP 的 Active、POP 是否有 Color</td></tr>
-      <tr><td>圖形左右或上下顛倒</td><td>X Scale / Y Scale 設 −1（背投或鏡面反射時常見）</td></tr>
+      <tr><td>TD 沒錯誤，但完全沒光</td><td>雷射機是否在 ILDA 模式、鑰匙與 interlock、RGB Scale 是否為 0、Laser CHOP 的 Active、POP 是否有 Color</td></tr>
+      <tr><td>圖形左右或上下顛倒</td><td>在 Laser Device CHOP 之前用 Math CHOP 把 x 或 y 乘上 −1（背投或鏡面反射時常見）。不要用負的 X/Y Scale</td></tr>
       <tr><td>閃爍</td><td>每秒重畫太低：減少筆畫、曲線改導引點、縮小圖形</td></tr>
-      <tr><td>轉角變圓、角落過亮</td><td>Corner Hold 太小或太大；取樣率超過投影機的掃描速度</td></tr>
+      <tr><td>轉角變圓、角落過亮</td><td>Corner Hold 太小或太大；取樣率超過雷射機的掃描速度</td></tr>
       <tr><td>線段頭尾有拖尾或缺口</td><td>調 Color Delay 與 blanking 參數</td></tr>
       <tr><td>操作後畫面慢半拍</td><td>Queue Time 太長</td></tr>
       <tr><td>USB 裝置無法辨識（燈亮但系統認不到）</td><td>依官方說明重新燒錄 Helios 韌體</td></tr>
@@ -896,7 +946,7 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
       <tr><td class="k">device</td><td>自動列出接上的 Helios</td></tr>
       <tr><td class="k">scan</td><td>重新掃描。掃描時會關閉使用中的 Helios 連線</td></tr>
       <tr><td class="k">queuetime = 0.1 · queueunits = seconds</td><td>緩衝長度；點數少時可以調小</td></tr>
-      <tr><td class="k">xscale / yscale</td><td>縮放與翻轉（−1）</td></tr>
+      <tr><td class="k">xscale / yscale</td><td>縮放。設成負數時 Helios 會卡在角落，翻轉請在前面用 Math CHOP</td></tr>
       <tr><td class="k wrap">redscale / greenscale / bluescale / intensityscale</td><td>RGB 全為 0 時自動 blanking</td></tr>
       <tr><td class="k">輸入通道</td><td>x、y（−1～1），r、g、b、i（0～1），user1～4 選用</td></tr>
     </tbody></table></div>
