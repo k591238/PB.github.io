@@ -3,6 +3,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>雷射 POP 工作流</title>
+<link rel="icon" href="../../assets/images/favicon.svg" type="image/svg+xml">  <!-- 作品集的網站圖示（講義放在 PB.github.io/handouts/laser-pop/） -->
 <meta name="description" content="TouchDesigner 雷射 POP 課程講義：認識雷射硬體與器材、理解路徑與掃描時間的邏輯，再用 POP 做出圖形送到 Helios DAC。吳承儒 Wu Cheng-Ru（PB / Pen_bit）編寫。">
 <link rel="canonical" href="https://k591238.github.io/PB.github.io/handouts/laser-pop/">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -78,6 +79,10 @@ header.hero{min-height:92vh;display:grid;align-content:space-between;gap:2rem;pa
 .meta-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem 1.4rem;font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;line-height:1.5}
 .meta-row div{border-top:1px solid var(--line-strong);padding-top:.4rem;min-width:0}
 .meta-row span{display:block;color:var(--muted)}
+/* 頁首返回 Teaching 列表（講義放在 PB.github.io/handouts/laser-pop/，../ 是 Teaching 列表） */
+.back-teaching{display:inline-block;margin-bottom:1.6rem;font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .25s}
+.back-teaching:hover{color:var(--fg)}
+@media print{.back-teaching{display:none}}
 .mega{font-family:var(--display);font-weight:500;font-size:clamp(4.2rem,17vw,11rem);line-height:.82;letter-spacing:-.045em;margin:0;display:flex;align-items:flex-start;gap:.06em;flex-wrap:wrap}
 .mega sup{font-size:.16em;line-height:1.05;letter-spacing:0;font-weight:500;margin-top:.35em;font-family:var(--display)}
 .mega .x{color:var(--accent)}
@@ -271,6 +276,7 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
 
 <main class="wrap">
 <header class="hero" id="intro" data-label="開場">
+  <a class="back-teaching" href="../">← Teaching</a>
   <div class="meta-row">
     <div><span>Course</span>TouchDesigner 雷射教學</div>
     <div><span>Operator</span>POP → Laser CHOP</div>
