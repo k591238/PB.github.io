@@ -34,8 +34,10 @@ PB.github.io/
 │   └── projects.json             ← 作品資料表，陣列順序＝列表顯示順序
 ├── handouts/                      ← 講義區（獨立靜態頁，不經過 SPA，見下方「📚 講義區」）
 │   ├── index.html                ← 講義列表頁（手寫，新增講義要在這裡加一筆）
-│   └── laser-pop/                ← 雷射 POP 講義（⚠️ 由 TD_Laser_POP 自動同步，不要在這裡直接改）
-│       └── index.html
+│   ├── laser-pop/                ← 雷射 POP 講義（⚠️ 由 TD_Laser_POP 自動同步，不要在這裡直接改）
+│   │   └── index.html
+│   ├── av-perform/               ← 音像互動體驗（⚠️ 由 scripts/sync_perform.mjs 從私有 repo talks 同步，不要在這裡直接改）
+│   └── thumbs/                   ← 列表頁的縮圖（16:10，640×400 webp）
 ├── assets/
 │   ├── css/
 │   │   └── style.css             ← 所有樣式（Design Tokens + 全部元件 CSS）
@@ -140,6 +142,23 @@ node scripts/build_cv_pdf.mjs
 |------|------|
 | `https://k591238.github.io/PB.github.io/handouts/` | `handouts/index.html`（列表頁） |
 | `https://k591238.github.io/PB.github.io/handouts/laser-pop/` | `handouts/laser-pop/index.html` |
+| `https://k591238.github.io/PB.github.io/handouts/av-perform/` | `handouts/av-perform/`（同步產生，見下方） |
+
+列表頁每一筆有縮圖（`.thumb`，16:10），圖檔放在 `handouts/thumbs/{名稱}.webp`（640×400）。**縮圖不要放進各講義的資料夾**：`laser-pop/` 會被自動同步覆蓋，`av-perform/` 的同步腳本會刪掉白名單以外的檔案。目前不分類（數量少，使用者決定），之後項目變多再考慮。
+
+### ⚠️ `av-perform`（音像互動體驗）是從私有 repo 同步的
+
+來源是講座網頁 repo `k591238/talks`（**私有**，本機在 `Desktop\2026_AV_Lecture`）的表演模式。使用者決定**講座本身只留本機簡報用，不公開**，只公開表演體驗。
+
+```bash
+node scripts/sync_perform.mjs                 # 來源預設 ../../2026_AV_Lecture/2026-career
+```
+
+- **白名單**：只複製 `index.html`、`talk.js`、`theme.css`、`vendor/three.module.min.js`。`talk.md` 由腳本產生，只有標題和 `only: perform`（talks 的開關：直接進表演頁、沒有講座按鈕、不開講者視窗、不讀講稿、不自動滿版）。**講座內容、講稿 `notes.md`、照片 `img/`、講者視窗都不會過來**；腳本最後會再檢查一次，出現 notes／pptx／img 就停止
+- 腳本會在 `<head>` 加上標題、簡介、canonical、og 分享資訊（只改公開版，不動 talks 原始檔），最後自動跑 `build_site.mjs` 更新 sitemap
+- **手動同步，不自動**：講座還在密集修改，避免半成品自動公開。使用者說「同步表演」時才跑，跑完本機檢查 → commit → 使用者同意才 push
+- 分享預覽圖 `av-perform/og.jpg`（1200×630）和縮圖是表演頁場景 5 的截圖（點雲組成 PenBit 字樣），在白名單裡、同步時不會被刪
+
 
 **入口**：About 頁的社群連結區有「Teaching」（桌機版 `social-list` 跟手機版 `about-mobile-social` 兩組都有），連到列表頁。刻意不放主選單，避免稀釋作品集定位。
 
@@ -162,7 +181,7 @@ node scripts/build_cv_pdf.mjs
 1. 建立 `handouts/{名稱}/index.html`（開頭要有 `<!doctype html>`，否則會進入相容模式，表格等排版會跑掉）
 2. 講義裡的資源一律用**相對路徑**，不可寫 `/images/...` 這種從根目錄開始的路徑（專案網址帶 `/PB.github.io/`，會失效）
 3. 建議在講義裡放回到作品集的連結：`../../`（作品集）、`../`（講義列表）
-4. 在 `handouts/index.html` 的 `<ul>` 加一筆
+4. 在 `handouts/index.html` 的 `<ul>` 加一筆，並做一張縮圖放到 `handouts/thumbs/`（640×400 webp）
 5. 執行 `node scripts/build_site.mjs`，sitemap 會自動加入新講義（不用手改 sitemap）
 
 ---
@@ -664,6 +683,8 @@ ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
 11. **拿掉自製游標，改用系統游標**：換頁後滑鼠不動時系統游標與自製游標會同時出現，屬瀏覽器限制無法根治；使用者在「先隱藏自製游標到滑鼠移動」「混合模式（點作品不換頁）」「改用系統游標」三案中選擇系統游標。移除 `style.css` 游標區塊、`index.html`／作品頁的游標元素與內嵌規則、`main.js` 游標程式；可點擊元素補上手指游標。驗證：一般區域為箭頭、卡片／篩選／選單／分頁／語言／黑膠／返回／回到頂部皆為手指；換頁 11 項測試通過。
 12. **正式網站速度**（上線後實測，無快取、限速 10 Mbps）：作品頁主要畫面 0.7～1.4 秒出現，在 Google 的「良好」標準（2.5 秒）內。
 13. **階段 3：作品 JSON-LD**。`data/projects.json` 新增 `credit`／`creators`／`events`／`note`（見「作品的結構化資料」），16 件作品的日期、場地、主辦、角色逐筆跟使用者確認。使用者補充：繫 Sync 主辦 glitch 毛刺空間（受邀展出藝術家）；101 商演不填主辦；Live VJ Lab 2025/07/30–08/03 09:30–16:30 於 BLND；自動販賣機為階段性呈現不建活動；離水山場地與主辦為國立臺灣美術館；聽說 Whisper 2024/10/19–11/03 18:00–22:00 於北藝大戰車草原；Mind Fluid 主辦用透視音像；白晝之夜主辦為臺北數位藝術節。簡介修正：光之曲幕改「臺中國家歌劇院」、自動販賣機補「影像技術」、VIVIDO 改「live audiovisual 演出」（作品頁原文 live A/V 保留，搜尋用完整的 audiovisual）。
+14. **Teaching 區新增「音像互動體驗」`handouts/av-perform/`**：講座網頁（私有 repo talks）的表演模式獨立公開，講座本身不公開（使用者決定）。talks 新增 `only: perform` 開關（talks@049faf3），作品集新增 `scripts/sync_perform.mjs`（白名單同步）。公開版預設不滿版，手機也能用面板按鈕操作。驗證：公開版不請求 notes.md／img／presenter，按 N 不開視窗；本機講座行為不變（預設講座頁、7 章、讀講稿、N 開講者視窗）。
+15. **Teaching 列表加縮圖**：每筆「年份｜縮圖｜文字｜箭頭」，手機版縮圖在文字上方。雷射 POP 用講義封面「LASER × POP」，音像互動體驗用場景 5 截圖。intro 改為「課程講義、教學資料與互動示範」。
 
 ### 2026-10-20（新增 3 個作品、Events 分類、通用轉換腳本、文件勘誤）
 

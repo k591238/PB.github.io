@@ -1,0 +1,2015 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- 由 PB.github.io/scripts/sync_perform.mjs 同步自 talks（只有表演頁），不要在這裡改 -->
+<title>音像互動體驗 Audiovisual Instrument｜吳承儒 PB</title>
+<meta name="description" content="用鍵盤即時演奏聲音與影像：5 種視覺場景、6 種音色、16 步序列機，以及可以把 ADSR 波形接到畫面參數的合成器。源自吳承儒（PB）創作生涯分享講座的現場示範。">
+<link rel="canonical" href="https://k591238.github.io/PB.github.io/handouts/av-perform/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="吳承儒 Wu Cheng-Ru（PB）">
+<meta property="og:url" content="https://k591238.github.io/PB.github.io/handouts/av-perform/">
+<meta property="og:title" content="音像互動體驗 Audiovisual Instrument｜吳承儒 PB">
+<meta property="og:description" content="用鍵盤即時演奏聲音與影像：5 種視覺場景、6 種音色、16 步序列機，以及可以把 ADSR 波形接到畫面參數的合成器。源自吳承儒（PB）創作生涯分享講座的現場示範。">
+<meta property="og:image" content="https://k591238.github.io/PB.github.io/handouts/av-perform/og.jpg">
+<meta name="twitter:image" content="https://k591238.github.io/PB.github.io/handouts/av-perform/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="theme.css">
+<style>
+/* everything is sized in rem; the root size follows the window, so the page scales as one piece
+   (≈14px @1280×720, ≈21px @1920×1080, ≈28px @2560×1440) */
+html{font-size:clamp(13px, calc(.7vw + .7vh), 28px)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans)}
+body{padding-top:var(--hh)}
+html{scroll-padding-top:var(--hh);scroll-snap-type:y proximity}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+
+/* ---------- header ---------- */
+#topbar{position:fixed;top:0;left:0;right:0;height:var(--hh);z-index:8;display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.4rem;background:var(--bg);border-bottom:1px solid var(--line)}
+#topbar .brand{font:700 .8rem var(--mono);letter-spacing:.14em}
+#topbar .brand span{color:var(--muted);font-weight:400;letter-spacing:.04em}
+#topbar nav{display:flex;gap:.5rem}
+body.only-perform #topbar nav{display:none}   /* talk.md 寫 only: perform：只有表演頁，沒有講座可切換 */
+#topbar nav button{background:none;border:1px solid transparent;border-radius:.3rem;font:600 .74rem var(--mono);letter-spacing:.14em;color:var(--muted);padding:.4rem .8rem}
+#topbar nav button:hover{color:var(--fg)}
+#topbar nav button.on{color:var(--accent);border-color:var(--accent)}
+
+/* ---------- common controls ---------- */
+.muted{color:var(--muted)}
+.acc{color:var(--accent)}
+ul.plain{margin:0 0 .8rem;padding-left:1.2rem;line-height:1.8;font-size:1.1rem}
+#talkErr{position:fixed;left:1rem;bottom:1rem;z-index:50;max-width:46rem;background:#2a0000;color:#fff;border:1px solid #ff3b30;border-radius:.4rem;
+  padding:.7rem 1rem;font:.85rem/1.6 var(--mono);white-space:pre-wrap}
+#talkErr b{color:#ff8a80}
+html.mirror{scroll-behavior:auto !important}
+html.mirror body{overflow:hidden}
+html.mirror #gate, html.mirror #talkErr{display:none !important}
+.pdot{position:fixed;left:0;top:0;z-index:25;pointer-events:none;border-radius:50%;opacity:0;transition:opacity .25s;will-change:transform}
+.pdot.on{opacity:1}
+#laser{width:20px;height:20px;margin:-10px 0 0 -10px;background:#ff2a2a;box-shadow:0 0 14px 5px rgba(255,42,42,.65)}
+#ghost{width:44px;height:44px;margin:-22px 0 0 -22px;border:4px solid #fff;box-shadow:0 0 0 3px rgba(0,0,0,.6)}
+.row{display:flex;flex-wrap:wrap;gap:.4rem;margin:.5rem 0}
+button{font:inherit;font-size:.8rem;color:var(--fg);background:var(--chip);border:1px solid var(--line);
+  border-radius:.35rem;padding:.45rem .65rem;cursor:pointer;user-select:none;touch-action:none}
+button:hover{border-color:var(--fg)}
+button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+button kbd{font:600 .7rem var(--mono);opacity:.7;margin-right:.3rem}
+button.big{font-size:1rem;padding:.7rem 1.2rem}
+
+/* ---------- LECTURE: one chapter per screen ---------- */
+#panel{max-width:74rem;margin:0 calc(var(--tl-w) + 2rem) 0 clamp(1.2rem, 7vw, 9rem)}
+section{min-height:calc(100vh - var(--hh));display:flex;flex-direction:column;justify-content:center;
+  padding:2.4rem 0;border-bottom:1px solid var(--line);scroll-snap-align:start}
+.num{font:600 .85rem var(--mono);color:var(--accent);letter-spacing:.12em}
+h2{margin:.3rem 0 1rem;font-size:2.4rem;letter-spacing:.02em;line-height:1.2}
+p{margin:0 0 .8rem;line-height:1.7;font-size:1.1rem;max-width:42em}
+.lead{font-size:1.35rem}
+.hero h1{font-size:4.6rem;line-height:1.05;margin:.4rem 0 1rem;letter-spacing:.01em}
+.hero h1 span{color:var(--accent)}
+.hero .who{font:600 1rem var(--mono);letter-spacing:.14em}
+.hero .who small{display:block;font-weight:400;color:var(--muted);letter-spacing:.06em;margin-top:.3rem}
+
+/* 01 career */
+.arc{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;font-size:.85rem;color:var(--muted);margin:.2rem 0 1.2rem}
+.arc span{border:1px solid var(--line);border-radius:999px;padding:.2rem .7rem;color:var(--fg)}
+.years{display:grid;grid-template-columns:repeat(6,1fr);gap:.8rem;border-top:1px solid var(--line);margin-bottom:1.2rem}
+.years b{display:block;font:600 .85rem var(--mono);color:var(--muted);margin-bottom:.2rem}
+.years .on b{color:var(--accent)}
+.wgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;max-width:62rem}
+section.has-timeline{padding:1rem 0}
+section.has-timeline h2{margin-bottom:.7rem}
+.cap .note{font-size:.86rem;color:var(--fg);margin-top:.3rem;line-height:1.45}
+/* 01 path */
+.path{display:grid;grid-template-columns:1fr auto 1fr auto 1.25fr;gap:1rem;align-items:stretch;margin-top:.6rem}
+.path > i{align-self:center;font-style:normal;color:var(--accent);font-size:1.6rem}
+.path > div{border:1px solid var(--line);border-radius:.5rem;background:var(--card);padding:1.2rem 1.3rem}
+.path small{font:600 .8rem var(--mono);color:var(--accent);letter-spacing:.08em}
+.path b{display:block;font-size:2rem;margin:.2rem 0 .3rem}
+.path span{display:block;color:var(--muted);font-size:.95rem;margin-bottom:.8rem}
+.path ul{margin:0;padding-left:1.1rem;line-height:1.9;font-size:1rem}
+.tags{display:flex;flex-wrap:wrap;gap:.4rem}
+.tags em{font-style:normal;font-size:.85rem;border:1px solid var(--line);border-radius:999px;padding:.2rem .65rem}
+/* 02 pillars */
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.4rem 0 1.6rem}
+.pillars div{border-top:3px solid var(--accent);background:var(--card);border-radius:0 0 .5rem .5rem;padding:1rem 1.2rem}
+.pillars b{font-size:1.5rem}
+.pillars p{margin:.5rem 0 0;font-size:1rem;color:var(--muted)}
+.flow{display:flex;align-items:stretch;gap:.6rem;margin-bottom:1.4rem}
+.flow > i{align-self:center;font-style:normal;color:var(--muted)}
+.flow > div{flex:1;border:1px solid var(--line);border-radius:.5rem;padding:.7rem .9rem;font-size:1rem;line-height:1.5}
+.flow small{display:block;font:600 .75rem var(--mono);color:var(--accent);letter-spacing:.1em;margin-bottom:.2rem}
+.flow .out{border-color:var(--accent)}
+.work{cursor:pointer;background:var(--card);border:1px solid var(--line);border-radius:.45rem;overflow:hidden;transition:border-color .2s,transform .2s}
+.work:hover{border-color:var(--accent);transform:translateY(-2px)}
+.thumb{position:relative;aspect-ratio:16/9;overflow:hidden;
+  background:#000 repeating-linear-gradient(90deg,#fff 0 1px,transparent 1px 5px,#fff 5px 7px,transparent 7px 13px)}
+.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.1);transition:filter .3s,transform .3s}
+.work:hover .thumb img{filter:none;transform:scale(1.03)}
+.thumb .tag{position:absolute;left:.35rem;top:.35rem;font:600 .65rem var(--mono);color:#fff;background:rgba(0,0,0,.72);padding:.1rem .35rem;border-radius:2px}
+.thumb .play{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:1.4rem;text-shadow:0 0 .4rem #000}
+.cap{padding:.5rem .65rem .6rem}
+.cap b{display:block;font-size:1.05rem}
+.cap .en{font-size:.86rem;color:var(--muted)}
+.cap .meta{font-size:.86rem;color:var(--muted);margin-top:.2rem;line-height:1.4}
+.hint{font-size:.8rem;color:var(--muted);margin:.8rem 0 0}
+
+/* 02 sound -> image */
+.two{display:grid;grid-template-columns:1.1fr 1fr;gap:2.4rem;align-items:center}
+svg.diag{width:100%;height:auto;color:var(--fg)}
+.adsr4{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin:1rem 0}
+.adsr4 div{border:1px solid var(--line);border-radius:.45rem;padding:.6rem .7rem;background:var(--card)}
+.adsr4 b{display:block;font:700 1.6rem var(--mono);color:var(--accent)}
+.adsr4 span{display:block;font-size:.95rem;font-weight:600}
+.adsr4 small{display:block;font-size:.86rem;color:var(--muted);line-height:1.5;margin-top:.2rem}
+#scope{width:100%;aspect-ratio:680/180;height:auto;display:block;background:#000;border-radius:.4rem}
+.adsrtxt{font:.86rem var(--mono);color:var(--muted);margin-top:.4rem}
+
+/* Q&A */
+.contact{font:1rem var(--mono);line-height:2;color:var(--muted)}
+.hero .talk{margin:2.4rem 0 0;font:1.05rem var(--mono);letter-spacing:.08em;color:var(--muted)}
+.hero .talk span{color:var(--accent)}
+.hero{position:relative}
+.hero > *{position:relative;z-index:1}
+.hero .sub{font:1.5rem var(--mono);letter-spacing:.08em;margin:-.4rem 0 1.6rem;color:var(--fg)}
+.hero-gv{position:absolute !important;z-index:0 !important;right:0;top:50%;transform:translateY(-50%);width:44%;height:62%;pointer-events:none}
+canvas.gv{display:block}
+.path > i canvas{width:3rem;height:1.4rem}
+.pillars div, .flow > div{position:relative}
+.gv.icon{position:absolute;top:.8rem;right:.9rem;width:4.6rem;height:2.6rem}
+.gv.icon.sm{top:.5rem;right:.6rem;width:2.4rem;height:2.4rem}
+.ex{font-size:.95rem;color:var(--muted);margin:-.6rem 0 1.2rem}
+section.has-bg{position:relative;overflow:hidden}
+section.has-bg > *{position:relative;z-index:1}
+.bg-gv{position:absolute !important;z-index:0 !important;inset:0;width:100%;height:100%;pointer-events:none}
+/* year switcher */
+.years > button{all:unset;cursor:pointer;position:relative;padding-top:.7rem;font-size:.86rem;line-height:1.45;color:var(--muted);transition:color .2s}
+.years > button::before{content:"";position:absolute;top:-.3rem;left:0;width:.55rem;height:.55rem;border-radius:50%;background:var(--line);transition:background .2s}
+.years > button:hover::before{background:var(--muted)}
+.years > button.on{color:var(--fg)}
+.years > button.on::before{background:var(--accent);animation:dotPulse 1.8s ease-out infinite}
+.years > button:focus-visible{outline:1px solid var(--accent);outline-offset:3px}
+@keyframes dotPulse{0%{box-shadow:0 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent)}100%{box-shadow:0 0 0 .7rem transparent}}
+.wgrid.c3{grid-template-columns:repeat(3,1fr);max-width:57rem}   /* two rows of 3 still fit one screen */
+.wgrid.c4{grid-template-columns:repeat(4,1fr)}
+.thumb .cat{position:absolute;right:.35rem;top:.35rem;font:600 .65rem var(--sans);color:#fff;background:var(--accent);padding:.1rem .4rem;border-radius:2px}
+.thumb .cnt{position:absolute;right:.35rem;bottom:.35rem;font:600 .62rem var(--mono);color:#fff;background:rgba(0,0,0,.72);padding:.1rem .35rem;border-radius:2px}
+.wgrid .work{animation:wIn .35s ease both}
+@keyframes wIn{from{opacity:0;transform:translateY(.4rem)}to{opacity:1;transform:none}}
+#vidBox img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+#vidStrip{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:center}
+#vidStrip button{width:6.4rem;height:3.6rem;padding:0;border:1px solid #333;background:#111 center/cover no-repeat;color:#fff;font-size:.75rem;border-radius:3px;opacity:.6}
+#vidStrip button.on{opacity:1;border-color:#ff2a2a}
+.qrs{display:flex;flex-wrap:wrap;gap:2.4rem;margin:1.6rem 0 1.2rem}
+.qrs a{display:flex;flex-direction:column;align-items:center;gap:.7rem;color:var(--qr-color);text-decoration:none;font:700 1.1rem var(--sans)}
+.qrs a{position:relative;z-index:10}   /* above the film grain, so the codes stay crisp */
+.qrs img, .qrs svg{width:14.5rem;height:14.5rem;display:block;image-rendering:pixelated}
+/* light theme: lime on light grey cannot be scanned, so the codes turn dark */
+:root[data-theme="light"] .qrs img{filter:brightness(0)}
+.qrs a:hover img, .qrs a:hover svg{outline:2px solid var(--qr-color);outline-offset:4px}
+:root[data-theme="light"] .qrs a{color:var(--fg)}
+/* film grain: static monochrome noise over the lecture view only (stage & video stay clean) */
+body[data-view="lecture"]::after{content:"";position:fixed;inset:0;z-index:9;pointer-events:none;opacity:var(--grain);background-size:180px 180px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='2.6 0 0 0 -.8 2.6 0 0 0 -.8 2.6 0 0 0 -.8 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ---------- right index + stepper (same as laser handout) ---------- */
+.tl-nav{position:fixed;top:var(--hh);right:0;bottom:0;width:var(--tl-w);z-index:6;display:flex;flex-direction:column;justify-content:center;padding:1.5rem 1.1rem 4.5rem 0;pointer-events:none}
+.tl-nav ol{list-style:none;margin:0;padding:0;position:relative;pointer-events:auto}
+.tl-nav ol::after{content:"";position:absolute;right:.25rem;top:.4rem;bottom:.4rem;width:1px;background:var(--line)}
+.tl-nav li button{all:unset;cursor:pointer;display:flex;justify-content:flex-end;align-items:center;gap:.7rem;width:100%;padding:.32rem 0;font:.72rem var(--mono);letter-spacing:.04em;color:var(--muted);opacity:.55;transition:opacity .2s,color .2s}
+.tl-nav li button:hover{opacity:1}
+.tl-nav li button .dot{width:.56rem;height:.56rem;border-radius:50%;border:1px solid var(--muted);background:var(--bg);position:relative;z-index:1;flex:none;transition:transform .2s,background .2s}
+.tl-nav li.past button{opacity:.8}
+.tl-nav li.past button .dot{background:var(--muted);border-color:transparent}
+.tl-nav li.active button{opacity:1;color:var(--fg);font-weight:600}
+.tl-nav li.active button .dot{background:var(--accent);border-color:var(--accent);transform:scale(1.35)}
+.tl-step{position:fixed;right:1.1rem;bottom:1.3rem;z-index:7;display:flex;gap:.35rem;align-items:center;background:var(--bg);padding:.3rem;border:1px solid var(--line);font:.7rem var(--mono);color:var(--muted)}
+.tl-step button{font:inherit;width:1.9rem;height:1.9rem;padding:0;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer;border-radius:2px}
+.tl-step button:hover{border-color:var(--accent);color:var(--accent)}
+.tl-step .theme{width:auto;padding:0 .6rem;display:inline-flex;gap:.4rem;align-items:center;margin-right:.35rem}
+.tl-step .theme i{width:.7rem;height:.7rem;border-radius:50%;border:1px solid currentColor;background:linear-gradient(90deg,currentColor 50%,transparent 50%);display:block}
+.tl-step .count{margin-right:.4rem;font-variant-numeric:tabular-nums}
+
+/* ---------- STAGE (perform page) ---------- */
+#stage{position:fixed;left:0;top:var(--hh);bottom:0;right:var(--ppw);background:var(--stage);overflow:hidden}
+#stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#hud{pointer-events:none}
+#keybar{position:absolute;left:0;right:0;bottom:0;display:flex;flex-wrap:wrap;gap:.35rem;
+  padding:.5rem .6rem;background:linear-gradient(transparent,rgba(0,0,0,.75));
+  font:.72rem var(--mono);color:#bbb;transition:opacity .3s}
+#keybar.hidden{opacity:0}
+.k{display:inline-flex;align-items:center;gap:.3rem;padding:.18rem .45rem;border:1px solid #444;border-radius:.25rem;background:rgba(0,0,0,.5)}
+.k b{color:#fff;font-weight:600}
+.k.on{border-color:#ff2a2a;color:#fff;background:rgba(255,42,42,.25)}
+
+/* floating synth (M) */
+#rackDock{position:absolute;left:1rem;bottom:3rem;width:clamp(300px, 34%, 32rem);max-height:calc(100% - 4.5rem);overflow:auto;z-index:3;
+  display:none;background:rgba(12,12,12,.9);border:1px solid #333;border-radius:.6rem;padding:.6rem .8rem .7rem;color:#ddd;
+  box-shadow:0 .6rem 2rem rgba(0,0,0,.6)}
+#rackDock.show{display:block}
+body.seq-open #rackDock{bottom:calc(2.8rem + var(--seqH, 12rem) + .6rem);max-height:calc(100% - var(--seqH, 12rem) - 4.5rem)}
+#seqDock{position:absolute;left:1rem;right:1rem;bottom:2.8rem;z-index:3;display:none;background:rgba(12,12,12,.9);
+  border:1px solid #333;border-radius:.6rem;padding:.5rem .7rem .6rem;color:#ddd;box-shadow:0 .6rem 2rem rgba(0,0,0,.6)}
+#seqDock.show{display:block}
+#seqDock .sh{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center;font:.72rem var(--mono);margin-bottom:.45rem}
+#seqDock .grp, #seqDock .bpm{display:inline-flex;gap:.25rem;align-items:center}
+#seqDock .bpm b{min-width:2.2rem;text-align:center;color:#fff;font-size:.9rem}
+#seqDock button{background:#1d1d1d;color:#eee;border-color:#3a3a3a;font-size:.72rem;padding:.28rem .55rem}
+#seqDock button.on{background:#ff2a2a;border-color:#ff2a2a;color:#fff}
+#seqDock .pos{margin-left:auto;color:#ff2a2a;font-variant-numeric:tabular-nums}
+#seqGrid{display:grid;grid-template-columns:5rem repeat(16,1fr);gap:3px}
+#seqGrid .lab{font:.68rem var(--mono);color:#aaa;display:flex;align-items:center;gap:.35rem}
+#seqGrid .lab b{color:#fff}
+#seqGrid .c{height:1.3rem;padding:0;border:1px solid #2c2c2c;background:#141414;border-radius:2px}
+#seqGrid .c.beat{background:#1e1e1e;border-color:#3a3a3a}
+#seqGrid .c.on{background:#e8e8e8;border-color:#e8e8e8}
+#seqGrid .c.now{border-color:#ff2a2a}
+#seqGrid .c.on.now{background:#ff2a2a}
+#rackDock .dh{display:flex;justify-content:space-between;align-items:center;gap:.6rem;font:600 .78rem var(--mono);letter-spacing:.1em}
+#rackDock .dh small{font-weight:400;color:#999;letter-spacing:0;font-family:var(--sans)}
+#rackDock .tip{font-size:.72rem;color:#aaa;margin:.3rem 0 0;line-height:1.5}
+#rackDock .tip em{color:#ff2a2a;font-style:normal}
+#rackDock button{background:#1d1d1d;color:#eee;border-color:#3a3a3a}
+#rackDock button.on{background:#ff2a2a;border-color:#ff2a2a}
+#rack{width:100%;height:auto;display:block;touch-action:none;user-select:none;margin:.4rem 0}
+#rack .mod{fill:#181818;stroke:#3a3a3a}
+#rack text{fill:#bdbdbd;font:9px ui-monospace,Consolas,monospace}
+#rack text.t{fill:#fff;font-weight:700;font-size:10px;letter-spacing:.1em}
+#rack text.red{fill:#ff2a2a}
+#rack .jack{fill:#0a0a0a;stroke:#9a9a9a;stroke-width:2;cursor:pointer}
+#rack .jack.env{stroke:#ff2a2a}
+#rack .handle{fill:#ff2a2a;stroke:#fff;stroke-width:1.5;cursor:grab}
+#rack .knob{fill:#2a2a2a;stroke:#777;cursor:ns-resize}
+#rack .btn{fill:#0a0a0a;stroke:#555;cursor:pointer}
+#rack .cable{fill:none;stroke-linecap:round;pointer-events:none}
+
+/* perform side panel */
+#perfPanel{display:none}
+h3.sub{font-size:.95rem;margin:1.3rem 0 .4rem}
+h3.sub small{font:400 .68rem var(--mono);color:var(--muted);margin-left:.4rem}
+#perfPanel .note{font-size:.75rem;margin:.5rem 0 0}
+.pads{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem}
+.pads button{padding:.85rem .4rem;text-align:center}
+.pads small{display:block;font-size:.68rem;color:var(--muted);margin-top:.2rem}
+.pads button.on small{color:#fff}
+details.keysbox{margin-top:1.3rem;border-top:1px solid var(--line);padding-top:.6rem}
+details.keysbox summary{cursor:pointer;font-weight:600;font-size:.95rem}
+table.keys{width:100%;border-collapse:collapse;font-size:.78rem;margin-top:.5rem}
+table.keys td{padding:.3rem .25rem;border-bottom:1px solid var(--line);vertical-align:top}
+table.keys td:first-child{font:600 .72rem var(--mono);white-space:nowrap;width:5.2rem}
+
+/* views */
+body[data-view="lecture"]:not(.perform) #stage{display:none}
+body[data-view="perform"]{overflow:hidden}
+body[data-view="perform"] #panel, body[data-view="perform"] .tl-nav, body[data-view="perform"] .tl-step{display:none}
+body[data-view="perform"] #perfPanel{display:block;position:fixed;top:var(--hh);right:0;bottom:0;width:var(--ppw);overflow-y:auto;
+  border-left:1px solid var(--line);padding:0 1.2rem 1.5rem}
+body.perform{overflow:hidden;padding-top:0}
+body.perform #topbar, body.perform #perfPanel, body.perform #panel, body.perform .tl-nav, body.perform .tl-step{display:none}
+body.perform #stage{top:0;right:0}
+body.perform #gl, body.perform #hud{cursor:none}   /* no mouse arrow on the projected stage */
+
+/* ---------- video overlay ---------- */
+#vidLayer{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.94);display:none;align-items:center;justify-content:center;flex-direction:column;gap:.6rem}
+#vidLayer.show{display:flex}
+#vidBox{position:relative;width:min(92vw,calc(80vh*16/9));aspect-ratio:16/9;background:#000}
+#vidBox iframe,#vidBox canvas{position:absolute;inset:0;width:100%;height:100%;border:0}
+#vidCap{font:.8rem var(--mono);color:#ddd;display:flex;gap:1rem;align-items:center}
+#vidCap a{color:#ff2a2a}
+#vidClose{position:absolute;top:.8rem;right:1rem;background:rgba(0,0,0,.6);color:#fff;border-color:#555}
+
+/* ---------- gate ---------- */
+#gate{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.86);color:#fff;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:1rem;cursor:pointer;text-align:center}
+#gate .big{font-size:1.8rem;letter-spacing:.1em}
+#gate .ring{width:5rem;height:5rem;border:2px solid #fff;border-radius:50%;display:grid;place-items:center;font-size:1.8rem}
+#gate small{font:.75rem var(--mono);color:#aaa}
+#gate.hide{display:none}
+#fileWarn{position:fixed;inset:0;z-index:40;background:#000;color:#fff;display:none;place-items:center;text-align:center;font-size:18px;line-height:1.8}
+
+/* ---------- smaller windows ---------- */
+@media screen and (max-width:1100px){
+  :root{--tl-w:3rem}
+  .tl-nav li button .lbl{display:none}
+  .wgrid{grid-template-columns:repeat(3,1fr)}
+  .two{grid-template-columns:1fr;gap:1rem}
+}
+@media screen and (max-width:800px){
+  html{font-size:15px;scroll-snap-type:none}
+  :root{--tl-w:0px}
+  .tl-nav{display:none}
+  #panel{margin:0 1rem}
+  section{min-height:0}
+  .hero h1{font-size:3rem}
+  .years{grid-template-columns:repeat(3,1fr)}
+  .path, .pillars{grid-template-columns:1fr}
+  .path > i, .flow > i, .hero-gv{display:none}
+  .flow{flex-direction:column}
+  .wgrid{grid-template-columns:repeat(2,1fr)}
+  .adsr4{grid-template-columns:repeat(2,1fr)}
+  #topbar .brand span{display:none}
+  body[data-view="perform"]{overflow:auto}
+  body[data-view="perform"] #stage{position:relative;top:auto;right:auto;height:56vh}
+  body[data-view="perform"] #perfPanel{position:static;width:auto;border-left:0}
+  #rackDock{width:calc(100% - 2rem)}
+}
+
+/* ---------- print / PDF (see printjs: Ctrl+P, speaker window buttons) ---------- */
+@media screen{ .print-only{display:none !important} }
+@page{size:13.333in 7.5in; margin:0}
+@page notes{size:A4 portrait; margin:10mm}
+@media print{
+  :root{--hh:0px}
+  html{font-size:14px !important; scroll-snap-type:none; background:var(--bg)}
+  html, body{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+  body{padding-top:0 !important; overflow:visible !important}
+  body::after, #topbar, #stage, #perfPanel, .tl-nav, .tl-step, #gate, #vidLayer, #fileWarn, #talkErr, .print-skip, #panel .row{display:none !important}
+  #panel{display:block !important; max-width:none; margin:0}
+  #panel section{height:720px; min-height:0; padding:2.2rem 5.5rem; border:0; background:var(--bg); overflow:hidden;
+    break-after:page; page-break-after:always; break-inside:avoid}
+  #panel section{position:relative}
+  #panel section::after{content:""; position:absolute; inset:0; pointer-events:none; z-index:9; opacity:var(--grain); background-size:180px 180px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='2.6 0 0 0 -.8 2.6 0 0 0 -.8 2.6 0 0 0 -.8 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .work{animation:none !important}
+  .work .thumb img{transform:none !important}
+  /* speaker version: A4, slide on top, notes below */
+  html:has(body.print-notes), body.print-notes{background:#fff}
+  body.print-notes #panel section{page:notes; width:1280px; zoom:.55; margin:0 auto; break-after:avoid; page-break-after:avoid}
+  body.print-notes .pnotes{page:notes; break-after:page; page-break-after:always; padding:14px 6px 0; color:#111; background:#fff;
+    font:13px/1.65 "Noto Sans TC", "Microsoft JhengHei", sans-serif}
+  .pnotes h4{margin:0 0 6px; font-size:15px}
+  .pnotes ul{margin:0; padding-left:18px}
+  .pnotes li.sub{margin-left:18px; list-style:circle}
+  .pnotes p{margin:0 0 6px; max-width:none; font-size:13px}
+}
+</style>
+<script type="importmap">{"imports":{"three":"./vendor/three.module.min.js"}}</script>
+</head>
+<body>
+<div id="fileWarn"><div>這個頁面要用本機伺服器開啟。<br>請雙擊資料夾裡的 <b>start.bat</b>。</div></div>
+
+<div id="gate">
+  <div class="ring">▶</div>
+  <div class="big">點一下開始</div>
+  <small>瀏覽器規定：要先點擊，才能發出聲音 ・ 也可以按任意鍵</small>
+</div>
+
+<header id="topbar">
+  <div class="brand">WU CHENG-RU <span>｜PenBit</span></div>
+  <nav>
+    <button data-view="lecture">講座 LECTURE</button>
+    <button data-view="perform">表演 PERFORM</button>
+  </nav>
+</header>
+<div id="vidLayer">
+  <button id="vidClose">✕ 關閉（Esc）</button>
+  <div id="vidBox"></div>
+  <div id="vidStrip"></div>
+  <div id="vidCap"></div>
+</div>
+<div id="app">
+  <!-- ========== STAGE (perform page) ========== -->
+  <div id="stage">
+    <canvas id="gl"></canvas>
+    <canvas id="hud"></canvas>
+    <div id="rackDock">
+      <div class="dh"><span>SYNTH 合成器 <small>按 M 收合</small></span><button data-act="rack">✕</button></div>
+      <p class="tip">① 拖紅點改 A / D / S / R　② 按住 <b>T</b> 聽與看　③ 從 <em>ENV</em> 拉線到畫面參數，點已插的孔可拔線</p>
+      <svg id="rack" viewBox="0 0 340 362"></svg>
+      <div class="row">
+        <button id="gateBtn" data-voice="patch"><kbd>T</kbd>按住觸發</button>
+        <button id="rackReset">重設</button>
+      </div>
+    </div>
+    <div id="seqDock">
+      <div class="sh">
+        <button id="seqPlay">▶ 播放 <kbd>⏎</kbd></button>
+        <span class="bpm"><button data-bpm="-5" aria-label="慢一點">−</button><b id="seqBpm">110</b> BPM<button data-bpm="5" aria-label="快一點">＋</button></span>
+        <span class="grp" id="seqPresets"></span>
+        <button id="seqRand">隨機</button><button id="seqClear">清除</button>
+        <button id="seqScene">場景軌：關</button>
+        <span class="pos" id="seqPos">BAR 01 · 01</span>
+        <button data-act="seq" aria-label="收合">✕</button>
+      </div>
+      <div id="seqGrid"></div>
+    </div>
+    <div id="keybar">
+      <span class="k" data-k="scene"><b>1–5</b>場景</span>
+      <span class="k" data-k="kick"><b>A</b>低頻</span>
+      <span class="k" data-k="noise"><b>S</b>噪音</span>
+      <span class="k" data-k="click"><b>D</b>點擊</span>
+      <span class="k" data-k="pad"><b>J</b>長音</span>
+      <span class="k" data-k="bleep"><b>K</b>嗶聲</span>
+      <span class="k" data-k="glitch"><b>L</b>故障</span>
+      <span class="k" data-k="patch"><b>T</b>模組</span>
+      <span class="k" data-k="rack"><b>M</b>合成器</span>
+      <span class="k" data-k="blob"><b>B</b>追蹤框</span>
+      <span class="k" data-k="seq"><b>Q</b>序列機</span>
+      <span class="k" data-k="seqplay"><b>⏎</b>播放</span>
+      <span class="k" data-k="black"><b>空白</b>黑幕</span>
+      <span class="k" data-k="perform"><b>P</b>表演模式</span>
+      <span class="k" data-k="help"><b>H</b>隱藏提示</span>
+    </div>
+  </div>
+
+  <!-- ========== LECTURE (one chapter per screen) ========== -->
+  <!-- 講座頁的內容由 talk.md 產生（talk.js），這裡留空 -->
+  <div id="panel"></div>
+
+  <!-- ========== PERFORM PAGE PANEL ========== -->
+  <aside id="perfPanel">
+      <h3 class="sub">場景 <small>1 – 5 ・ B 追蹤框</small></h3>
+      <div class="row" id="sceneBtns">
+        <button data-scene="0"><kbd>1</kbd>粒子</button>
+        <button data-scene="1"><kbd>2</kbd>點雲</button>
+        <button data-scene="2"><kbd>3</kbd>Boids</button>
+        <button data-scene="3"><kbd>4</kbd>資料矩陣</button>
+        <button data-scene="4"><kbd>5</kbd>綜合</button>
+        <button data-act="blob"><kbd>B</kbd>追蹤框</button>
+      </div>
+      <h3 class="sub">音色 <small>按住＝持續，放開＝釋放</small></h3>
+      <div class="pads" id="pads"></div>
+      <p class="muted note">場景 2、5 按 A 會隨機換點雲形狀。</p>
+      <h3 class="sub">控制</h3>
+      <div class="row">
+        <button data-act="seq"><kbd>Q</kbd>序列機</button>
+        <button data-act="seqplay"><kbd>⏎</kbd>播放／停止</button>
+        <button data-act="rack"><kbd>M</kbd>合成器</button>
+        <button data-act="black"><kbd>␣</kbd>黑幕</button>
+        <button data-act="perform"><kbd>P</kbd>表演模式</button>
+        <button data-act="help"><kbd>H</kbd>按鍵提示</button>
+      </div>
+      <details class="keysbox">
+        <summary>按鍵說明</summary>
+        <table class="keys">
+          <tr><td>1 – 5</td><td>切換場景：粒子 / 點雲 / Boids / 資料矩陣 / 綜合</td></tr>
+          <tr><td>B</td><td>Blob 追蹤框：找畫面亮區，畫紅框、準心、座標</td></tr>
+          <tr><td>A S D</td><td>打擊：低頻 / 噪音 / 點擊（短，自動結束）</td></tr>
+          <tr><td>A（場景 2、5）</td><td>點雲隨機換形狀</td></tr>
+          <tr><td>J K L</td><td>音色：長音 / 嗶聲 / 故障（按住持續，放開釋放）</td></tr>
+          <tr><td>Q</td><td>序列機面板：16 步 × 6 軌，點格子開關</td></tr>
+          <tr><td>Enter</td><td>序列機播放／停止（面板收起也能用）</td></tr>
+          <tr><td>， ．</td><td>速度 −5 / +5 BPM</td></tr>
+          <tr><td>M</td><td>合成器面板：ADSR、接線到畫面參數</td></tr>
+          <tr><td>T</td><td>合成器的音（按住觸發）</td></tr>
+          <tr><td>空白鍵</td><td>黑幕開關（畫面淡出，聲音不停）</td></tr>
+          <tr><td>F11</td><td>瀏覽器全螢幕（瀏覽器內建，再按一次離開）</td></tr>
+          <tr><td>P</td><td>表演模式：只留舞台，滿版</td></tr>
+          <tr><td>H</td><td>顯示 / 隱藏舞台下方的按鍵提示</td></tr>
+        </table>
+      </details>
+  </aside>
+</div>
+<nav class="tl-nav" aria-label="章節目錄"><ol id="tlnav"></ol></nav>
+<div class="tl-step" aria-label="切換章節">
+  <button type="button" class="theme" id="themeBtn" aria-label="切換亮色／暗色"><i></i><span id="themeLbl">暗色</span></button>
+  <span class="count" id="tlcount"></span>
+  <button type="button" id="tlprev" aria-label="上一節">↑</button><button type="button" id="tlnext" aria-label="下一節">↓</button>
+</div>
+
+<script>
+// file:// cannot load ES modules; tell the user to use start.bat
+setTimeout(()=>{ if(!window.__booted && location.protocol==='file:') document.getElementById('fileWarn').style.display='grid'; },1200);
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import {loadTalk, renderTalk, notesHTML} from './talk.js';
+
+/* =====================================================================
+   TALK — talk.md becomes the lecture pages before anything else runs
+   ===================================================================== */
+const escH = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const TALK = await (async () => {
+  let t = {meta:{}, chapters:[], errors:[], notes:{}, timeline:[]};
+  try{
+    t = await loadTalk();
+    const r = renderTalk(t);
+    document.getElementById('panel').innerHTML = r.html;
+    t.timeline = r.timeline;
+  }catch(e){ t.errors = [...(t.errors || []), e.message]; t.timeline = t.timeline || []; t.notes = t.notes || {}; }
+  if (t.meta.title) document.title = t.meta.title;
+  if (t.meta.brand){
+    const [a, ...b] = t.meta.brand.split('｜');
+    document.querySelector('#topbar .brand').innerHTML = escH(a.trim()) + (b.length ? ` <span>｜${escH(b.join('｜').trim())}</span>` : '');
+  }
+  // widgets the rest of the page expects, even if their chapter was removed from talk.md
+  const shelf = document.createElement('div'); shelf.hidden = true;
+  for (const [id, tag] of [['scope', 'canvas'], ['adsrtxt', 'div'], ['years', 'div'], ['wgrid', 'div']])
+    if (!document.getElementById(id)){ const el = document.createElement(tag); el.id = id; shelf.appendChild(el); }
+  if (shelf.children.length) document.body.appendChild(shelf);
+  if (t.errors.length){
+    const box = document.createElement('div'); box.id = 'talkErr';
+    box.innerHTML = '<b>talk.md 有地方要修正：</b>\n' + t.errors.map(x => '・' + escH(x)).join('\n');
+    document.body.appendChild(box); console.warn(t.errors);
+  }
+  return t;
+})();
+// talk.md 寫 `only: perform` → 只有表演頁（公開的表演體驗用）：直接進表演、沒有講座按鈕、不開講者視窗、不讀講稿
+const ONLY_PERFORM = TALK.meta.only === 'perform';
+if (ONLY_PERFORM) document.body.classList.add('only-perform');
+
+/* sync with the speaker window (presenter.html, opened with N) */
+const QS = new URLSearchParams(location.search);
+const MIRROR = QS.has('mirror'), MIRROR_OFF = +QS.get('offset') || 0;   // ?mirror&offset=1 → shows the next chapter
+if (MIRROR){ document.documentElement.classList.add('mirror'); document.getElementById('gate').classList.add('hide'); }
+const talkSync = {
+  ch: 'BroadcastChannel' in window ? new BroadcastChannel('talk-sync') : null,
+  state: () => ({}),
+  post(){ if (this.ch && !MIRROR) this.ch.postMessage({type:'state', ...this.state()}); },
+};
+if (talkSync.ch && MIRROR) talkSync.ch.onmessage = e => {
+  const m = e.data || {};
+  if (m.type === 'mouse'){ if (!MIRROR_OFF) dot('ghost', m); return; }
+  if (m.type !== 'state') return;
+  if (m.theme && document.documentElement.dataset.theme !== m.theme) window.__setTheme(m.theme, true);
+  if (window.__showYear && m.year != null && window.__yearIdx() !== m.year) window.__showYear(m.year);
+  if (window.__go) window.__go(m.idx + MIRROR_OFF);
+};
+if (MIRROR && talkSync.ch) setTimeout(() => talkSync.ch.postMessage({type:'hello'}), 300);
+/* pointer dots: #laser = speaker's pointer on the projector, #ghost = projector mouse shown in the preview */
+const dotTimers = {};
+function dot(id, m){
+  let d = document.getElementById(id);
+  if (!d){ d = document.createElement('div'); d.id = id; d.className = 'pdot'; document.body.appendChild(d); }
+  const show = !m.off && document.body.dataset.view === 'lecture';
+  d.classList.toggle('on', show);
+  if (show) d.style.transform = `translate(${m.x * innerWidth}px, ${m.y * innerHeight}px)`;
+  clearTimeout(dotTimers[id]); dotTimers[id] = setTimeout(() => d.classList.remove('on'), 2500);
+}
+if (!MIRROR && talkSync.ch){
+  let mp = null;
+  addEventListener('mousemove', e => {
+    if (!mp) requestAnimationFrame(() => { talkSync.ch.postMessage({type:'mouse', ...mp}); mp = null; });
+    mp = {x:e.clientX / innerWidth, y:e.clientY / innerHeight};
+  });
+}
+const bodyPath = el => { const p = []; while (el && el !== document.body){ p.unshift([...el.parentNode.children].indexOf(el)); el = el.parentNode; } return el ? p : null; };
+if (MIRROR){
+  document.addEventListener('click', e => {
+    e.preventDefault(); e.stopPropagation();
+    if (MIRROR_OFF || !talkSync.ch) return;
+    const el = e.target.closest('button, .work');   // QR links are left alone (they would open tabs on the projector)
+    const path = el && bodyPath(el);
+    if (path) talkSync.ch.postMessage({type:'click', path});
+  }, true);
+  let ptr = null;
+  addEventListener('mousemove', e => {
+    if (MIRROR_OFF || !talkSync.ch) return;
+    if (!ptr) requestAnimationFrame(() => { talkSync.ch.postMessage({type:'ptr', ...ptr}); ptr = null; });   // once per display frame
+    ptr = {x:e.clientX / innerWidth, y:e.clientY / innerHeight};
+  });
+  document.addEventListener('mouseleave', () => { if (!MIRROR_OFF && talkSync.ch) talkSync.ch.postMessage({type:'ptr', off:true}); });
+  for (const t of ['keydown', 'keyup']) addEventListener(t, e => {
+    if (e.ctrlKey || e.metaKey || e.altKey || /^F\d+$/.test(e.code)) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    if (parent.__fwdKey) parent.__fwdKey(t, e);   // same rules as typing in the speaker window
+  }, true);
+}
+if (talkSync.ch && !MIRROR) talkSync.ch.onmessage = e => {
+  const m = e.data || {};
+  if (m.type === 'hello') talkSync.post();
+  else if (m.type === 'theme' && window.__setTheme) window.__setTheme(m.theme);
+  else if (m.type === 'click'){
+    let el = document.body;
+    for (const k of m.path || []) el = el && el.children[k];
+    if (el) el.click();
+  }
+  else if (m.type === 'video' && window.__vidCmd) window.__vidCmd(m.cmd);
+  else if (m.type === 'ptr') dot('laser', m);
+  else if (m.type === 'perfcmd' && window.__perfCmd) window.__perfCmd(m.cmd, m.arg);
+  else if (m.type === 'ping') talkSync.ch.postMessage({type:'pong', fps:window.__perf ? Math.round(__perf.fps) : 0,
+    sound:!!(window.__av && __av.audio.ctx && __av.audio.ctx.state === 'running')});
+  else if (m.type === 'key') document.body.dispatchEvent(new KeyboardEvent(m.ev, {code:m.code, key:m.key, repeat:!!m.repeat, shiftKey:!!m.shift, bubbles:true, cancelable:true}));
+  else if (m.type === 'view' && window.__setView) window.__setView(m.view);
+  else if (m.type === 'go' && window.__go) window.__go(m.idx);
+  else if (m.type === 'step' && window.__go) window.__go(window.__cur() + m.dir);
+  else if (m.type === 'print' && window.__printTalk) window.__printTalk(!!m.notes);
+};
+
+
+/* =====================================================================
+   ADSR — one function used by BOTH the audio gain schedule and visuals
+   ===================================================================== */
+function envAt(p, tOn, tOff, vOff, t){
+  if (t < tOn) return 0;
+  if (tOff == null || t < tOff){
+    const e = t - tOn;
+    if (e < p.a) return e / p.a;
+    if (e < p.a + p.d) return 1 - (1 - p.s) * (e - p.a) / p.d;
+    return p.s;
+  }
+  const r = t - tOff;
+  return r >= p.r ? 0 : vOff * (1 - r / p.r);
+}
+
+/* =====================================================================
+   VOICES
+   ===================================================================== */
+const PENTA = [220, 247, 294, 330, 392, 440, 494, 587, 659, 784];
+// Phase 2 teaching rack: one patchable voice (T key). Its envelope can be cabled to visual params.
+const rack = {wave:'sawtooth', freq:220, vol:.3, adsr:{a:.05, d:.3, s:.5, r:.8}, targets:new Set(['kick'])};
+const VOICES = {
+  patch: {key:'KeyT', label:'T', name:'模組', desc:'教學模組', perc:false, rack:true, get peak(){ return rack.vol; }, adsr:rack.adsr},
+  kick:  {key:'KeyA', label:'A', name:'低頻', desc:'sine 下滑', perc:true,  peak:.9,  adsr:{a:.002,d:.35,s:0,r:.08}},
+  noise: {key:'KeyS', label:'S', name:'噪音', desc:'白噪音',     perc:true,  peak:.45, adsr:{a:.001,d:.18,s:0,r:.05}},
+  click: {key:'KeyD', label:'D', name:'點擊', desc:'高頻 sine',  perc:true,  peak:.5,  adsr:{a:.0005,d:.03,s:0,r:.02}},
+  pad:   {key:'KeyJ', label:'J', name:'長音', desc:'鋸齒波和弦', perc:false, peak:.22, adsr:{a:.6,d:.8,s:.6,r:1.6}},
+  bleep: {key:'KeyK', label:'K', name:'嗶聲', desc:'方波音階',   perc:false, peak:.14, adsr:{a:.005,d:.12,s:.35,r:.25}},
+  glitch:{key:'KeyL', label:'L', name:'故障', desc:'調變鋸齒',   perc:false, peak:.2,  adsr:{a:.01,d:.3,s:.45,r:.4}},
+};
+const VOICE_BY_CODE = {}; for (const id in VOICES) VOICE_BY_CODE[VOICES[id].key] = id;
+
+/* =====================================================================
+   AUDIO ENGINE
+   ===================================================================== */
+const audio = {
+  ctx:null, master:null, recDest:null, noiseBuf:null, voices:[],
+  async start(){
+    if (this.ctx){ if (this.ctx.state !== 'running') await this.ctx.resume(); return; }
+    const ctx = this.ctx = new (window.AudioContext || window.webkitAudioContext)({latencyHint:'interactive'});
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -14; comp.ratio.value = 4; comp.attack.value = .003; comp.release.value = .2;
+    this.master = ctx.createGain(); this.master.gain.value = .8;
+    this.bus = ctx.createGain();
+    this.bus.connect(comp); comp.connect(this.master); this.master.connect(ctx.destination);
+    this.recDest = ctx.createMediaStreamDestination(); this.master.connect(this.recDest); // for Phase 5 recorder
+    const n = ctx.sampleRate * 2, buf = ctx.createBuffer(1, n, ctx.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+    this.noiseBuf = buf;
+    await ctx.resume();
+  },
+  // visual clock = what is coming out of the speaker now
+  now(){ const c = this.ctx; return c ? c.currentTime - (c.outputLatency || c.baseLatency || 0) : 0; },
+
+  build(id, t){
+    const ctx = this.ctx, srcs = [], out = ctx.createGain();
+    const osc = (type, f) => { const o = ctx.createOscillator(); o.type = type; o.frequency.value = f; srcs.push(o); return o; };
+    if (id === 'patch'){
+      if (rack.wave === 'noise'){ const s = ctx.createBufferSource(); s.buffer = this.noiseBuf; s.loop = true; srcs.push(s); s.connect(out); }
+      else osc(rack.wave, rack.freq).connect(out);
+    } else if (id === 'kick'){
+      const o = osc('sine', 160); o.frequency.setValueAtTime(160, t); o.frequency.exponentialRampToValueAtTime(42, t + .14); o.connect(out);
+    } else if (id === 'noise'){
+      const s = ctx.createBufferSource(); s.buffer = this.noiseBuf; s.loop = true; srcs.push(s);
+      const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 1800 + Math.random() * 3000; f.Q.value = .7;
+      s.connect(f); f.connect(out);
+    } else if (id === 'click'){
+      osc('sine', [2000, 3200, 4800, 8000][Math.random() * 4 | 0]).connect(out);
+    } else if (id === 'pad'){
+      const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 1100; f.Q.value = 2; f.connect(out);
+      for (const [fr, dt] of [[110, -7], [110, 7], [165, 0], [220, 3]]){ const o = osc('sawtooth', fr); o.detune.value = dt; o.connect(f); }
+    } else if (id === 'bleep'){
+      const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 3500; f.connect(out);
+      osc('square', PENTA[Math.random() * PENTA.length | 0] * 2).connect(f);
+    } else if (id === 'glitch'){
+      const o = osc('sawtooth', 55), lfo = osc('square', 18 + Math.random() * 30), lg = ctx.createGain();
+      lg.gain.value = 40; lfo.connect(lg); lg.connect(o.frequency);
+      const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 2400; f.Q.value = 6;
+      o.connect(f); f.connect(out);
+    }
+    return {srcs, out};
+  },
+
+  noteOn(id, at){
+    if (!this.ctx || this.ctx.state !== 'running') return null;
+    const V = VOICES[id], p = {...V.adsr}, ctx = this.ctx, t = Math.max(ctx.currentTime + .005, at || 0);   // copy: edits mid-note must not desync
+    const {srcs, out} = this.build(id, t);
+    const vca = ctx.createGain(); out.connect(vca); vca.connect(this.bus);
+    const g = vca.gain;
+    g.setValueAtTime(0, t);
+    g.linearRampToValueAtTime(V.peak, t + p.a);
+    g.linearRampToValueAtTime(V.peak * p.s, t + p.a + p.d);
+    srcs.forEach(s => s.start(t));
+    const voice = {id, p, peak:V.peak, tOn:t, tOff:null, vOff:0, srcs, vca, end:Infinity};
+    if (V.perc) this.release(voice, t + p.a + p.d);   // one-shot: auto release after decay
+    this.voices.push(voice);
+    lastVoice = voice;
+    return voice;
+  },
+  release(v, at){
+    if (v.tOff != null) return;
+    const t = Math.max(at ?? this.ctx.currentTime, v.tOn);
+    v.vOff = envAt(v.p, v.tOn, null, 0, t); v.tOff = t;
+    const g = v.vca.gain;
+    g.cancelScheduledValues(t);
+    g.setValueAtTime(v.peak * v.vOff, t);
+    g.linearRampToValueAtTime(0, t + v.p.r);
+    v.end = t + v.p.r + .05;
+    v.srcs.forEach(s => s.stop(v.end));
+    setTimeout(() => { try{ v.vca.disconnect(); }catch(e){} }, (v.end - this.ctx.currentTime) * 1000 + 200);
+  },
+  // envelope levels per voice id, read every frame by the visuals
+  levels(L){
+    for (const id in VOICES) L[id] = 0;
+    const t = this.now();
+    this.voices = this.voices.filter(v => t < v.end + .1);
+    for (const v of this.voices){
+      const e = envAt(v.p, v.tOn, v.tOff, v.vOff, t);
+      if (e > L[v.id]) L[v.id] = e;
+    }
+    return L;
+  }
+};
+let lastVoice = null;
+
+/* =====================================================================
+   RENDERER + SCENES
+   ===================================================================== */
+const stage = document.getElementById('stage');
+const glCanvas = document.getElementById('gl'), hud = document.getElementById('hud'), hctx = hud.getContext('2d');
+/* stage snapshot for the speaker window's live preview: copied right after rendering (the only moment
+   a WebGL canvas can be read), only while a speaker window asks for it, at ~960px wide */
+let stageWanted = 0, perfWanted = 0, perfSig = '';
+/* perform state for the speaker window's control panel (sent only when it changed, only while asked for) */
+function postPerf(){
+  if (!talkSync.ch) return;
+  const S = seqUI.S, $ = id => document.getElementById(id);
+  const st = {scene:cur, black, blob:blob.on, rack:$('rackDock').classList.contains('show'),
+    full:document.body.classList.contains('perform'), help:!$('keybar').classList.contains('hidden'),
+    seq:{playing:S.playing, bpm:S.bpm, every:S.sceneEvery, grid:S.grid, step:S.playing ? S.shown : -1, pos:$('seqPos').textContent, dock:$('seqDock').classList.contains('show')},
+    scenes:scenes.map(x => x.label), presets:[...document.querySelectorAll('#seqPresets button')].map(b => b.textContent),
+    tracks:Object.keys(S.grid).map(id => ({id, key:VOICES[id].label, name:VOICES[id].name}))};
+  const sig = JSON.stringify(st); if (sig === perfSig) return; perfSig = sig;
+  talkSync.ch.postMessage({type:'perf', ...st});
+}
+window.__perfCmd = (cmd, arg) => {
+  const q = sel => document.querySelector(sel);
+  if (cmd === 'test'){   // short beep so the speaker can check the room's loudspeakers
+    if (!audio.ctx || audio.ctx.state !== 'running') return;
+    const v = audio.noteOn('bleep'); if (v) audio.release(v, audio.ctx.currentTime + .35);
+    return;
+  }
+  if (cmd === 'want'){ perfWanted = performance.now() + 2500; if (arg) perfSig = ''; return; }
+  if (cmd === 'scene') setScene(+arg);
+  else if (cmd === 'act') act(arg);
+  else if (cmd === 'bpm') q(`#seqDock [data-bpm="${+arg}"]`)?.click();
+  else if (cmd === 'preset') document.querySelectorAll('#seqPresets button')[+arg]?.click();
+  else if (cmd === 'rand') q('#seqRand').click();
+  else if (cmd === 'clear') q('#seqClear').click();
+  else if (cmd === 'sceneTrack') q('#seqScene').click();
+  else if (cmd === 'cell') document.getElementById('seqGrid').children[arg.t * 17 + 1 + arg.i]?.click();
+};
+const stageSnap = document.createElement('canvas'), ssx = stageSnap.getContext('2d');
+window.__stageSnap = stageSnap;
+window.__wantStage = () => { stageWanted = performance.now() + 2000; };
+function snapStage(){
+  const w = 960, h = Math.round(960 * glCanvas.height / Math.max(1, glCanvas.width));
+  if (stageSnap.width !== w || stageSnap.height !== h){ stageSnap.width = w; stageSnap.height = h; }
+  ssx.drawImage(glCanvas, 0, 0, w, h); ssx.drawImage(hud, 0, 0, w, h);
+}
+const renderer = new THREE.WebGLRenderer({canvas:glCanvas, antialias:false, powerPreference:'high-performance'});
+renderer.setClearColor(0x000000, 1);
+renderer.autoClear = false;
+const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+renderer.setPixelRatio(DPR);
+
+const quad = new THREE.PlaneGeometry(2, 2);
+const orthoCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+const fullVS = `void main(){ gl_Position = vec4(position.xy, 0., 1.); }`;
+const U = () => ({uTime:{value:0}, uKick:{value:0}, uNoise:{value:0}, uClick:{value:0}, uPad:{value:0}, uBleep:{value:0}, uGlitch:{value:0}});
+function setU(u, t, L){ u.uTime.value = t; u.uKick.value = L.kick; u.uNoise.value = L.noise; u.uClick.value = L.click; u.uPad.value = L.pad; u.uBleep.value = L.bleep; u.uGlitch.value = L.glitch; }
+
+// ---- Scene 1: GPU particles -------------------------------------------
+function makeParticles(){
+  const N = 160000, pos = new Float32Array(N * 3), rnd = new Float32Array(N * 4);
+  for (let i = 0; i < N; i++){
+    const u = Math.random() * 2 - 1, th = Math.random() * Math.PI * 2, s = Math.sqrt(1 - u * u);
+    const r = Math.random() < .82 ? 1 + (Math.random() - .5) * .06 : Math.cbrt(Math.random()) * .95;
+    pos.set([s * Math.cos(th) * r, u * r, s * Math.sin(th) * r], i * 3);
+    rnd.set([Math.random(), Math.random(), Math.random(), Math.random()], i * 4);
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute('aRand', new THREE.BufferAttribute(rnd, 4));
+  const uniforms = {...U(), uPix:{value:DPR}};
+  const mat = new THREE.ShaderMaterial({uniforms, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending,
+    vertexShader:`
+      uniform float uTime,uKick,uNoise,uClick,uPad,uBleep,uGlitch,uPix;
+      attribute vec4 aRand; varying float vA;
+      void main(){
+        vec3 p = position;
+        float a = uTime*.06; p.xz = mat2(cos(a),-sin(a),sin(a),cos(a))*p.xz;
+        p *= 1. + uPad*.45*aRand.x;                                   // pad: breathe
+        p += normalize(p) * uKick * 1.1 * aRand.y;                     // kick: explode
+        p += (aRand.xyz - .5) * uNoise * .9;                           // noise: scatter
+        p += .07*vec3(sin(p.y*3.+uTime), sin(p.z*3.+uTime*1.3), sin(p.x*3.+uTime*.7));
+        if (uGlitch > .01){ float q = mix(60., 6., uGlitch); p = mix(p, floor(p*q)/q, step(aRand.w, uGlitch)); }
+        float band = smoothstep(.04, 0., abs(p.y - (fract(uTime*.7)*2.4-1.2)));  // bleep: scan band
+        vec4 mv = modelViewMatrix * vec4(p, 1.);
+        gl_Position = projectionMatrix * mv;
+        gl_PointSize = uPix * (1.4 + uKick*2.5*aRand.z) * (3.2 / -mv.z);
+        vA = .22 + .8*uClick*step(.7, aRand.z) + uBleep*band*1.5 + uKick*.3;
+      }`,
+    fragmentShader:`
+      varying float vA;
+      void main(){ vec2 c = gl_PointCoord - .5; if (dot(c,c) > .25) discard; gl_FragColor = vec4(vec3(1.), vA); }`
+  });
+  const scene = new THREE.Scene(); scene.add(new THREE.Points(geo, mat));
+  const cam = new THREE.PerspectiveCamera(50, 1, .01, 50); cam.position.set(0, 0, 3.4);
+  return {name:'PARTICLES', label:'粒子', scene, cam,
+    resize(w, h){ cam.aspect = w / h; cam.updateProjectionMatrix(); },
+    update(t, dt, L){ setU(uniforms, t, L); cam.position.z = 3.4 - L.kick * .25; }};
+}
+
+// ---- Scene 4: data matrix ---------------------------------------------
+function makeMatrix(){
+  const uniforms = {...U(), uRes:{value:new THREE.Vector2(1, 1)}};
+  const mat = new THREE.ShaderMaterial({uniforms, depthTest:false, vertexShader:fullVS, fragmentShader:`
+    precision highp float;
+    uniform float uTime,uKick,uNoise,uClick,uPad,uBleep,uGlitch,uDim; uniform vec2 uRes;
+    float h(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453); }
+    void main(){
+      vec2 uv = gl_FragCoord.xy / uRes;
+      uv.x += (h(vec2(floor(uv.y*14.), floor(uTime*24.))) - .5) * uGlitch * .35;   // glitch: tear
+      float rows = floor(mix(46., 14., uKick));                                   // kick: zoom rows
+      float r = floor(uv.y*rows), rh = h(vec2(r, 7.));
+      float speed = (rh - .5) * (.08 + uKick*.9);
+      float x = uv.x + uTime*speed;
+      float cols = h(vec2(r,3.)) > .5 ? 420. : 72.;
+      float c = floor(x*cols);
+      float v = step(.52 - .25*uPad, h(vec2(c, r + floor(uTime*(1.+rh*3.))*13.)));
+      float type = h(vec2(r, 11.));
+      if (type < .18) v = step(.5, .5 + .5*sin(x*cols*.25 + uTime*4.));           // sine rows
+      else if (type < .26) v = step(.92, fract(x*cols*.5));                       // thin ticks
+      v *= step(.1, fract(uv.y*rows));                                            // row gaps
+      float nb = step(h(vec2(r, floor(uTime*30.))), uNoise);                      // noise: static rows
+      v = mix(v, step(.5, h(gl_FragCoord.xy + fract(uTime*61.)*97.)), nb);
+      v = abs(v - step(h(vec2(r, floor(uTime*40.))), uClick*.55));                // click: invert rows
+      v = max(v, smoothstep(.003, 0., abs(uv.x - fract(uTime*.31))) * uBleep);    // bleep: scan line
+      gl_FragColor = vec4(vec3(v*.9*uDim), 1.);
+    }`});
+  uniforms.uDim = {value:1};
+  const scene = new THREE.Scene(); const m = new THREE.Mesh(quad, mat); m.frustumCulled = false; scene.add(m);
+  return {name:'DATA MATRIX', label:'資料矩陣', scene, cam:orthoCam,
+    resize(w, h){ uniforms.uRes.value.set(w * DPR, h * DPR); },
+    update(t, dt, L, dim = 1){ setU(uniforms, t, L); uniforms.uDim.value = dim; }};
+}
+
+// ---- Scene 2: point cloud — Point Generate shapes; a kick (A) morphs to a random new shape ----
+function makeCloud(){
+  const N = 60000, rnd = Math.random;
+  // every shape returns {p: Float32Array N*3, l: Float32Array N (brightness)}, roughly within ±1.1
+  const SHAPES = {
+    // image -> point cloud: draw text, bright pixels become points, brightness pushes them forward
+    PENBIT(){
+      const w = 900, h = 420, cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+      const cx = cv.getContext('2d', {willReadFrequently:true});
+      cx.fillStyle = '#000'; cx.fillRect(0, 0, w, h); cx.fillStyle = '#fff'; cx.textAlign = 'center';
+      cx.font = '900 210px Arial Black, Arial, sans-serif'; cx.fillText('PenBit', 450, 250);
+      cx.font = '600 44px Arial, sans-serif'; cx.globalAlpha = .7; cx.fillText('WU  CHENG-RU', 450, 340);
+      const d = cx.getImageData(0, 0, w, h).data, cand = [];
+      for (let i = 0; i < w * h; i++) if (d[i * 4] > 15) cand.push(i);
+      const p = new Float32Array(N * 3), l = new Float32Array(N), s = 2.2 / w;
+      for (let k = 0; k < N;){
+        const px = cand[(rnd() * cand.length) | 0], lv = d[px * 4] / 255;
+        if (rnd() > lv) continue;                                   // brighter pixels get more points
+        const x = px % w, y = (px / w) | 0;
+        p[k * 3] = (x - w / 2 + rnd()) * s; p[k * 3 + 1] = (h / 2 - y + rnd()) * s;
+        p[k * 3 + 2] = ((lv - .5) * .25 + (rnd() - .5) * .12 * lv) * 2.2;
+        l[k++] = lv;
+      }
+      return {p, l};
+    },
+    SPHERE(){                                                       // Fibonacci lattice: evenly spaced
+      const p = new Float32Array(N * 3), ga = Math.PI * (3 - Math.sqrt(5));
+      for (let i = 0; i < N; i++){ const y = 1 - 2 * (i + .5) / N, r = Math.sqrt(1 - y * y), th = ga * i;
+        p.set([Math.cos(th) * r * 1.05, y * 1.05, Math.sin(th) * r * 1.05], i * 3); }
+      return {p, l:new Float32Array(N).fill(.75)};
+    },
+    TORUS(){
+      const p = new Float32Array(N * 3), l = new Float32Array(N);
+      for (let i = 0; i < N; i++){ const a = rnd() * 6.283, b = rnd() * 6.283, R = .78, r = .3;
+        p.set([(R + r * Math.cos(b)) * Math.cos(a), r * Math.sin(b), (R + r * Math.cos(b)) * Math.sin(a)], i * 3); l[i] = .35 + .65 * rnd(); }
+      return {p, l};
+    },
+    GRID(){                                                         // cube lattice
+      const p = new Float32Array(N * 3), n = 39, s = 1.6 / (n - 1);
+      for (let i = 0; i < N; i++){ const q = (rnd() * n * n * n) | 0;
+        p.set([(q % n) * s - .8, ((q / n | 0) % n) * s - .8, (q / (n * n) | 0) * s - .8], i * 3); }
+      return {p, l:new Float32Array(N).fill(.55)};
+    },
+    HELIX(){
+      const p = new Float32Array(N * 3), l = new Float32Array(N).fill(.8);
+      for (let i = 0; i < N; i++){ const u = rnd(), a = u * 6.283 * 3 + (i & 1) * Math.PI, j = .035;
+        p.set([Math.cos(a) * .55 + (rnd() - .5) * j, (u - .5) * 2.1, Math.sin(a) * .55 + (rnd() - .5) * j], i * 3); }
+      return {p, l};
+    },
+    WAVE(){                                                         // height-field grid
+      const p = new Float32Array(N * 3), l = new Float32Array(N), n = 245;
+      for (let i = 0; i < N; i++){ const x = (i % n) / (n - 1) * 2.2 - 1.1, z = ((i / n) | 0) / (n - 1) * 2.2 - 1.1, y = Math.sin(x * 4) * Math.cos(z * 3) * .25;
+        p.set([x, y, z], i * 3); l[i] = .4 + y * 1.6; }
+      return {p, l};
+    },
+  };
+  const NAMES = Object.keys(SHAPES), cache = {};
+  const shape = k => cache[k] || (cache[k] = SHAPES[k]());
+
+  const uniforms = {...U(), uPix:{value:DPR}, uSize:{value:1.4}, uMorph:{value:1}};
+  const mat = new THREE.ShaderMaterial({uniforms, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending,
+    vertexShader:`
+      uniform float uTime,uKick,uNoise,uClick,uPad,uBleep,uGlitch,uPix,uSize,uMorph;
+      attribute vec3 aTo; attribute vec4 aRand; attribute float aLum, aLumTo; varying float vA;
+      void main(){
+        float m = smoothstep(aRand.x*.35, .65 + aRand.x*.35, uMorph);           // staggered morph
+        vec3 p = mix(position, aTo, m);
+        p += (aRand.yzw - .5) * sin(m * 3.14159) * .5;                           // swirl mid-morph
+        float lum = mix(aLum, aLumTo, m);
+        float a = uTime*.08; p.xz = mat2(cos(a),-sin(a),sin(a),cos(a))*p.xz;
+        p.y += sin(p.x*4. + uTime*1.5) * .07 * uPad;
+        p.x += cos(p.z*4. + uTime) * .07 * uPad;
+        p += normalize(p + 1e-4) * uKick * .45 * aRand.y;
+        p += (aRand.xyz - .5) * uNoise * .5;
+        if (uGlitch > .01){ float q = mix(80., 6., uGlitch); p = mix(p, floor(p*q)/q, step(aRand.w, uGlitch)); }
+        float band = smoothstep(.035, 0., abs(p.z - sin(uTime*2.)*1.1));
+        vec4 mv = modelViewMatrix * vec4(p, 1.);
+        gl_Position = projectionMatrix * mv;
+        gl_PointSize = uPix * uSize * (1.3 + uKick*1.6*aRand.z) * (3. / -mv.z);
+        vA = .1 + .65*lum + band*uBleep*1.6 + uClick*step(.8, aRand.z)*.9 + uKick*.2;
+      }`,
+    fragmentShader:`varying float vA; void main(){ vec2 c = gl_PointCoord - .5; if (dot(c,c) > .25) discard; gl_FragColor = vec4(vec3(1.), vA); }`
+  });
+  const geo = new THREE.BufferGeometry(), R = new Float32Array(N * 4);
+  for (let i = 0; i < R.length; i++) R[i] = rnd();
+  const first = shape('PENBIT');
+  const from = new THREE.BufferAttribute(first.p.slice(), 3), to = new THREE.BufferAttribute(first.p.slice(), 3);
+  const lFrom = new THREE.BufferAttribute(first.l.slice(), 1), lTo = new THREE.BufferAttribute(first.l.slice(), 1);
+  geo.setAttribute('position', from); geo.setAttribute('aTo', to); geo.setAttribute('aLum', lFrom); geo.setAttribute('aLumTo', lTo);
+  geo.setAttribute('aRand', new THREE.BufferAttribute(R, 4));
+  const points = new THREE.Points(geo, mat); points.frustumCulled = false;
+  const scene = new THREE.Scene(); scene.add(points);
+  const cam = new THREE.PerspectiveCamera(50, 1, .01, 50); cam.position.set(0, 0, 3.3);
+  let curName = 'PENBIT', m = 1;
+  return {name:'POINT CLOUD', label:'點雲', scene, cam, uniforms, shapes:NAMES,
+    get shape(){ return curName; },
+    get info(){ return `POINT GENERATE  ${curName}  ${N.toLocaleString()} PTS` + (m < 1 ? '  MORPH ' + m.toFixed(2) : ''); },
+    resize(w, h){ cam.aspect = w / h; cam.updateProjectionMatrix(); },
+    update(t, dt, L){
+      if (m < 1){ m = Math.min(1, m + dt / 1.1); uniforms.uMorph.value = m; }
+      setU(uniforms, t, L); cam.position.z = 3.3 - L.kick * .3;
+    },
+    // freeze the current in-between state as "from", then morph to a new random shape
+    morph(name){
+      if (!name){ const others = NAMES.filter(n => n !== curName); name = others[(rnd() * others.length) | 0]; }
+      const F = from.array, T = to.array, LF = lFrom.array, LT = lTo.array;
+      for (let i = 0; i < N; i++){
+        const a = R[i * 4] * .35, e = Math.min(1, Math.max(0, (m - a) / .65)), w = e * e * (3 - 2 * e);
+        F[i * 3] += (T[i * 3] - F[i * 3]) * w; F[i * 3 + 1] += (T[i * 3 + 1] - F[i * 3 + 1]) * w; F[i * 3 + 2] += (T[i * 3 + 2] - F[i * 3 + 2]) * w;
+        LF[i] += (LT[i] - LF[i]) * w;
+      }
+      const s = shape(name); T.set(s.p); LT.set(s.l);
+      from.needsUpdate = to.needsUpdate = lFrom.needsUpdate = lTo.needsUpdate = true;
+      curName = name; m = 0; uniforms.uMorph.value = 0;
+    }};
+}
+
+// ---- Scene 3: boids flocking (CPU, uniform grid) -------------------------------------------
+function makeBoids(){
+  const N = 1800, P = new Float32Array(N * 3), V = new Float32Array(N * 3);
+  for (let i = 0; i < N; i++){
+    for (let k = 0; k < 3; k++){ P[i * 3 + k] = (Math.random() - .5) * 2; V[i * 3 + k] = (Math.random() - .5) * .4; }
+  }
+  const CS = .2, G = 20, OFF = 2, cellCount = new Int32Array(G * G * G + 1), cellStart = new Int32Array(G * G * G + 1), order = new Int32Array(N), cellId = new Int32Array(N);
+  const cellOf = v => Math.min(G - 1, Math.max(0, Math.floor((v + OFF) / CS)));
+  const linePos = new Float32Array(N * 6), geo = new THREE.BufferGeometry();
+  const attr = new THREE.BufferAttribute(linePos, 3); attr.setUsage(THREE.DynamicDrawUsage); geo.setAttribute('position', attr);
+  const mat = new THREE.LineBasicMaterial({color:0xffffff, transparent:true, opacity:.75, blending:THREE.AdditiveBlending, depthWrite:false});
+  const lines = new THREE.LineSegments(geo, mat); lines.frustumCulled = false;
+  const headGeo = new THREE.BufferGeometry(); headGeo.setAttribute('position', new THREE.BufferAttribute(P, 3));
+  const heads = new THREE.Points(headGeo, new THREE.PointsMaterial({color:0xffffff, size:2 * DPR, sizeAttenuation:false, transparent:true, opacity:.9, blending:THREE.AdditiveBlending, depthWrite:false}));
+  heads.frustumCulled = false;
+  const scene = new THREE.Scene(); scene.add(lines, heads);
+  const cam = new THREE.PerspectiveCamera(50, 1, .01, 50);
+  let tA = 0;
+  return {name:'BOIDS', label:'Boids', scene, cam, P,
+    resize(w, h){ cam.aspect = w / h; cam.updateProjectionMatrix(); },
+    update(t, dt, L){
+      dt = Math.min(dt, 1 / 30); tA += dt * (1 + L.bleep * 6);
+      const ax = Math.sin(tA * .31) * .8, ay = Math.sin(tA * .47) * .5, az = Math.cos(tA * .29) * .8;
+      // counting sort into grid cells
+      cellCount.fill(0);
+      for (let i = 0; i < N; i++){ const c = (cellOf(P[i * 3]) * G + cellOf(P[i * 3 + 1])) * G + cellOf(P[i * 3 + 2]); cellId[i] = c; cellCount[c + 1]++; }
+      for (let c = 0; c < G * G * G; c++) cellStart[c + 1] = cellStart[c] + cellCount[c + 1];
+      cellCount.fill(0);
+      for (let i = 0; i < N; i++){ const c = cellId[i]; order[cellStart[c] + cellCount[c]++] = i; }
+      const R2 = .16 * .16, SEP = .1, coh = .25 + L.pad * 2.5, maxV = .75 + L.kick * 2.2;
+      for (let i = 0; i < N; i++){
+        const px = P[i * 3], py = P[i * 3 + 1], pz = P[i * 3 + 2];
+        const gx = cellOf(px), gy = cellOf(py), gz = cellOf(pz);
+        let n = 0, cx = 0, cy = 0, cz = 0, vx = 0, vy = 0, vz = 0, sx = 0, sy = 0, sz = 0;
+        for (let x = Math.max(0, gx - 1); x <= Math.min(G - 1, gx + 1); x++)
+        for (let y = Math.max(0, gy - 1); y <= Math.min(G - 1, gy + 1); y++)
+        for (let z = Math.max(0, gz - 1); z <= Math.min(G - 1, gz + 1); z++){
+          const c = (x * G + y) * G + z;
+          for (let q = cellStart[c], e = cellStart[c + 1]; q < e && n < 24; q++){
+            const j = order[q]; if (j === i) continue;
+            const dx = px - P[j * 3], dy = py - P[j * 3 + 1], dz = pz - P[j * 3 + 2], d2 = dx * dx + dy * dy + dz * dz;
+            if (d2 > R2) continue;
+            n++; cx += P[j * 3]; cy += P[j * 3 + 1]; cz += P[j * 3 + 2]; vx += V[j * 3]; vy += V[j * 3 + 1]; vz += V[j * 3 + 2];
+            const d = Math.sqrt(d2) + 1e-4; if (d < SEP){ const w = (SEP - d) / (SEP * d); sx += dx * w; sy += dy * w; sz += dz * w; }
+          }
+        }
+        let fx = 0, fy = 0, fz = 0;
+        if (n){
+          fx += (vx / n - V[i * 3]) * 1.4 + (cx / n - px) * coh + sx * 6;
+          fy += (vy / n - V[i * 3 + 1]) * 1.4 + (cy / n - py) * coh + sy * 6;
+          fz += (vz / n - V[i * 3 + 2]) * 1.4 + (cz / n - pz) * coh + sz * 6;
+        }
+        const r = Math.hypot(px, py, pz) + 1e-4;
+        if (r > 1.3){ const k = (r - 1.3) * 5 / r; fx -= px * k; fy -= py * k; fz -= pz * k; }       // soft bounds
+        const at = .08 + L.pad * .8; fx += (ax - px) * at; fy += (ay - py) * at; fz += (az - pz) * at;     // attractor
+        const kk = L.kick * 7 / r; fx += px * kk; fy += py * kk; fz += pz * kk;                         // kick: burst out
+        const nz = L.noise * 9; fx += (Math.random() - .5) * nz; fy += (Math.random() - .5) * nz; fz += (Math.random() - .5) * nz;
+        let ux = V[i * 3] + fx * dt, uy = V[i * 3 + 1] + fy * dt, uz = V[i * 3 + 2] + fz * dt;
+        if (L.glitch > .05){                                                                            // glitch: snap to axis
+          const m = Math.max(Math.abs(ux), Math.abs(uy), Math.abs(uz)), g = L.glitch;
+          ux = Math.abs(ux) === m ? ux : ux * (1 - g); uy = Math.abs(uy) === m ? uy : uy * (1 - g); uz = Math.abs(uz) === m ? uz : uz * (1 - g);
+        }
+        let sp = Math.hypot(ux, uy, uz) + 1e-6; const cl = Math.min(maxV, Math.max(.22, sp)) / sp;
+        V[i * 3] = ux * cl; V[i * 3 + 1] = uy * cl; V[i * 3 + 2] = uz * cl;
+      }
+      const tail = .09 * (1 + L.kick * 2);
+      for (let i = 0; i < N; i++){
+        for (let k = 0; k < 3; k++){
+          const p = P[i * 3 + k] += V[i * 3 + k] * dt;
+          linePos[i * 6 + k] = p; linePos[i * 6 + 3 + k] = p - V[i * 3 + k] * tail;
+        }
+      }
+      attr.needsUpdate = true; headGeo.attributes.position.needsUpdate = true;
+      mat.opacity = .5 + .5 * L.click;
+      cam.position.set(Math.sin(t * .05) * 3.4, .4, Math.cos(t * .05) * 3.4); cam.lookAt(0, 0, 0);
+    }};
+}
+
+const particles = makeParticles(), cloud = makeCloud(), boids = makeBoids(), matrix = makeMatrix();
+// ---- Scene 5: mix = dimmed data matrix behind the point cloud ----
+const mix = {name:'MIX', label:'綜合', cam:orthoCam,
+  resize(){},
+  update(t, dt, L){ matrix.update(t, dt, L, .28); cloud.update(t, dt, L); },
+  render(r){ r.render(matrix.scene, matrix.cam); r.render(cloud.scene, cloud.cam); },
+  get info(){ return cloud.info; }};
+const scenes = [particles, cloud, boids, matrix, mix];
+
+let cur = 0;
+
+// blackout fade quad (drawn inside WebGL so the recorder sees it too)
+const fadeMat = new THREE.MeshBasicMaterial({color:0x000000, transparent:true, opacity:0, depthTest:false});
+const fadeScene = new THREE.Scene(); { const m = new THREE.Mesh(quad, fadeMat); m.frustumCulled = false; fadeScene.add(m); }
+let black = false, fade = 1;
+
+/* =====================================================================
+   RESIZE / HUD
+   ===================================================================== */
+let W = 1, H = 1, HS = 1;   // HS = HUD scale, so readouts stay legible on a projector
+function resize(){
+  W = Math.max(1, stage.clientWidth); H = Math.max(1, stage.clientHeight);
+  HS = Math.max(1, Math.min(2.4, W / 1000, H / 620));
+  renderer.setSize(W, H, false);
+  hud.width = W * DPR; hud.height = H * DPR;
+  scenes.forEach(s => s.resize(W, H));
+}
+new ResizeObserver(resize).observe(stage); resize();
+
+const RED = '#ff2a2a';
+const stageW = () => W / HS, stageH = () => H / HS;
+function drawHUD(t, L){
+  const W = stageW(), H = stageH();   // virtual (scaled) size
+  hctx.setTransform(DPR * HS, 0, 0, DPR * HS, 0, 0);
+  hctx.clearRect(0, 0, W, H);
+  hctx.globalAlpha = fade;
+  const s = scenes[cur];
+  hctx.font = '12px ui-monospace, Consolas, monospace'; hctx.fillStyle = RED; hctx.strokeStyle = RED;
+  hctx.fillText(`SCENE 0${cur + 1}  ${s.name}`, 14, 22);
+  hctx.fillText(`${perf.fps.toFixed(0).padStart(3)} FPS  ${perf.size}`, 14, 38);
+  hctx.fillText(`T ${t.toFixed(2)}  NET ${navigator.onLine ? 'ONLINE' : 'OFFLINE'}`, 14, 54);
+  // envelope meters
+  let y = 22; const x = W - 150;
+  for (const id in VOICES){
+    hctx.fillText(VOICES[id].label, x, y);
+    hctx.strokeRect(x + 14, y - 8, 110, 8);
+    hctx.fillRect(x + 14, y - 8, 110 * L[id], 8);
+    y += 15;
+  }
+  if (s.info) hctx.fillText(s.info, 14, 70);
+  if (blob.on) blob.draw(hctx, W, H, fade);
+  hctx.globalAlpha = 1;
+}
+
+const renderScene = s => s.render ? s.render(renderer) : renderer.render(s.scene, s.cam);
+
+/* =====================================================================
+   BLOB TRACKING (B): read back the rendered frame at ~1/16 size,
+   threshold, connected components, nearest-neighbour IDs, red HUD.
+   ===================================================================== */
+const blob = (() => {
+  const chain = []; let gw = 0, gh = 0, lum, lab, stack, thr = 0, nextId = 1, tracks = [];
+  function ensure(){
+    const w0 = glCanvas.width, h0 = glCanvas.height;
+    if (chain.w0 === w0 && chain.h0 === h0) return;
+    chain.length = 0; let w = w0, h = h0;
+    do { w = Math.ceil(w / 2); h = Math.ceil(h / 2); const c = document.createElement('canvas'); c.width = w; c.height = h; chain.push(c); } while (w > 160);
+    chain.ctx = chain.map(c => c.getContext('2d'));
+    chain.w0 = w0; chain.h0 = h0; gw = w; gh = h;
+    lum = new Float32Array(gw * gh); lab = new Uint8Array(gw * gh); stack = new Int32Array(gw * gh);
+  }
+  function detect(){
+    ensure();
+    // repeated exact halving = box-filter average, so sparse points still register
+    let src = glCanvas;
+    for (let i = 0; i < chain.length; i++){ chain.ctx[i].drawImage(src, 0, 0, chain[i].width, chain[i].height); src = chain[i]; }
+    const d = chain.ctx[chain.length - 1].getImageData(0, 0, gw, gh).data, n = gw * gh;
+    let sum = 0, mx = 0;
+    for (let i = 0; i < n; i++){ const l = Math.max(d[i * 4], d[i * 4 + 1], d[i * 4 + 2]) / 255; lum[i] = l; sum += l; if (l > mx) mx = l; }
+    const mean = sum / n; thr = Math.max(.1, mean + (mx - mean) * .45);
+    lab.fill(0); const found = [];
+    for (let p0 = 0; p0 < n; p0++){
+      if (lab[p0] || lum[p0] < thr) continue;
+      let sp = 0, area = 0, sx = 0, sy = 0, sw = 0, x0 = gw, y0 = gh, x1 = 0, y1 = 0;
+      stack[sp++] = p0; lab[p0] = 1;
+      while (sp){
+        const p = stack[--sp], x = p % gw, y = (p / gw) | 0, w = lum[p];
+        area++; sx += x * w; sy += y * w; sw += w;
+        if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+        if (x > 0 && !lab[p - 1] && lum[p - 1] >= thr){ lab[p - 1] = 1; stack[sp++] = p - 1; }
+        if (x < gw - 1 && !lab[p + 1] && lum[p + 1] >= thr){ lab[p + 1] = 1; stack[sp++] = p + 1; }
+        if (y > 0 && !lab[p - gw] && lum[p - gw] >= thr){ lab[p - gw] = 1; stack[sp++] = p - gw; }
+        if (y < gh - 1 && !lab[p + gw] && lum[p + gw] >= thr){ lab[p + gw] = 1; stack[sp++] = p + gw; }
+      }
+      if (area >= 3) found.push({area, cx:(sx / sw + .5) / gw, cy:(sy / sw + .5) / gh, x0:x0 / gw, y0:y0 / gh, x1:(x1 + 1) / gw, y1:(y1 + 1) / gh});
+    }
+    found.sort((a, b) => b.area - a.area); found.length = Math.min(found.length, 14);
+    // track: match to nearest previous blob, else new ID
+    tracks.forEach(t => t.hit = false);
+    for (const b of found){
+      let best = null, bd = .08;
+      for (const t of tracks){ if (t.hit) continue; const dd = Math.hypot(t.cx - b.cx, t.cy - b.cy); if (dd < bd){ bd = dd; best = t; } }
+      if (best){ for (const k of ['cx', 'cy', 'x0', 'y0', 'x1', 'y1']) best[k] += (b[k] - best[k]) * .6; best.area = b.area; best.hit = true; best.age = 0; }
+      else tracks.push({...b, id:nextId++, hit:true, age:0});
+    }
+    tracks.forEach(t => { if (!t.hit) t.age++; });
+    tracks = tracks.filter(t => t.age < 5);
+  }
+  function draw(c, W, H, fade){
+    const live = tracks.filter(t => t.age === 0).sort((a, b) => a.cx - b.cx);
+    c.save(); c.strokeStyle = c.fillStyle = RED; c.font = '10px ui-monospace, Consolas, monospace';
+    if (live.length){
+      const big = live.reduce((a, b) => b.area > a.area ? b : a);
+      c.globalAlpha = .22 * fade; c.beginPath(); c.moveTo(big.cx * W, 0); c.lineTo(big.cx * W, H); c.moveTo(0, big.cy * H); c.lineTo(W, big.cy * H); c.stroke();
+      c.globalAlpha = .45 * fade; c.beginPath(); live.forEach((t, i) => i ? c.lineTo(t.cx * W, t.cy * H) : c.moveTo(t.cx * W, t.cy * H)); c.stroke();
+    }
+    for (const t of tracks){
+      const a = (1 - t.age / 5) * fade, x = t.x0 * W, y = t.y0 * H, w = (t.x1 - t.x0) * W, h = (t.y1 - t.y0) * H, k = Math.min(10, w / 3, h / 3);
+      c.globalAlpha = a * .35; c.lineWidth = 1; c.strokeRect(x, y, w, h);
+      c.globalAlpha = a; c.lineWidth = 1.5; c.beginPath();
+      c.moveTo(x, y + k); c.lineTo(x, y); c.lineTo(x + k, y);  c.moveTo(x + w - k, y); c.lineTo(x + w, y); c.lineTo(x + w, y + k);
+      c.moveTo(x, y + h - k); c.lineTo(x, y + h); c.lineTo(x + k, y + h);  c.moveTo(x + w - k, y + h); c.lineTo(x + w, y + h); c.lineTo(x + w, y + h - k);
+      const px = t.cx * W, py = t.cy * H; c.moveTo(px - 5, py); c.lineTo(px + 5, py); c.moveTo(px, py - 5); c.lineTo(px, py + 5);
+      c.stroke();
+      c.fillText(`#${String(t.id).padStart(3, '0')}  ${t.cx.toFixed(3)} ${t.cy.toFixed(3)}`, x, y - 4);
+      c.fillText(`A${t.area}`, x + w + 3, y + h);
+    }
+    c.globalAlpha = fade;
+    c.fillText(`BLOB TRACK  N ${String(live.length).padStart(2, '0')}  THR ${thr.toFixed(2)}  GRID ${gw}x${gh}`, 14, 86);
+    c.restore();
+  }
+  return {on:false, detect, draw, get count(){ return tracks.filter(t => t.age === 0).length; }};
+})();
+
+/* envelope scope in section 02 */
+const scope = document.getElementById('scope'), sctx = scope.getContext('2d'), hist = new Float32Array(240);
+let histI = 0, lastShown = null;
+function drawScope(L){
+  let sum = 0; for (const id in L) sum = Math.max(sum, L[id]);
+  hist[histI++ % hist.length] = sum;
+  const w = scope.width, h = scope.height;
+  sctx.fillStyle = '#000'; sctx.fillRect(0, 0, w, h);
+  sctx.strokeStyle = '#333'; sctx.beginPath(); sctx.moveTo(0, h - 10); sctx.lineTo(w, h - 10); sctx.stroke();
+  sctx.strokeStyle = RED; sctx.lineWidth = 2; sctx.beginPath();
+  for (let i = 0; i < hist.length; i++){
+    const v = hist[(histI + i) % hist.length], X = i / (hist.length - 1) * w, Y = h - 10 - v * (h - 22);
+    i ? sctx.lineTo(X, Y) : sctx.moveTo(X, Y);
+  }
+  sctx.stroke();
+  if (lastVoice && lastVoice !== lastShown){
+    lastShown = lastVoice; const V = VOICES[lastVoice.id], p = V.adsr, ms = v => (v * 1000).toFixed(v < .01 ? 1 : 0) + 'ms';
+    document.getElementById('adsrtxt').textContent = `${V.label} ${V.name}｜A ${ms(p.a)}  D ${ms(p.d)}  S ${p.s}  R ${ms(p.r)}`;
+  }
+}
+
+/* =====================================================================
+   RACK (Phase 2): OSC -> ADSR -> OUT, ENV cable -> visual params
+   ===================================================================== */
+const rackUI = (() => {
+  const svg = document.getElementById('rack'), NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs = {}, parent = svg, text) => {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (text != null) e.textContent = text;
+    parent.appendChild(e); return e;
+  };
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const DEF = JSON.parse(JSON.stringify({wave:rack.wave, freq:rack.freq, vol:rack.vol, adsr:rack.adsr, targets:[...rack.targets]}));
+  const gMod = el('g'), gCab = el('g'), gTop = el('g');
+
+  const mod = (x, y, w, h, title) => { el('rect', {x, y, width:w, height:h, rx:4, class:'mod'}, gMod); el('text', {x:x + 8, y:y + 15, class:'t'}, gMod, title); };
+  mod(6, 6, 150, 84, 'OSC 振盪器'); mod(184, 6, 150, 84, 'OUT 輸出'); mod(6, 98, 328, 160, 'ADSR 封包'); mod(6, 266, 328, 90, 'VISUAL 畫面');
+
+  // jacks
+  const J = {oscOut:[138, 72], outIn:[202, 72], adsrIn:[24, 240], env:[262, 240], adsrOut:[316, 240],
+             kick:[48, 300], pad:[128, 300], click:[208, 300], glitch:[288, 300]};
+  const TARGETS = {kick:['爆散', 'EXPLODE'], pad:['呼吸', 'BREATHE'], click:['閃爍', 'FLASH'], glitch:['量化', 'QUANT']};
+  const jackEls = {};
+  const jack = (k, label, cls = '') => {
+    const [x, y] = J[k];
+    const c = jackEls[k] = el('circle', {cx:x, cy:y, r:7, class:'jack ' + cls}, gMod); c.dataset.jack = k;
+    el('circle', {cx:x, cy:y, r:2.5, fill:'#555', 'pointer-events':'none'}, gMod);
+    if (label) el('text', {x, y:y - 11, 'text-anchor':'middle', class:cls === 'env' ? 'red' : ''}, gMod, label);
+  };
+  jack('oscOut', 'OUT'); jack('outIn', 'IN'); jack('adsrIn', 'IN'); jack('adsrOut', 'AUDIO'); jack('env', 'ENV', 'env');
+  for (const k in TARGETS){
+    const [x, y] = J[k]; jack(k);
+    el('text', {x, y:y + 23, 'text-anchor':'middle', style:'font-size:12px;fill:#fff'}, gMod, TARGETS[k][0]);
+    el('text', {x, y:y + 36, 'text-anchor':'middle'}, gMod, TARGETS[k][1]);
+  }
+  el('text', {x:326, y:281, 'text-anchor':'end'}, gMod, '插哪個孔，封包就控制哪個參數');
+
+  // OSC: wave button + pitch knob
+  const WAVES = ['sine', 'triangle', 'sawtooth', 'square', 'noise'];
+  const WNAME = {sine:'SINE 正弦', triangle:'TRI 三角', sawtooth:'SAW 鋸齒', square:'SQR 方波', noise:'NOISE 噪音'};
+  const wbtn = el('rect', {x:16, y:26, width:64, height:38, rx:3, class:'btn'}, gMod); wbtn.dataset.wave = 1;
+  const wIcon = el('path', {fill:'none', stroke:'#fff', 'stroke-width':1.5, 'pointer-events':'none'}, gMod);
+  const wTxt = el('text', {x:48, y:78, 'text-anchor':'middle'}, gMod);
+  const knob = (x, y, k) => {
+    const c = el('circle', {cx:x, cy:y, r:13, class:'knob'}, gMod); c.dataset.knob = k;
+    const ln = el('line', {x1:x, y1:y, x2:x, y2:y - 11, stroke:'#fff', 'stroke-width':2, 'pointer-events':'none'}, gMod);
+    const tx = el('text', {x, y:y + 32, 'text-anchor':'middle'}, gMod);
+    return {x, y, ln, tx};
+  };
+  const kPitch = knob(104, 44, 'pitch'), kVol = knob(250, 44, 'vol');
+  const led = el('circle', {cx:306, cy:40, r:7, fill:'#ff2a2a', 'fill-opacity':.08, stroke:'#552222'}, gMod);
+  el('path', {d:'M296 62h5l7-6v20l-7-6h-5z', fill:'none', stroke:'#999'}, gMod);
+
+  // ADSR graph
+  const gx = 16, gy = 122, gw = 308, gh = 76, zA = .27 * gw, zD = .27 * gw, zH = .14 * gw, zR = .32 * gw, MAXA = 1.5, MAXD = 1.5, MAXR = 3;
+  el('rect', {x:gx - 4, y:gy - 6, width:gw + 8, height:gh + 12, fill:'#0a0a0a'}, gMod);
+  el('line', {x1:gx, y1:gy + gh, x2:gx + gw, y2:gy + gh, stroke:'#333'}, gMod);
+  const area = el('path', {fill:'rgba(255,42,42,.13)', 'pointer-events':'none'}, gMod);
+  const curve = el('path', {fill:'none', stroke:'#ff2a2a', 'stroke-width':2, 'pointer-events':'none'}, gMod);
+  const segTx = ['A', 'D', 'S', 'R'].map(s => el('text', {y:gy + gh - 4, 'text-anchor':'middle', fill:'#666', style:'fill:#666'}, gMod, s));
+  const readout = el('text', {x:16, y:216}, gMod);
+  const geom = p => {
+    const xA = gx + zA * Math.sqrt(p.a / MAXA), xD = xA + zD * Math.sqrt(p.d / MAXD), xS = xD + zH, xR = xS + zR * Math.sqrt(p.r / MAXR);
+    return {xA, xD, xS, xR, yS:gy + gh - p.s * gh};
+  };
+  const play = el('circle', {r:4, fill:'#fff', 'pointer-events':'none', opacity:0}, gTop);
+  const H = {};
+  for (const h of ['A', 'D', 'R']){ H[h] = el('circle', {r:6.5, class:'handle'}, gTop); H[h].dataset.h = h; }
+
+  // cables
+  const cablePath = ([x1, y1], [x2, y2]) => { const sag = 28 + Math.abs(x2 - x1) * .22; return `M${x1} ${y1} C${x1} ${y1 + sag} ${x2} ${y2 + sag} ${x2} ${y2}`; };
+  const audioCab = {stroke:'#e6e6e6', 'stroke-width':3.5, 'stroke-opacity':.5, class:'cable'};
+  el('path', {...audioCab, d:cablePath(J.oscOut, J.adsrIn)}, gCab);
+  el('path', {...audioCab, d:cablePath(J.adsrOut, J.outIn)}, gCab);
+  const envCabs = el('g', {}, gCab);
+  const tmp = el('path', {stroke:'#ff2a2a', 'stroke-width':3.5, 'stroke-opacity':.8, class:'cable', 'stroke-dasharray':'6 4', visibility:'hidden'}, gCab);
+
+  function renderCables(){
+    envCabs.replaceChildren();
+    for (const k of rack.targets) el('path', {d:cablePath(J.env, J[k]), stroke:'#ff2a2a', class:'cable'}, envCabs);
+    for (const k in TARGETS) jackEls[k].style.stroke = rack.targets.has(k) ? '#ff2a2a' : '';
+  }
+  function wavePath(w){
+    let d = '';
+    for (let i = 0; i <= 56; i++){
+      const u = i / 56 * 2, ph = u % 1;
+      const v = w === 'sine' ? Math.sin(u * Math.PI * 2) : w === 'triangle' ? 1 - 4 * Math.abs(ph - .5) : w === 'sawtooth' ? 2 * ph - 1 : w === 'square' ? (ph < .5 ? 1 : -1) : Math.sin(i * 12.9898) * .9;
+      d += (i ? 'L' : 'M') + (20 + i).toFixed(1) + ' ' + (45 - v * 12).toFixed(1);
+    }
+    return d;
+  }
+  const knobSet = (k, u, txt) => { const a = (-135 + 270 * u) * Math.PI / 180; k.ln.setAttribute('x2', k.x + Math.sin(a) * 11); k.ln.setAttribute('y2', k.y - Math.cos(a) * 11); k.tx.textContent = txt; };
+  const ms = v => v < 1 ? (v * 1000).toFixed(0) + 'ms' : v.toFixed(2) + 's';
+
+  function renderAll(){
+    const p = rack.adsr, g = geom(p), yb = gy + gh;
+    const d = `M${gx} ${yb} L${g.xA} ${gy} L${g.xD} ${g.yS} L${g.xS} ${g.yS} L${g.xR} ${yb}`;
+    curve.setAttribute('d', d); area.setAttribute('d', d + 'Z');
+    H.A.setAttribute('cx', g.xA); H.A.setAttribute('cy', gy);
+    H.D.setAttribute('cx', g.xD); H.D.setAttribute('cy', g.yS);
+    H.R.setAttribute('cx', g.xR); H.R.setAttribute('cy', yb);
+    [[gx, g.xA], [g.xA, g.xD], [g.xD, g.xS], [g.xS, g.xR]].forEach(([a, b], i) => segTx[i].setAttribute('x', (a + b) / 2));
+    readout.textContent = `A ${ms(p.a)}   D ${ms(p.d)}   S ${p.s.toFixed(2)}   R ${ms(p.r)}`;
+    wIcon.setAttribute('d', wavePath(rack.wave)); wTxt.textContent = WNAME[rack.wave];
+    knobSet(kPitch, Math.log2(rack.freq / 55) / 4, rack.wave === 'noise' ? '—' : Math.round(rack.freq) + 'Hz');
+    knobSet(kVol, rack.vol / .6, 'VOL ' + Math.round(rack.vol / .6 * 100));
+  }
+
+  // pointer interaction
+  const pt = e => { const q = new DOMPoint(e.clientX, e.clientY).matrixTransform(svg.getScreenCTM().inverse()); return [q.x, q.y]; };
+  let drag = null;
+  svg.addEventListener('pointerdown', e => {
+    const t = e.target, ds = t.dataset || {};
+    if (ds.wave){ rack.wave = WAVES[(WAVES.indexOf(rack.wave) + 1) % WAVES.length]; renderAll(); return; }
+    if (ds.h) drag = {type:'h', h:ds.h};
+    else if (ds.knob) drag = {type:'knob', k:ds.knob, y0:e.clientY, f0:rack.freq, v0:rack.vol};
+    else if (ds.jack === 'env') drag = {type:'cable'};
+    else if (TARGETS[ds.jack] && rack.targets.has(ds.jack)){ rack.targets.delete(ds.jack); renderCables(); drag = {type:'cable', from:ds.jack}; }
+    else return;
+    svg.setPointerCapture(e.pointerId); e.preventDefault(); move(e);
+  });
+  function move(e){
+    if (!drag) return;
+    const [x, y] = pt(e), p = rack.adsr, g = geom(p);
+    if (drag.type === 'h'){
+      if (drag.h === 'A') p.a = Math.max(.001, MAXA * (clamp(x - gx, 0, zA) / zA) ** 2);
+      if (drag.h === 'D'){ p.d = Math.max(.005, MAXD * (clamp(x - g.xA, 0, zD) / zD) ** 2); p.s = clamp((gy + gh - y) / gh, 0, 1); }
+      if (drag.h === 'R') p.r = Math.max(.01, MAXR * (clamp(x - g.xS, 0, zR) / zR) ** 2);
+      renderAll();
+    } else if (drag.type === 'knob'){
+      const dy = e.clientY - drag.y0;
+      if (drag.k === 'pitch') rack.freq = 55 * 2 ** (4 * clamp(Math.log2(drag.f0 / 55) / 4 - dy / 160, 0, 1));
+      else rack.vol = clamp(drag.v0 - dy / 260, 0, .6);
+      renderAll();
+    } else if (drag.type === 'cable'){
+      tmp.setAttribute('d', cablePath(J.env, [x, y])); tmp.setAttribute('visibility', 'visible');
+    }
+  }
+  svg.addEventListener('pointermove', move);
+  const up = e => {
+    if (drag && drag.type === 'cable'){
+      const [x, y] = pt(e);
+      // dropping back on the jack it was pulled from = unplug (a click unplugs)
+      for (const k in TARGETS) if (k !== drag.from && Math.hypot(x - J[k][0], y - J[k][1]) < 16) rack.targets.add(k);
+      tmp.setAttribute('visibility', 'hidden'); renderCables();
+    }
+    drag = null;
+  };
+  svg.addEventListener('pointerup', up); svg.addEventListener('pointercancel', up);
+  document.getElementById('rackReset').addEventListener('click', () => {
+    Object.assign(rack, {wave:DEF.wave, freq:DEF.freq, vol:DEF.vol}); Object.assign(rack.adsr, DEF.adsr);
+    rack.targets = new Set(DEF.targets); renderAll(); renderCables();
+  });
+
+  renderAll(); renderCables();
+
+  // per-frame: playhead on the curve, cables + LED glow with the envelope
+  return {
+    update(L){
+      const lv = L.patch || 0;
+      led.setAttribute('fill-opacity', .08 + .92 * lv);
+      envCabs.setAttribute('stroke-opacity', .35 + .65 * lv);
+      envCabs.setAttribute('stroke-width', 3.5 + 2.5 * lv);
+      let v = null;
+      for (let i = audio.voices.length - 1; i >= 0; i--) if (audio.voices[i].id === 'patch'){ v = audio.voices[i]; break; }
+      const t = audio.now();
+      if (!v || t > v.end){ play.setAttribute('opacity', 0); return; }
+      const p = v.p, g = geom(p), e = t - v.tOn; let x;
+      if (v.tOff == null || t < v.tOff){
+        x = e < 0 ? gx : e < p.a ? gx + (g.xA - gx) * e / p.a : e < p.a + p.d ? g.xA + (g.xD - g.xA) * (e - p.a) / p.d : g.xD + zH * .5;
+      } else x = g.xS + (g.xR - g.xS) * Math.min(1, (t - v.tOff) / p.r);
+      play.setAttribute('cx', x); play.setAttribute('cy', gy + gh - envAt(p, v.tOn, v.tOff, v.vOff, t) * gh); play.setAttribute('opacity', 1);
+    },
+    J, renderAll, renderCables
+  };
+})();
+
+/* =====================================================================
+   LOOP + PERF
+   ===================================================================== */
+const perf = window.__perf = {fps:0, frameMs:0, frameMsMax:0, frames:0, audio:'none', scene:'', voices:0, dpr:DPR, size:''};
+const L = {}; for (const id in VOICES) L[id] = 0;
+let fpsT = performance.now(), fpsN = 0, maxMs = 0, lastNow = performance.now(), worst = 0;
+const t0 = performance.now();
+function frame(now){
+  requestAnimationFrame(frame);
+  const dt = Math.min(.1, (now - lastNow) / 1000); lastNow = now;
+  const tw0 = performance.now();
+  const t = audio.ctx ? audio.now() : (now - t0) / 1000;
+  if (audio.ctx){
+    audio.levels(L);
+    for (const tg of rack.targets) if (L.patch > L[tg]) L[tg] = L.patch;   // patch cable: ENV -> visual param
+  }
+  rackUI.update(L);
+  seqUI.update();
+  fade += ((black ? 0 : 1) - fade) * Math.min(1, dt * 6);
+  const s = scenes[cur];
+  if (document.body.dataset.view !== 'lecture' || document.body.classList.contains('perform')){
+    s.update(t, dt, L);
+    renderer.clear();
+    renderScene(s);
+    if (fade < .999){ fadeMat.opacity = 1 - fade; renderer.render(fadeScene, orthoCam); }
+    if (blob.on && (perf.frames & 1) === 0) blob.detect();
+    drawHUD(t, L);
+    if (stageWanted > now) snapStage();
+  }
+  if (perfWanted > now) postPerf();
+  drawScope(L);
+  // perf: fps from rAF intervals, frameMs = JS work this frame
+  const work = performance.now() - tw0; maxMs = Math.max(maxMs, work);
+  fpsN++; perf.frames++;
+  if (now - fpsT >= 1000){
+    perf.fps = fpsN * 1000 / (now - fpsT); perf.frameMsMax = +maxMs.toFixed(2);
+    fpsN = 0; fpsT = now; maxMs = 0;
+  }
+  perf.frameMs = +work.toFixed(2);
+  perf.blobs = blob.on ? blob.count : -1;
+  perf.audio = audio.ctx ? audio.ctx.state : 'none'; perf.scene = s.name; perf.voices = audio.voices.length; perf.size = `${W}x${H}`;
+}
+requestAnimationFrame(frame);
+
+/* =====================================================================
+   CONTROLS (keyboard + on-screen)
+   ===================================================================== */
+const gate = document.getElementById('gate');
+async function unlock(){ await audio.start(); gate.classList.add('hide'); talkSync.post(); }
+gate.addEventListener('pointerdown', unlock);
+
+const chip = k => document.querySelector(`#keybar [data-k="${k}"]`);
+function flash(k){ const c = chip(k); if (!c) return; c.classList.add('on'); clearTimeout(c._t); c._t = setTimeout(() => c.classList.remove('on'), 160); }
+
+function setScene(i){
+  cur = i; flash('scene');
+  document.querySelectorAll('[data-scene]').forEach(b => b.classList.toggle('on', +b.dataset.scene === i));
+}
+function act(a){
+  flash(a);
+  if (a === 'black'){ black = !black; document.querySelectorAll('[data-act="black"]').forEach(b => b.classList.toggle('on', black)); }
+  else if (a === 'perform'){ document.body.classList.toggle('perform'); }
+  else if (a === 'blob'){ blob.on = !blob.on; document.querySelectorAll('[data-act="blob"]').forEach(b => b.classList.toggle('on', blob.on)); }
+  else if (a === 'rack'){
+    const dock = document.getElementById('rackDock');
+    const open = !dock.classList.contains('show') || document.body.dataset.view !== 'perform';
+    if (open && document.body.dataset.view !== 'perform' && window.__setView) window.__setView('perform');
+    dock.classList.toggle('show', open);
+    document.querySelectorAll('#perfPanel [data-act="rack"]').forEach(b => b.classList.toggle('on', open));
+  }
+  else if (a === 'seq'){ seqUI.toggleDock(); }
+  else if (a === 'seqplay'){ seqUI.toggle(); }
+  else if (a === 'help'){ document.getElementById('keybar').classList.toggle('hidden'); }
+}
+
+const held = {};     // source -> voice
+function gateOn(id, src){
+  if (held[src]) return;
+  const v = audio.noteOn(id); if (!v) return;
+  held[src] = v;
+  if (id === 'kick' && (cur === 1 || cur === 4)) cloud.morph();   // kick in point-cloud scenes = random new shape
+  const c = chip(id); c && c.classList.add('on');
+  document.querySelectorAll(`[data-voice="${id}"]`).forEach(b => b.classList.add('on'));
+}
+function gateOff(src){
+  const v = held[src]; if (!v) return; delete held[src];
+  if (!VOICES[v.id].perc) audio.release(v);
+  if (!Object.values(held).some(h => h.id === v.id)){
+    const c = chip(v.id); c && c.classList.remove('on');
+    document.querySelectorAll(`[data-voice="${v.id}"]`).forEach(b => b.classList.remove('on'));
+  }
+}
+
+const ACT_KEYS = {Space:'black', KeyP:'perform', KeyH:'help', KeyB:'blob', KeyM:'rack', KeyQ:'seq', Enter:'seqplay', NumpadEnter:'seqplay'};
+addEventListener('keydown', async e => {
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  if (!audio.ctx || audio.ctx.state !== 'running'){ if (e.isTrusted) await unlock(); else unlock(); }
+  const c = e.code;
+  const m = c.match(/^(?:Digit|Numpad)([1-5])$/);
+  if (m){ setScene(+m[1] - 1); e.preventDefault(); return; }
+  if (VOICE_BY_CODE[c]){ e.preventDefault(); if (!e.repeat) gateOn(VOICE_BY_CODE[c], c); return; }
+  if (ACT_KEYS[c]){ e.preventDefault(); if (!e.repeat) act(ACT_KEYS[c]); }
+});
+addEventListener('keyup', e => gateOff(e.code));
+addEventListener('blur', () => Object.keys(held).forEach(gateOff));
+
+// on-screen pads: pointer down = gate on, up = gate off
+function bindGate(b, id){
+  b.addEventListener('pointerdown', async e => { b.setPointerCapture(e.pointerId); await unlock(); gateOn(id, 'ptr' + e.pointerId); });
+  const off = e => gateOff('ptr' + e.pointerId);
+  b.addEventListener('pointerup', off); b.addEventListener('pointercancel', off);
+}
+const pads = document.getElementById('pads');
+for (const id in VOICES){
+  const V = VOICES[id]; if (V.rack) continue;
+  const b = document.createElement('button');
+  b.dataset.voice = id; b.innerHTML = `<kbd>${V.label}</kbd>${V.name}<small>${V.desc}</small>`;
+  bindGate(b, id); pads.appendChild(b);
+}
+bindGate(document.getElementById('gateBtn'), 'patch');
+document.querySelectorAll('[data-scene]').forEach(b => b.addEventListener('click', () => setScene(+b.dataset.scene)));
+document.querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', () => act(b.dataset.act)));
+// buttons must not keep focus, or Space would "click" them
+document.querySelectorAll('button').forEach(b => b.addEventListener('mouseup', () => b.blur()));
+setScene(0);
+
+/* right index + section stepper (same behaviour as the laser handout) */
+(function(){
+  const pages = [...document.querySelectorAll('#panel section[id]')], ol = document.getElementById('tlnav'), items = [];
+  pages.forEach((p, i) => {
+    const label = p.querySelector('.num').textContent.trim() + ' — ' + (p.dataset.title || p.querySelector('h2').textContent.trim());
+    const li = document.createElement('li'), b = document.createElement('button');
+    b.type = 'button'; b.setAttribute('aria-label', label);
+    b.innerHTML = `<span class="lbl">${label}</span><span class="dot"></span>`;
+    b.addEventListener('click', () => go(i));
+    li.appendChild(b); ol.appendChild(li); items.push(li);
+  });
+  let cur = -1;
+  talkSync.state = () => ({idx:cur, total:pages.length, view:document.body.dataset.view, theme:document.documentElement.dataset.theme,
+    year:window.__yearIdx ? window.__yearIdx() : 0, w:innerWidth, h:innerHeight, video:window.__vidInfo ? window.__vidInfo() : null, sound:!!(window.__av && __av.audio.ctx && __av.audio.ctx.state === 'running')});
+  // chapter change = smooth scroll to the chapter (like the mouse wheel), never a hard cut
+  const calm = matchMedia('(prefers-reduced-motion: reduce)');
+  let target = -1, moving = false, moveT = 0;
+  const at = () => moving ? target : cur;   // where we are going (so quick double presses add up)
+  function jump(i){ pages[i].scrollIntoView({block:'start', behavior:'instant'}); update(); }
+  function arrive(){ moving = false; clearTimeout(moveT); update(); }
+  function go(i){
+    i = Math.max(0, Math.min(pages.length - 1, i));
+    if (MIRROR || calm.matches || document.body.dataset.view !== 'lecture'){ jump(i); return; }
+    target = i; moving = true;
+    pages[i].scrollIntoView({block:'start', behavior:'smooth'});
+    clearTimeout(moveT); moveT = setTimeout(() => { if (moving){ moving = false; jump(target); } }, 1200);   // safety net: land exactly even if the scroll never finished
+  }
+  addEventListener('scrollend', () => { if (moving) arrive(); });
+  function update(){
+    const y = innerHeight * .35; let a = 0;
+    pages.forEach((p, i) => { if (p.getBoundingClientRect().top <= y) a = i; });
+    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) a = pages.length - 1;
+    if (a === cur) return; cur = a;
+    items.forEach((li, i) => li.className = i < a ? 'past' : i === a ? 'active' : 'future');
+    document.getElementById('tlcount').textContent = String(a).padStart(2, '0') + ' / ' + String(pages.length - 1).padStart(2, '0');
+    talkSync.post();
+  }
+  document.getElementById('tlprev').addEventListener('click', () => go(at() - 1));
+  document.getElementById('tlnext').addEventListener('click', () => go(at() + 1));
+  addEventListener('keydown', e => {
+    if (e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('perform') || document.body.dataset.view === 'perform') return;
+    if (['ArrowDown', 'PageDown'].includes(e.key)){ e.preventDefault(); go(Math.max(at(), 0) + 1); }
+    else if (['ArrowUp', 'PageUp'].includes(e.key)){ e.preventDefault(); go(Math.max(at(), 0) - 1); }
+  });
+  let ticking = false;
+  addEventListener('scroll', () => { if (!ticking){ ticking = true; requestAnimationFrame(() => { ticking = false; update(); }); } }, {passive:true});
+  addEventListener('resize', update); update();
+
+  // theme toggle
+  const root = document.documentElement, lbl = document.getElementById('themeLbl');
+  const isDark = () => root.dataset.theme !== 'light';   // the colours themselves can be edited freely
+  let th0 = 'dark'; try{ th0 = localStorage.getItem('av-theme') || 'dark'; }catch(e){}
+  root.dataset.theme = th0;
+  const sync = () => lbl.textContent = isDark() ? '亮色' : '暗色';
+  function setTheme(th, quiet){
+    root.dataset.theme = th; sync();
+    if (quiet) return;
+    try{ localStorage.setItem('av-theme', th); }catch(e){}
+    talkSync.post();
+  }
+  window.__setTheme = setTheme;
+  document.getElementById('themeBtn').addEventListener('click', () => setTheme(isDark() ? 'light' : 'dark'));
+  sync();
+
+  // header views: 講座 LECTURE / 表演 PERFORM (remembered)
+  function setView(v){
+    if (ONLY_PERFORM) v = 'perform';
+    const was = document.body.dataset.view;
+    document.body.dataset.view = v;
+    // entering the performance: full-bleed stage, key hints hidden (P / H bring them back); leaving: back to normal
+    // 公開的表演體驗（only: perform）不自動滿版：訪客要看得到控制面板和按鍵提示，想滿版再按 P
+    if (!MIRROR && !ONLY_PERFORM && v === 'perform' && was !== 'perform'){ document.body.classList.add('perform'); document.getElementById('keybar').classList.add('hidden'); }
+    if (v === 'lecture') document.body.classList.remove('perform');
+    document.querySelectorAll('#topbar [data-view]').forEach(b => b.classList.toggle('on', b.dataset.view === v));
+    if (!MIRROR && !ONLY_PERFORM) try{ localStorage.setItem('av-view', v); }catch(e){}
+    if (v === 'lecture') update(); else scrollTo(0, 0);
+    talkSync.post();
+  }
+  document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
+  let v0 = 'lecture'; try{ v0 = localStorage.getItem('av-view') || 'lecture'; }catch(e){}
+  setView(v0 === 'perform' && !MIRROR ? 'perform' : 'lecture');
+  window.__setView = setView;
+  window.__go = go; window.__cur = () => at();
+})();
+
+/* =====================================================================
+   CAREER TIMELINE (Phase 4) — data from k591238.github.io/PB.github.io
+   ===================================================================== */
+/* CAREER — click a year (or ← →) to show that period's works.
+   yt = YouTube id, ph/n = local photos img/<ph>-1..n.jpg (from the talk decks) */
+const CAREER = TALK.timeline;
+
+const yearsEl = document.getElementById('years'), grid = document.getElementById('wgrid');
+window.__showYear = i => showYear(i); window.__yearCount = () => CAREER.length; window.__yearIdx = () => yearIdx;
+let yearIdx = 0;
+function showYear(i){
+  if (!CAREER.length) return;
+  setTimeout(() => talkSync.post(), 0);
+  yearIdx = (i + CAREER.length) % CAREER.length;
+  [...yearsEl.children].forEach((b, k) => { b.classList.toggle('on', k === yearIdx); b.setAttribute('aria-pressed', k === yearIdx); });
+  const yr = CAREER[yearIdx];
+  const k = yr.works.length; grid.className = 'wgrid ' + (k === 4 || k > 6 ? 'c4' : 'c3');   // ≤6 → 3 cols, 7–8 → 4 cols (two rows)
+  grid.innerHTML = '';
+  for (const w of yr.works){
+    const a = document.createElement('div'); a.className = 'work';
+    const vid = !!(w.yt || w.embed), n = (vid ? 1 : 0) + (w.n || 0);
+    const src = w.ph ? `img/${w.ph}-1.jpg` : `https://i.ytimg.com/vi/${w.yt}/hqdefault.jpg`;
+    a.innerHTML = `<div class="thumb"><img alt="" loading="lazy" src="${src}"><span class="play">${vid ? '▶' : ''}</span><span class="tag">${yr.y}</span><span class="cat">${w.cat}</span>${n > 1 ? `<span class="cnt">${vid ? '影片＋' : ''}${w.n} 張照片</span>` : ''}</div>
+      <div class="cap"><b>${w.zh}</b><span class="en">${w.en}</span><div class="meta">${w.role} ・ ${w.where}</div>${w.note ? `<div class="note">${w.note}</div>` : ''}</div>`;
+    const img = a.querySelector('img');
+    img.onerror = () => { img.remove(); a.querySelector('.tag').textContent = yr.y + ' ・ OFFLINE'; };
+    a.addEventListener('click', () => openVideo(w));
+    grid.appendChild(a);
+  }
+}
+for (const [k, yr] of CAREER.entries()){
+  const b = document.createElement('button'); b.type = 'button';
+  b.innerHTML = `<b>${yr.y}</b>${yr.ms}`;
+  b.addEventListener('click', () => { showYear(k); b.blur(); });
+  yearsEl.appendChild(b);
+}
+if (CAREER.length) showYear(0);
+// ← → switch years while the works chapter is on screen (lecture view, no overlay open)
+addEventListener('keydown', e => {
+  if ((e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') || e.altKey || e.ctrlKey || e.metaKey) return;
+  if (document.body.dataset.view !== 'lecture' || vidLayer.classList.contains('show')) return;
+  const sec = document.querySelector('section.has-timeline'); if (!sec || !CAREER.length) return;
+  const r = sec.getBoundingClientRect();
+  if (r.top > innerHeight * .5 || r.bottom < innerHeight * .5) return;
+  e.preventDefault(); showYear(yearIdx + (e.key === 'ArrowRight' ? 1 : -1));
+});
+
+/* video on the stage: YouTube when online, generative "offline" screen when not */
+const vidLayer = document.getElementById('vidLayer'), vidBox = document.getElementById('vidBox'), vidCap = document.getElementById('vidCap');
+let vidWork = null, offRAF = 0, vidIdx = 0;
+window.__vidInfo = () => vidWork ? {t:`${vidWork.zh} ${vidWork.en}`, i:vidIdx + 1, n:mediaOf(vidWork).length} : null;
+window.__vidCmd = cmd => {
+  if (!vidWork) return;
+  if (cmd === 'close') closeVideo();
+  else openVideo(vidWork, vidIdx + (cmd === 'next' ? 1 : -1));
+};
+const vidStrip = document.getElementById('vidStrip');
+const mediaOf = w => [...(w.yt ? [{yt:w.yt}] : []), ...(w.embed ? [{embed:w.embed}] : []), ...Array.from({length:w.n || 0}, (_, i) => ({img:`img/${w.ph}-${i + 1}.jpg`}))];
+function openVideo(w, i = 0){
+  setTimeout(() => talkSync.post(), 0);
+  vidWork = w; vidLayer.classList.add('show');
+  const M = mediaOf(w); vidIdx = (i + M.length) % M.length; const m = M[vidIdx];
+  vidCap.innerHTML = `<span>${w.zh} ${w.en} ・ ${w.role}${M.length > 1 ? `　${vidIdx + 1} / ${M.length}（← →）` : ''}</span>` + (m.yt && navigator.onLine ? `<a href="https://youtu.be/${m.yt}" target="_blank" rel="noopener">在 YouTube 開啟 ↗</a>` : '');
+  vidStrip.innerHTML = M.length > 1 ? M.map((x, k) => `<button data-k="${k}" class="${k === vidIdx ? 'on' : ''}" style="background-image:url('${x.img || (x.yt ? `https://i.ytimg.com/vi/${x.yt}/mqdefault.jpg` : '')}')">${x.img ? '' : '▶'}</button>`).join('') : '';
+  if (m.img){ cancelAnimationFrame(offRAF); vidBox.innerHTML = `<img alt="" src="${m.img}">`; }
+  else if (m.embed){ if (!navigator.onLine) return showOffline(w); cancelAnimationFrame(offRAF); vidBox.innerHTML = `<iframe src="${m.embed}" allow="autoplay; fullscreen" allowfullscreen></iframe>`; }
+  else navigator.onLine ? showIframe({...w, yt:m.yt}) : showOffline(w);
+}
+vidStrip.addEventListener('click', e => { const b = e.target.closest('button'); if (b) openVideo(vidWork, +b.dataset.k); });
+addEventListener('keydown', e => {
+  if (!vidWork || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
+  e.preventDefault(); e.stopImmediatePropagation(); openVideo(vidWork, vidIdx + (e.key === 'ArrowRight' ? 1 : -1));
+}, true);
+function showIframe(w){
+  cancelAnimationFrame(offRAF);
+  vidBox.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${w.yt}?autoplay=1&rel=0&playsinline=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+}
+function showOffline(w){
+  vidBox.innerHTML = '<canvas></canvas>';
+  const cv = vidBox.firstChild, c = cv.getContext('2d');
+  const draw = now => {
+    const W = cv.width = cv.clientWidth, H = cv.height = cv.clientHeight, t = now / 1000, rows = 36;
+    c.fillStyle = '#000'; c.fillRect(0, 0, W, H); c.fillStyle = '#fff';
+    for (let r = 0; r < rows; r++){                                   // drifting barcode rows
+      const rh = H / rows, sp = (Math.sin(r * 12.9898) * 43758.5453 % 1) * 160 - 80, cols = r % 3 ? 90 : 300, cw = W / cols;
+      for (let k = 0; k < cols; k++){
+        const n = Math.sin((k + Math.floor(t * sp / 20)) * 78.233 + r * 37.719) * 43758.5453 % 1;
+        if (Math.abs(n) > .55) c.fillRect(k * cw, r * rh + 1, cw * .8, rh - 2);
+      }
+    }
+    c.fillStyle = 'rgba(0,0,0,.72)'; c.fillRect(W * .18, H * .36, W * .64, H * .28);
+    c.fillStyle = '#ff2a2a'; c.textAlign = 'center'; c.font = `600 ${Math.round(H * .07)}px ui-monospace, Consolas, monospace`;
+    c.fillText((t * 2 | 0) % 2 ? 'OFFLINE ・ 離線中' : 'OFFLINE ・ 離線中_', W / 2, H * .49);
+    c.fillStyle = '#ddd'; c.font = `${Math.round(H * .032)}px ui-monospace, Consolas, monospace`;
+    c.fillText(`${w.zh} ${w.en} — 影片需要網路，連線後會自動播放`, W / 2, H * .57);
+    offRAF = requestAnimationFrame(draw);
+  };
+  cancelAnimationFrame(offRAF); offRAF = requestAnimationFrame(draw);
+}
+function closeVideo(){ setTimeout(() => talkSync.post(), 0); cancelAnimationFrame(offRAF); vidBox.innerHTML = ''; vidLayer.classList.remove('show'); vidWork = null; }
+document.getElementById('vidClose').addEventListener('click', closeVideo);
+addEventListener('keydown', e => { if (e.code === 'Escape' && vidWork) closeVideo(); });
+addEventListener('offline', () => { if (vidWork) openVideo(vidWork); });
+addEventListener('online', () => { if (vidWork) openVideo(vidWork); });
+
+/* =====================================================================
+   STEP SEQUENCER (Q dock, Enter play/stop, , . tempo)
+   Notes are scheduled ahead on the audio clock ("lookahead" scheduler),
+   so timing is sample-accurate; visuals read the same envelopes.
+   ===================================================================== */
+const seqUI = (() => {
+  const TRACKS = ['kick', 'noise', 'click', 'pad', 'bleep', 'glitch'];
+  const GATE = {pad:8, bleep:1, glitch:2};                 // held voices: gate length in steps
+  const P = s => [...s].map(c => c === 'x' ? 1 : 0);
+  const PRESETS = {
+    '脈衝': {kick:'x...x...x...x...', noise:'....x.......x...', click:'..x...x...x...x.', pad:'x...............', bleep:'......x.......x.', glitch:'...............x'},
+    '資料': {kick:'x.........x.....', noise:'......x.......x.', click:'x.x.xx.x..x.x.xx', pad:'................', bleep:'x...x...x...x...', glitch:'.......x........'},
+    '碎拍': {kick:'x.....x...x.....', noise:'....x.......x..x', click:'xxxxxxxxxxxxxxxx', pad:'x...............', bleep:'................', glitch:'..........x.x...'},
+    '氛圍': {kick:'................', noise:'................', click:'x.......x.......', pad:'x...............', bleep:'..x.....x....x..', glitch:'................'},
+  };
+  const S = {bpm:110, grid:{}, sceneEvery:0, playing:false, step:0, bar:0, nextT:0, timer:0, queue:[], shown:-1};
+  const load = name => { for (const id of TRACKS) S.grid[id] = P(PRESETS[name][id]); };
+  load('脈衝');
+  try{ const o = JSON.parse(localStorage.getItem('av-seq') || 'null'); if (o){ S.bpm = o.bpm || S.bpm; S.sceneEvery = o.sceneEvery || 0; for (const id of TRACKS) if (o.grid && o.grid[id]) S.grid[id] = o.grid[id]; } }catch(e){}
+  const save = () => { try{ localStorage.setItem('av-seq', JSON.stringify({bpm:S.bpm, grid:S.grid, sceneEvery:S.sceneEvery})); }catch(e){} };
+  const stepDur = () => 60 / S.bpm / 4;
+
+  // ---- scheduler ----
+  function scheduleStep(i, t){
+    const ctx = audio.ctx, delay = Math.max(0, (t - ctx.currentTime + (ctx.outputLatency || ctx.baseLatency || 0)) * 1000);
+    for (const id of TRACKS){
+      if (!S.grid[id][i]) continue;
+      const v = audio.noteOn(id, t); if (!v) continue;
+      if (!VOICES[id].perc) audio.release(v, t + GATE[id] * stepDur() * .95);
+      setTimeout(() => { flash(id); if (id === 'kick' && (cur === 1 || cur === 4)) cloud.morph(); }, delay);
+    }
+    if (i === 0 && S.sceneEvery && S.bar > 0 && S.bar % S.sceneEvery === 0) setTimeout(() => setScene((cur + 1) % scenes.length), delay);
+    S.queue.push({i, t, bar:S.bar});
+  }
+  function tick(){
+    const ctx = audio.ctx; if (!ctx) return;
+    while (S.nextT < ctx.currentTime + .12){
+      scheduleStep(S.step, S.nextT);
+      S.nextT += stepDur();
+      if (++S.step === 16){ S.step = 0; S.bar++; }
+    }
+  }
+  async function play(){
+    await unlock();
+    S.playing = true; S.step = 0; S.bar = 0; S.queue = []; S.nextT = audio.ctx.currentTime + .06;
+    clearInterval(S.timer); S.timer = setInterval(tick, 25); tick(); paint();
+  }
+  function stop(){ S.playing = false; clearInterval(S.timer); S.queue = []; S.shown = -1; markNow(-1); paint(); }
+
+  // ---- UI ----
+  const dock = document.getElementById('seqDock'), gridEl = document.getElementById('seqGrid');
+  const cells = {};
+  for (const id of TRACKS){
+    const V = VOICES[id], lab = document.createElement('div');
+    lab.className = 'lab'; lab.innerHTML = `<b>${V.label}</b>${V.name}`;
+    gridEl.appendChild(lab); cells[id] = [];
+    for (let i = 0; i < 16; i++){
+      const c = document.createElement('button'); c.className = 'c' + (i % 4 === 0 ? ' beat' : '');
+      c.addEventListener('click', () => { S.grid[id][i] ^= 1; c.classList.toggle('on', !!S.grid[id][i]); save(); c.blur(); });
+      gridEl.appendChild(c); cells[id].push(c);
+    }
+  }
+  const presetBox = document.getElementById('seqPresets');
+  for (const name in PRESETS){
+    const b = document.createElement('button'); b.textContent = name;
+    b.addEventListener('click', () => { load(name); save(); paint(); b.blur(); });
+    presetBox.appendChild(b);
+  }
+  const PROB = {kick:.25, noise:.15, click:.45, pad:.06, bleep:.2, glitch:.08};
+  document.getElementById('seqRand').addEventListener('click', e => { for (const id of TRACKS) S.grid[id] = S.grid[id].map(() => Math.random() < PROB[id] ? 1 : 0); S.grid.kick[0] = 1; save(); paint(); e.currentTarget.blur(); });
+  document.getElementById('seqClear').addEventListener('click', e => { for (const id of TRACKS) S.grid[id].fill(0); save(); paint(); e.currentTarget.blur(); });
+  document.getElementById('seqScene').addEventListener('click', e => { S.sceneEvery = S.sceneEvery === 0 ? 4 : S.sceneEvery === 4 ? 8 : 0; save(); paint(); e.currentTarget.blur(); });
+  document.getElementById('seqPlay').addEventListener('click', e => { toggle(); e.currentTarget.blur(); });
+  document.querySelectorAll('[data-bpm]').forEach(b => b.addEventListener('click', () => { bpm(+b.dataset.bpm); b.blur(); }));
+  const bpm = d => { S.bpm = Math.max(60, Math.min(180, S.bpm + d)); save(); paint(); };
+
+  function paint(){
+    for (const id of TRACKS) cells[id].forEach((c, i) => c.classList.toggle('on', !!S.grid[id][i]));
+    document.getElementById('seqBpm').textContent = S.bpm;
+    const pb = document.getElementById('seqPlay'); pb.classList.toggle('on', S.playing); pb.innerHTML = (S.playing ? '■ 停止' : '▶ 播放') + ' <kbd>⏎</kbd>';
+    document.getElementById('seqScene').textContent = '場景軌：' + (S.sceneEvery ? `每 ${S.sceneEvery} 小節` : '關');
+    document.getElementById('seqScene').classList.toggle('on', !!S.sceneEvery);
+    document.querySelectorAll('[data-act="seqplay"]').forEach(b => b.classList.toggle('on', S.playing));
+  }
+  function markNow(i){ for (const id of TRACKS) cells[id].forEach((c, k) => c.classList.toggle('now', k === i)); }
+  const pos = document.getElementById('seqPos');
+  paint();
+
+  function setOpen(open){
+    dock.classList.toggle('show', open);
+    document.body.classList.toggle('seq-open', open);
+    document.body.style.setProperty('--seqH', dock.offsetHeight + 'px');
+    document.querySelectorAll('#perfPanel [data-act="seq"]').forEach(b => b.classList.toggle('on', open));
+  }
+  function toggle(){ S.playing ? stop() : play(); }
+  addEventListener('keydown', e => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.code === 'Comma'){ e.preventDefault(); bpm(-5); }
+    if (e.code === 'Period'){ e.preventDefault(); bpm(5); }
+  });
+
+  return {
+    S,
+    toggleDock(){
+      const open = !dock.classList.contains('show') || document.body.dataset.view !== 'perform';
+      if (open && document.body.dataset.view !== 'perform' && window.__setView) window.__setView('perform');
+      setOpen(open);
+    },
+    toggle,
+    // per frame: move the playhead to the step that is sounding now
+    update(){
+      if (!S.playing || !audio.ctx) return;
+      const now = audio.now();
+      while (S.queue.length > 1 && S.queue[1].t <= now) S.queue.shift();
+      const q = S.queue[0]; if (!q || q.t > now) return;
+      if (q.i !== S.shown){ S.shown = q.i; markNow(q.i); pos.textContent = `BAR ${String(q.bar + 1).padStart(2, '0')} · ${String(q.i + 1).padStart(2, '0')}`; }
+    }
+  };
+})();
+
+/* =====================================================================
+   LECTURE MINI VISUALS — small 2D canvases (canvas.gv[data-gv]).
+   Only drawn in the lecture view and only while on screen.
+   No fast flashing: everything pulses at ≤ 1 Hz (WCAG 2.3.1).
+   ===================================================================== */
+const gv = (() => {
+  const items = [];
+  const io = new IntersectionObserver(es => es.forEach(e => { e.target._vis = e.isIntersecting; }));
+  document.querySelectorAll('canvas.gv').forEach(cv => { cv._vis = false; io.observe(cv); items.push({cv, c:cv.getContext('2d'), kind:cv.dataset.gv, st:{}}); });
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let col = {}, colT = -1e9;
+  const readCol = () => { const cs = getComputedStyle(document.documentElement), g = k => cs.getPropertyValue(k).trim();
+    col = {fg:g('--fg'), mu:g('--muted'), ac:g('--accent'), ln:g('--line')}; };
+  const hash = n => { const x = Math.sin(n * 127.1) * 43758.5453; return x - Math.floor(x); };
+  const TAU = Math.PI * 2;
+
+  const DRAW = {
+    // cover: rows of dots riding slow sine waves, red centre line
+    wave(c, w, h, t){
+      const rows = 9, step = Math.max(6, w / 90);
+      for (let r = 0; r < rows; r++){
+        const mid = r === (rows >> 1), y0 = h * (.18 + .64 * r / (rows - 1));
+        c.fillStyle = mid ? col.ac : col.fg; c.globalAlpha = mid ? .9 : .18 + .25 * (1 - Math.abs(r - rows / 2) / rows);
+        for (let x = step / 2; x < w; x += step){
+          const u = x / w, env = Math.sin(Math.PI * u) ** 1.5;
+          const y = y0 + env * h * .07 * (Math.sin(u * 9 + t * (.7 + r * .07) + r) + .5 * Math.sin(u * 23 - t * 1.3 + r * 2));
+          const s = mid ? 1.9 : 1.3;
+          c.fillRect(x - s / 2, y - s / 2, s, s);
+        }
+      }
+      c.globalAlpha = 1;
+    },
+    // 01 path: dashed line + travelling dot
+    arrow(c, w, h, t){
+      c.strokeStyle = col.mu; c.globalAlpha = .6; c.setLineDash([3, 4]); c.lineWidth = 1;
+      c.beginPath(); c.moveTo(0, h / 2); c.lineTo(w - 6, h / 2); c.stroke(); c.setLineDash([]);
+      c.beginPath(); c.moveTo(w - 7, h / 2 - 4); c.lineTo(w - 1, h / 2); c.lineTo(w - 7, h / 2 + 4); c.stroke();
+      const u = (t * .45) % 1; c.globalAlpha = Math.sin(Math.PI * u); c.fillStyle = col.ac;
+      c.beginPath(); c.arc(u * (w - 8), h / 2, 3, 0, TAU); c.fill(); c.globalAlpha = 1;
+    },
+    // 02 daily observation: an eye that looks around and blinks
+    eye(c, w, h, t){
+      const cx = w / 2, cy = h / 2, rx = Math.min(w * .42, h * .95), ph = t % 4.2, blink = ph < .18 ? Math.abs(Math.cos(ph / .18 * Math.PI)) : 1;
+      const ry = h * .38 * blink;
+      c.strokeStyle = col.fg; c.lineWidth = 1.3; c.globalAlpha = .75;
+      c.beginPath(); c.moveTo(cx - rx, cy); c.quadraticCurveTo(cx, cy - ry * 2, cx + rx, cy); c.quadraticCurveTo(cx, cy + ry * 2, cx - rx, cy); c.stroke();
+      if (blink > .3){
+        const px = cx + Math.sin(t * .8) * rx * .35, py = cy + Math.sin(t * 1.3) * ry * .25;
+        c.globalAlpha = 1; c.fillStyle = col.ac; c.beginPath(); c.arc(px, py, Math.min(ry * .7, h * .2), 0, TAU); c.fill();
+      }
+      c.globalAlpha = 1;
+    },
+    // 02 tech research: click -> noise -> wave, cycling
+    wave3(c, w, h, t){
+      const mode = Math.floor(t / 2.6) % 3, cy = h / 2, f = Math.floor(t * 12);
+      c.strokeStyle = col.fg; c.lineWidth = 1.2; c.globalAlpha = .8; c.beginPath();
+      for (let x = 0; x <= w; x += 1){
+        let v;
+        if (mode === 0) v = (x % Math.round(w / 4) < 2) ? -1 : 0;                       // click
+        else if (mode === 1) v = (hash(x * .5 + f * 31.7) * 2 - 1) * .8;                // noise
+        else v = Math.sin(x / w * TAU * 2 + t * 3) * .8;                               // wave
+        const y = cy + v * h * .4; x ? c.lineTo(x, y) : c.moveTo(x, y);
+      }
+      c.stroke();
+      c.globalAlpha = .9; c.fillStyle = col.ac; c.font = `600 ${Math.max(8, h * .26)}px ui-monospace, Consolas, monospace`; c.textAlign = 'right';
+      c.fillText(['click', 'noise', 'wave'][mode], w, h * .26); c.globalAlpha = 1;
+    },
+    // 02 feeling: calm -> agitated -> calm, travelling left to right
+    mood(c, w, h, t){
+      c.strokeStyle = col.fg; c.lineWidth = 1.2; c.globalAlpha = .8; c.beginPath();
+      for (let x = 0; x <= w; x += 1){
+        const u = x / w, env = Math.sin(Math.PI * u) ** 3;
+        const y = h / 2 + env * h * .42 * (Math.sin(u * 60 + t * 9) * .6 + Math.sin(u * 137 - t * 13) * .4);
+        x ? c.lineTo(x, y) : c.moveTo(x, y);
+      }
+      c.stroke();
+      const u = (t * .2) % 1; c.fillStyle = col.ac; c.globalAlpha = 1;
+      c.beginPath(); c.arc(u * w, h / 2, 2.4, 0, TAU); c.fill();
+    },
+    // 02 presentation: a soft glint that breathes (≈0.4 Hz, never a strobe)
+    flicker(c, w, h, t){
+      const cx = w / 2, cy = h / 2, a = .35 + .65 * (.5 + .5 * Math.sin(t * 2.5)), r = Math.min(w, h) * .42;
+      c.strokeStyle = col.ac; c.lineWidth = 1.2; c.globalAlpha = a;
+      for (let k = 0; k < 8; k++){ const an = k / 8 * TAU + t * .2, r0 = r * .3, r1 = r * (k % 2 ? .65 : 1);
+        c.beginPath(); c.moveTo(cx + Math.cos(an) * r0, cy + Math.sin(an) * r0); c.lineTo(cx + Math.cos(an) * r1, cy + Math.sin(an) * r1); c.stroke(); }
+      c.globalAlpha = 1;
+    },
+    // 02 audience: ripples spreading out
+    ripple(c, w, h, t){
+      const cx = w / 2, cy = h / 2, R = Math.min(w, h) * .48;
+      c.strokeStyle = col.ac; c.lineWidth = 1.2;
+      for (let k = 0; k < 3; k++){ const u = (t * .35 + k / 3) % 1;
+        c.globalAlpha = 1 - u; c.beginPath(); c.arc(cx, cy, 2 + u * R, 0, TAU); c.stroke(); }
+      c.globalAlpha = 1; c.fillStyle = col.ac; c.beginPath(); c.arc(cx, cy, 2, 0, TAU); c.fill();
+    },
+    // 05 perform cue: particles drifting through a slow flow field
+    field(c, w, h, t, st){
+      if (!st.p || st.w !== w || st.h !== h){ st.w = w; st.h = h; st.p = Array.from({length:520}, (_, i) => [hash(i) * w, hash(i + 99) * h]); }
+      c.fillStyle = col.fg; c.globalAlpha = .28;
+      for (const q of st.p){
+        const a = Math.sin(q[0] * .004 + t * .15) * 2 + Math.cos(q[1] * .005 - t * .1) * 2;
+        q[0] += Math.cos(a) * .6; q[1] += Math.sin(a) * .6;
+        if (q[0] < 0) q[0] += w; if (q[0] > w) q[0] -= w; if (q[1] < 0) q[1] += h; if (q[1] > h) q[1] -= h;
+        c.fillRect(q[0], q[1], 1.6, 1.6);
+      }
+      c.globalAlpha = 1;
+    },
+  };
+
+  function frame(now){
+    requestAnimationFrame(frame);
+    if (document.hidden || document.body.dataset.view !== 'lecture') return;
+    if (now - colT > 500){ readCol(); colT = now; }
+    const t = reduce ? 1.3 : now / 1000, d = Math.min(2, devicePixelRatio || 1);
+    for (const it of items){
+      if (!it.cv._vis) continue;
+      const cv = it.cv, w = cv.clientWidth, h = cv.clientHeight; if (!w || !h) continue;
+      const W = Math.round(w * d), H = Math.round(h * d);
+      if (cv.width !== W || cv.height !== H){ cv.width = W; cv.height = H; }
+      it.c.setTransform(d, 0, 0, d, 0, 0); it.c.clearRect(0, 0, w, h);
+      DRAW[it.kind](it.c, w, h, t, it.st);
+    }
+  }
+  requestAnimationFrame(frame);
+  function drawAll(){
+    readCol(); const d = Math.min(2, devicePixelRatio || 1);
+    for (const it of items){ const w = it.cv.clientWidth, h = it.cv.clientHeight; if (!w || !h) continue;
+      it.cv.width = Math.round(w * d); it.cv.height = Math.round(h * d); it.c.setTransform(d, 0, 0, d, 0, 0); it.c.clearRect(0, 0, w, h); DRAW[it.kind](it.c, w, h, 1.3, it.st); }
+  }
+  window.__gvDrawAll = drawAll;
+  return {items, drawAll};
+})();
+/* =====================================================================
+   PRINT / PDF
+   Ctrl+P → slides PDF (one chapter per 16:9 page, every year of the timeline)
+   Speaker window buttons → slides PDF or speaker PDF (A4, slide + notes)
+   N → open the speaker window
+   ===================================================================== */
+(() => {
+  let made = [];
+  function cleanup(){
+    made.forEach(e => e.remove()); made = [];
+    document.querySelectorAll('.print-skip').forEach(e => e.classList.remove('print-skip'));
+    document.body.classList.remove('print-notes');
+  }
+  function prepare(withNotes){
+    cleanup();
+    document.body.classList.toggle('print-notes', !!withNotes);
+    const tl = document.querySelector('section.has-timeline'), n = window.__yearCount ? window.__yearCount() : 0;
+    if (tl && n && !withNotes){   // slides PDF: one page per year; speaker PDF keeps a single works page
+      const keep = window.__yearIdx();
+      for (let k = 0; k < n; k++){
+        window.__showYear(k);
+        const sec = tl.cloneNode(true);
+        sec.removeAttribute('id'); sec.classList.add('print-only');
+        if (k < n - 1) sec.dataset.noNotes = '1';
+        sec.querySelectorAll('[id]').forEach(e => e.removeAttribute('id'));
+        sec.querySelectorAll('img').forEach(i => { i.loading = 'eager'; });
+        tl.parentNode.insertBefore(sec, tl); made.push(sec);
+      }
+      tl.classList.add('print-skip'); window.__showYear(keep);
+    }
+    if (withNotes){
+      document.querySelectorAll('#panel section').forEach(sec => {
+        if (sec.classList.contains('print-skip') || sec.dataset.noNotes) return;
+        const a = document.createElement('aside'); a.className = 'pnotes print-only';
+        a.innerHTML = `<h4>${sec.dataset.num} — ${sec.dataset.title}</h4>` + notesHTML(TALK.notes[sec.dataset.num]);
+        sec.after(a); made.push(a);
+      });
+    }
+    if (window.__gvDrawAll) window.__gvDrawAll();
+  }
+  async function waitImages(ms = 6000){
+    const pending = [...document.querySelectorAll('#panel img')].filter(i => !i.complete);
+    await Promise.race([
+      Promise.all(pending.map(i => new Promise(r => { i.addEventListener('load', r, {once:true}); i.addEventListener('error', r, {once:true}); }))),
+      new Promise(r => setTimeout(r, ms)),
+    ]);
+  }
+  window.__printTalk = async withNotes => { prepare(withNotes); await waitImages(); window.print(); };
+  addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.code === 'KeyP'){ e.preventDefault(); window.__printTalk(false); return; }
+    if (e.code === 'KeyN' && !ONLY_PERFORM && !e.ctrlKey && !e.metaKey && !e.altKey && !e.repeat)
+      window.open('presenter.html?v=' + Date.now(), 'talk-presenter', 'width=1180,height=760');
+  });
+  addEventListener('beforeprint', () => { if (!made.length) prepare(false); });
+  // ?print=slides / ?print=notes keeps the print layout ready (handy for exporting without the dialog)
+  const pm = new URLSearchParams(location.search).get('print');
+  if (pm){ prepare(pm === 'notes'); document.documentElement.dataset.theme = new URLSearchParams(location.search).get('theme') || document.documentElement.dataset.theme; }
+  else addEventListener('afterprint', cleanup);
+})();
+window.__booted = true;
+// bench(n): render n frames back-to-back with a GPU sync; returns ms per frame (for pre-flight checks)
+function bench(n = 60){
+  const gl = renderer.getContext(), px = new Uint8Array(4), s = scenes[cur], t1 = performance.now();
+  for (let k = 0; k < n; k++){ s.update(k / 60, 1 / 60, L); renderer.clear(); renderScene(s); if (blob.on) blob.detect(); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); }
+  return +((performance.now() - t1) / n).toFixed(2);
+}
+window.__av = {seqUI, openVideo, showOffline, closeVideo, audio, scenes, setScene, act, envAt, VOICES, bench, rack, rackUI, L, blob, cloud, resize};
+</script>
+</body>
+</html>

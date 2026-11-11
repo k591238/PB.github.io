@@ -1,0 +1,45 @@
+/* =====================================================================
+   主題設定 ── 顏色、顆粒、字型都在這裡改
+   改完存檔 → 瀏覽器按 Ctrl+F5 重新整理
+   色碼可以用 https://htmlcolorcodes.com 挑，格式是 #RRGGBB
+   ===================================================================== */
+
+/* ---------- 亮色主題 ---------- */
+:root{
+  --bg:     #ebe9e3;   /* 整頁底色 */
+  --fg:     #1a1a1a;   /* 主要文字 */
+  --muted:  #686660;   /* 次要文字（說明、年份） */
+  --line:   #d0cdc5;   /* 分隔線、卡片邊框 */
+  --card:   #f4f2ed;   /* 卡片底色（比底色亮一點） */
+  --chip:   #e1ded6;   /* 按鈕底色 */
+  --accent: #e0201c;   /* 強調色（紅） */
+  --grain:  .09;       /* 底片顆粒強度：0 = 沒有，.15 = 很明顯 */
+}
+
+/* ---------- 暗色主題（預設） ----------
+   下面兩段要改成一樣的值：
+   第一段是「電腦設定成深色模式」時用，第二段是「按了暗色按鈕」時用 */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0a0a0a; --fg:#e0e0e0; --muted:#8c8c8c; --line:#222222; --card:#141414; --chip:#1a1a1a; --accent:#ff3b30; --grain:.05;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:     #0a0a0a;
+  --fg:     #e0e0e0;
+  --muted:  #8c8c8c;
+  --line:   #222222;
+  --card:   #141414;
+  --chip:   #1a1a1a;
+  --accent: #ff3b30;
+  --grain:  .05;
+}
+
+/* ---------- 字型與版面（一般不用改） ---------- */
+:root{
+  --mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --sans: "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --stage:#000;
+  --hh:3rem; --tl-w:11rem; --ppw:clamp(300px, 26vw, 520px);
+  --qr-color:#d9ff82;  /* QR 碼點顏色（暗色主題） */
+}

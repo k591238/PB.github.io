@@ -100,17 +100,36 @@
 
     li a {
       display: grid;
-      grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+      grid-template-columns: 4.5rem 11rem minmax(0, 1fr) auto;
       gap: 1.2rem;
-      align-items: baseline;
+      align-items: start;
       padding: 1.6rem 0;
       border-bottom: 1px solid var(--border);
+    }
+
+    /* 縮圖：16:10，放在 handouts/thumbs/（不要放進各講義資料夾，laser-pop 會被自動同步覆蓋） */
+    .thumb {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: #000;
+      opacity: 0.85;
+      transition: opacity 0.25s;
+    }
+
+    li a:hover .thumb {
+      opacity: 1;
     }
 
     .year {
       font-family: var(--font-heading);
       font-size: 0.8rem;
       color: var(--text-secondary);
+      padding-top: 0.35rem;
     }
 
     .title {
@@ -137,6 +156,7 @@
     }
 
     .arrow {
+      align-self: center;
       color: var(--text-secondary);
       transition: color 0.25s, transform 0.25s;
     }
@@ -168,8 +188,13 @@
         gap: 0.4rem 1rem;
       }
 
-      .year {
+      .year,
+      .thumb {
         grid-column: 1 / -1;
+      }
+
+      .year {
+        padding-top: 0;
       }
     }
   </style>
@@ -181,13 +206,26 @@
 
     <header>
       <h1>Teaching<span>.</span></h1>
-      <p class="intro">課程講義與教學資料。Course handouts and teaching materials.</p>
+      <p class="intro">課程講義、教學資料與互動示範。Course handouts, teaching materials and interactive demos.</p>
     </header>
 
     <ul>
       <li>
+        <a href="av-perform/">
+          <span class="year">2026</span>
+          <img class="thumb" src="thumbs/av-perform.webp" width="640" height="400" loading="lazy" alt="音像互動體驗畫面：點雲組成 PenBit 字樣，背景是黑白資料矩陣">
+          <div>
+            <p class="title">音像互動體驗 Audiovisual Instrument</p>
+            <p class="meta">瀏覽器即時音像 · Three.js · Web Audio</p>
+            <p class="desc">用鍵盤即時演奏聲音與影像：5 種視覺場景、6 種音色、16 步序列機，以及可以把 ADSR 波形接到畫面參數的合成器。源自創作生涯分享講座的現場示範。</p>
+          </div>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </li>
+      <li>
         <a href="laser-pop/">
           <span class="year">2026</span>
+          <img class="thumb" src="thumbs/laser-pop.webp" width="640" height="400" loading="lazy" alt="雷射 POP 工作流講義封面：LASER × POP 大標題">
           <div>
             <p class="title">雷射 POP 工作流</p>
             <p class="meta">TouchDesigner 雷射教學 · POP → Laser CHOP · Helios DAC</p>
