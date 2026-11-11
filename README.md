@@ -587,7 +587,7 @@ ffmpeg -i 原檔.mp4 -ss 開始秒數 -t 18 -an -r 30 -vf "scale=-2:540" \
 | git 歷史殘留大檔 | 換掉的舊影片仍在歷史裡，約 160 MB（p2 舊 `ig02.mp4` 52 MB、c1 舊檔約 77 MB、e3 舊檔約 27 MB）。只影響 repo 大小與 clone 時間，**不影響訪客**（網站只提供最新版檔案）。**⛔ 這一項只是紀錄，AI Agent 不可自行執行**（見「禁止輕易更動的項目」）。使用者決定：維持現狀；遇到大改版（如「作品獨立網址」）或 repo 接近 1 GB 時，**只提醒使用者有這件事**，由使用者決定要不要處理 |
 | 照片格線共用 class | 80 多處 inline `display:grid` 改成 `gallery-2`／`gallery-3`／`gallery-portrait` 之類的 class，手機收欄的 `!important` 屬性選擇器可一併改乾淨 |
 | 作品獨立網址 | `#project/p4` 的 `#` 會被 Google 和社群平台忽略：分享單一作品時預覽卡片永遠是首頁，個別作品也幾乎搜不到。根本解法是每個作品做成獨立靜態頁（如 `projects/p4/`），屬大改版，分三階段。**階段 1（產生腳本）、階段 2（作品獨立網頁 `projects/{id}/`）、階段 3（作品 JSON-LD）2026-11-11 都已完成**。作品頁已上線，使用者分兩天到 Search Console 對 16 個作品頁要求建立索引。階段 3：每件作品的 JSON-LD（日期、場地等資料整理成表格請使用者逐筆確認）。使用者已同意以上方向，作品簡介由 Agent 從作品頁擷取草稿、使用者修改 |
-| 網址／網域（跟大改版一起決定） | Google 搜尋結果的網站名稱顯示成「GitHub Pages documentation」、網站圖示是預設的地球：Google 只支援網域層級的網站名稱和網站圖示（favicon），子資料夾（`/PB.github.io/`）無法自訂，網站內容怎麼改都修不了。解法二選一：①買自訂網域（最佳，使用者想等網站完整後再買）②repo 改名為 `k591238.github.io` 變成 user site（免費，也順便解決 robots.txt 問題）。兩者都要處理舊網址轉址、CV PDF 與講義 QR code 重新產生，所以要在做「作品獨立網址」時或之前決定 |
+| 網址／網域（跟大改版一起決定） | Google 搜尋結果的網站名稱顯示成「GitHub Pages documentation」、網站圖示是預設的地球：Google 只支援網域層級的網站名稱和網站圖示（favicon），子資料夾（`/PB.github.io/`）無法自訂，網站內容怎麼改都修不了。解法二選一：①買自訂網域（最佳，使用者想等網站完整後再買）②repo 改名為 `k591238.github.io` 變成 user site（免費，也順便解決 robots.txt 問題）。兩者都要處理舊網址轉址、CV PDF 與講義 QR code 重新產生。**2026-11-11 決定：預計 2027 上半年買自訂網域時一併處理**，不先做 ② 或「在 `k591238.github.io` 放臨時入口頁」的過渡方案。買網域時要做：GitHub Pages 設定自訂網域、改 `data/site.json` 的 `baseUrl` 後重跑 `build_site.mjs`、改 `index.html` `<head>` 的 canonical／og／JSON-LD 網址、重新產生 CV PDF 與講義 QR code、Search Console 新增網域資源並提交 sitemap |
 
 ### 中 / 低優先
 
