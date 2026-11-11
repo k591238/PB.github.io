@@ -91,6 +91,10 @@ PB.github.io/
 ```
 不要刪除，刪除會導致 Search Console 失去所有權驗證。
 
+### 網站圖示（favicon）
+
+`assets/images/favicon.svg`：2026-11-11 換成依名片設計的 PB 標誌（黑底圓角、銀白線條：左上圓圈＋實心點、P 的弧、直線與一條橫線）。名片原設計較複雜（虛線、三條橫線），為了在瀏覽器分頁 16px 也看得清楚而精簡（使用者在三個版本中選 A）。首頁、作品頁、Teaching 列表、音像互動體驗、雷射講義都引用同一個檔案，換圖只要換這個檔。Google 搜尋結果左邊的圖示要等自訂網域才會出現（見「網址／網域」待辦）。
+
 ### Open Graph / Twitter Card / JSON-LD
 
 `index.html` `<head>` 內有社群分享預覽（og:*、twitter:*）與結構化資料（`application/ld+json`, `@type: Person`），全部指向正式網址 `https://k591238.github.io/PB.github.io/`。**修改網址、標題、簡介、大頭照時，這些標記要跟著同步更新**，否則社群分享卡片或 Google 的理解會跟實際內容不一致。
@@ -157,6 +161,7 @@ node scripts/sync_perform.mjs                 # 來源預設 ../../2026_AV_Lectu
 - **白名單**：只複製 `index.html`、`talk.js`、`theme.css`、`vendor/three.module.min.js`。`talk.md` 由腳本產生，只有標題和 `only: perform`（talks 的開關：直接進表演頁、沒有講座按鈕、不開講者視窗、不讀講稿、不自動滿版）。**講座內容、講稿 `notes.md`、照片 `img/`、講者視窗都不會過來**；腳本最後會再檢查一次，出現 notes／pptx／img 就停止
 - 腳本會在 `<head>` 加上標題、簡介、canonical、og 分享資訊（只改公開版，不動 talks 原始檔），最後自動跑 `build_site.mjs` 更新 sitemap
 - **手動同步，不自動**：講座還在密集修改，避免半成品自動公開。使用者說「同步表演」時才跑，跑完本機檢查 → commit → 使用者同意才 push
+- 公開版的 `talk.md` 另外寫了 `home: ../../`（左上角名字回作品集首頁）和 `back: ← Teaching | ../`（右上角返回 Teaching 列表），腳本會檢查來源有沒有這兩個功能
 - 分享預覽圖 `av-perform/og.jpg`（1200×630）和縮圖是表演頁場景 5 的截圖（點雲組成 PenBit 字樣），在白名單裡、同步時不會被刪
 
 

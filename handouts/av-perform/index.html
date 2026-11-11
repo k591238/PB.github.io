@@ -34,6 +34,9 @@ html{scroll-padding-top:var(--hh);scroll-snap-type:y proximity}
 #topbar .brand span{color:var(--muted);font-weight:400;letter-spacing:.04em}
 #topbar nav{display:flex;gap:.5rem}
 body.only-perform #topbar nav{display:none}   /* talk.md 寫 only: perform：只有表演頁，沒有講座可切換 */
+#topbar a.brand{color:inherit;text-decoration:none}   /* talk.md 寫 home: 網址 → 名字可以點 */
+#topbar .backlink{font:600 .74rem var(--mono);letter-spacing:.14em;color:var(--muted);text-decoration:none;padding:.4rem .8rem;border-radius:.3rem}
+#topbar .backlink:hover{color:var(--fg)}
 #topbar nav button{background:none;border:1px solid transparent;border-radius:.3rem;font:600 .74rem var(--mono);letter-spacing:.14em;color:var(--muted);padding:.4rem .8rem}
 #topbar nav button:hover{color:var(--fg)}
 #topbar nav button.on{color:var(--accent);border-color:var(--accent)}
@@ -494,6 +497,15 @@ const TALK = await (async () => {
   if (t.meta.brand){
     const [a, ...b] = t.meta.brand.split('｜');
     document.querySelector('#topbar .brand').innerHTML = escH(a.trim()) + (b.length ? ` <span>｜${escH(b.join('｜').trim())}</span>` : '');
+  }
+  // home: 網址 → 左上角名字變成連結；back: 文字 | 網址 → 右上角加一個返回連結（公開的表演體驗用，平常講座不用寫）
+  if (t.meta.home){
+    const old = document.querySelector('#topbar .brand'), link = document.createElement('a');
+    link.className = 'brand'; link.href = t.meta.home; link.innerHTML = old.innerHTML; old.replaceWith(link);
+  }
+  if (t.meta.back){
+    const [label, href] = t.meta.back.split('|').map(x => x.trim());
+    if (label && href){ const link = document.createElement('a'); link.className = 'backlink'; link.href = href; link.textContent = label; document.getElementById('topbar').appendChild(link); }
   }
   // widgets the rest of the page expects, even if their chapter was removed from talk.md
   const shelf = document.createElement('div'); shelf.hidden = true;

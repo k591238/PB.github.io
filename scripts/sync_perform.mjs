@@ -37,6 +37,8 @@ const src = f => fs.readFileSync(path.join(SRC, f), 'utf8');
 let html = src('index.html');
 if (!html.includes("TALK.meta.only === 'perform'"))
   fail('來源的 index.html 沒有 only: perform 開關（talks 的程式太舊？），同步出去會變成空白的講座頁');
+if (!html.includes('t.meta.home') || !html.includes('t.meta.back'))
+  fail('來源的 index.html 沒有 home／back 設定（talks 的程式太舊？），公開頁會沒有返回連結');
 if (!src('talk.js').includes("talk.meta.only === 'perform'"))
   fail('來源的 talk.js 沒有 only: perform 開關，公開頁會去讀講稿 notes.md');
 
@@ -61,7 +63,8 @@ if (!titleRe.test(html)) fail('來源 index.html 找不到 <title>');
 html = html.replace(titleRe, `<!-- 由 PB.github.io/scripts/sync_perform.mjs 同步自 talks（只有表演頁），不要在這裡改 -->\n${head}`)
   .replace(/<html lang="[^"]*">/, '<html lang="zh-Hant">');
 
-const talkMd = `title: ${TITLE}\nbrand: WU CHENG-RU ｜PenBit\nonly: perform\n`;
+// home：左上角名字回作品集首頁；back：右上角回 Teaching 列表（talks 的設定，見 talks README）
+const talkMd = `title: ${TITLE}\nbrand: WU CHENG-RU ｜PenBit\nonly: perform\nhome: ../../\nback: ← Teaching | ../\n`;
 
 // 寫入：先清掉公開資料夾裡不在允許清單的檔案（例如以前同步過、後來移除的）
 fs.mkdirSync(DEST, { recursive: true });
