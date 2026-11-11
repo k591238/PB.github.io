@@ -415,6 +415,22 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
     <div class=""><svg aria-hidden="true"><use href="#i-cube"/></svg><b>LaserCube</b><span>DAC 做在機身裡，USB 或網路直連，不需要 ILDA 線</span></div>
   </div>
   <p class="note">ILDA 接頭和舊式印表機線外型一樣（DB-25），但印表機線不保證每一腳都有接通，請用 ILDA 專用線。</p>
+  <h3>兩種 DAC：Helios 與 EtherDream</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>項目</th><th>Helios（USB）</th><th>EtherDream（網路）</th></tr></thead>
+    <tbody>
+      <tr><td>接電腦</td><td>USB 線</td><td>網路線，接路由器／交換器或直接接電腦</td></tr>
+      <tr><td>供電</td><td>USB 供電，不用變壓器</td><td>舊款用圓孔 DC 變壓器；Ether Dream 4 用 USB-C 供電</td></tr>
+      <tr><td>距離</td><td>USB 線短，電腦要放在 DAC 旁</td><td>網路線可以拉長，電腦離雷射遠也沒關係</td></tr>
+      <tr><td>多台</td><td>每台一條 USB</td><td>同一個網路接多台，靠 IP 區分</td></tr>
+      <tr><td>TD 設定</td><td>Type = Helios，Device 自動列出，沒出現按 Scan</td><td>Type = EtherDream，填 IP，Port 7765</td></tr>
+    </tbody>
+  </table></div>
+  <div class="grid2">
+    <div class="card"><div class="lbl">Helios 接線</div><p>電腦 → USB → Helios → ILDA 線 → 投影機（切到 ILDA 模式）。電源燈亮就可以在 TD 裡找到。</p></div>
+    <div class="card"><div class="lbl">EtherDream 接線</div><p>① 接電源 ② 網路線接到和電腦同一個網路 ③ ILDA 線接投影機。IP 不用自己查：TD 的 <b>EtherDream DAT</b> 會列出網路上找到的機器和 IP。直接接電腦時，IP 會是 169.254 開頭，屬正常。</p></div>
+    <div class="card"><div class="lbl">EtherDream 找不到時</div><p>確認同一個網路；Windows 防火牆要允許 TouchDesigner（第一次跳出詢問時按允許）；再按一次搜尋。</p></div>
+  </div>
 </section>
 
 <section id="multi">
@@ -773,8 +789,8 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
 </section>
 
 <section id="helios">
-  <div class="sec-no"><b>10</b>軟體 · 接上 Helios</div>
-  <h2>從 TouchDesigner 送到 Helios</h2>
+  <div class="sec-no"><b>10</b>軟體 · 接上 DAC</div>
+  <h2>從 TouchDesigner 送到 Helios / EtherDream</h2>
   <p>Laser CHOP 後面接 <b>Laser Device CHOP</b>，Type 選 Helios。Output Sample Rate 依投影機的掃描速度設定，不超過 Helios 的 65,500。</p>
   <h3>TouchDesigner 設定步驟</h3>
   <ol class="steps">
@@ -787,7 +803,7 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
     <li><b>確認路徑後才加亮度</b>：圖形方向不對時，在送進 Laser Device CHOP 之前用 Math CHOP 把 x 或 y 乘上 −1（或在 POP 用 Transform POP 翻轉）。<b>不要</b>把 Laser Device CHOP 的 X/Y Scale 設成負數：實測 Helios 會卡在角落、只剩一個點。</li>
   </ol>
   <div class="grid2">
-    <div class="card"><div class="lbl">Type 要選對</div><p>Type 選 <b>EtherDream</b> 時（網路型 DAC，要填 IP 和 Port），找不到裝置節點就會變紅。使用 Helios 時 Type 選 <b>Helios</b>，不需要填 IP。</p></div>
+    <div class="card"><div class="lbl">改用 EtherDream</div><p>Laser Device CHOP 的 <b>Type 選 EtherDream</b>，Network Address 填 EtherDream DAT 列出的 IP，Port 維持 7765，其餘步驟和 Helios 相同。Type 選錯時節點會變紅。</p></div>
     <div class="card"><div class="lbl">Scan 的注意事項</div><p>Scan 時不能有使用中的 Helios 連線，否則會被關掉。實測：沒接裝置時切換 Active 或 Scan，TD 會短暫掉幀（60 → 23 fps），之後恢復，屬正常現象。</p></div>
     <div class="card"><div class="lbl">舊節點</div><p>Helios DAC CHOP 已標示為 deprecated，請統一使用 Laser Device CHOP。</p></div>
   </div>
