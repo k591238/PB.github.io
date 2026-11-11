@@ -28,29 +28,73 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    "name": "翼手龍摩天劇院 The Archaeology of Wonderland",
-    "url": "https://k591238.github.io/PB.github.io/projects/co1/",
-    "image": "https://k591238.github.io/PB.github.io/assets/images/projects/co1/og.jpg",
-    "description": "明白實驗所《翼手龍摩天劇院 The Archaeology of Wonderland》，2024 臺北藝穗節，吳承儒（PB）擔任技術統籌暨執行與 AI 影像設計，打造一座關於記憶考古的飛行劇院。",
-    "dateCreated": "2024",
-    "genre": "Collaboration",
-    "creator": {
-      "@type": "Person",
-      "name": "Wu Cheng-Ru",
-      "alternateName": [
-        "吳承儒",
-        "PB",
-        "Pen_bit",
-        "penbit"
-      ],
-      "url": "https://k591238.github.io/PB.github.io/"
-    },
-    "isPartOf": {
-      "@type": "WebSite",
-      "name": "吳承儒 Wu Cheng-Ru（PB）",
-      "url": "https://k591238.github.io/PB.github.io/"
-    }
+    "@graph": [
+      {
+        "@type": "CreativeWork",
+        "@id": "https://k591238.github.io/PB.github.io/projects/co1/#work",
+        "name": "翼手龍摩天劇院 The Archaeology of Wonderland",
+        "url": "https://k591238.github.io/PB.github.io/projects/co1/",
+        "image": "https://k591238.github.io/PB.github.io/assets/images/projects/co1/og.jpg",
+        "description": "明白實驗所《翼手龍摩天劇院 The Archaeology of Wonderland》，2024 臺北藝穗節，吳承儒（PB）擔任技術統籌暨執行與 AI 影像設計，打造一座關於記憶考古的飛行劇院。",
+        "dateCreated": "2024",
+        "genre": "Collaboration",
+        "contributor": {
+          "@type": "Role",
+          "roleName": "技術統籌暨執行、AI 影像設計 Technical Director / AI Image Design",
+          "contributor": {
+            "@type": "Person",
+            "name": "Wu Cheng-Ru",
+            "alternateName": [
+              "吳承儒",
+              "PB",
+              "Pen_bit",
+              "penbit"
+            ],
+            "url": "https://k591238.github.io/PB.github.io/"
+          }
+        },
+        "creator": [
+          {
+            "@type": "Organization",
+            "name": "明白實驗所"
+          }
+        ],
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "吳承儒 Wu Cheng-Ru（PB）",
+          "url": "https://k591238.github.io/PB.github.io/"
+        }
+      },
+      {
+        "@type": "Event",
+        "name": "2024 臺北藝穗節《翼手龍摩天劇院》",
+        "startDate": "2024-09-06",
+        "endDate": "2024-09-08",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "國立臺灣科學教育館"
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "明白實驗所"
+        },
+        "performer": {
+          "@type": "Person",
+          "name": "Wu Cheng-Ru",
+          "alternateName": [
+            "吳承儒",
+            "PB",
+            "Pen_bit",
+            "penbit"
+          ],
+          "url": "https://k591238.github.io/PB.github.io/"
+        },
+        "workFeatured": {
+          "@id": "https://k591238.github.io/PB.github.io/projects/co1/#work"
+        }
+      }
+    ]
   }
   </script>
 

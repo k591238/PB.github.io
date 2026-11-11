@@ -28,29 +28,62 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    "name": "101 手錶發表會商演",
-    "url": "https://k591238.github.io/PB.github.io/projects/c1/",
-    "image": "https://k591238.github.io/PB.github.io/assets/images/projects/c1/og.jpg",
-    "description": "101 手錶發表會商業演出紀錄（2026 年 6 月 10 日），吳承儒（pen_bit）擔任 VJ，與 DJ 達巴斯胡祕 Tapas Humi 合作演出。",
-    "dateCreated": "2026",
-    "genre": "Case",
-    "creator": {
-      "@type": "Person",
-      "name": "Wu Cheng-Ru",
-      "alternateName": [
-        "吳承儒",
-        "PB",
-        "Pen_bit",
-        "penbit"
-      ],
-      "url": "https://k591238.github.io/PB.github.io/"
-    },
-    "isPartOf": {
-      "@type": "WebSite",
-      "name": "吳承儒 Wu Cheng-Ru（PB）",
-      "url": "https://k591238.github.io/PB.github.io/"
-    }
+    "@graph": [
+      {
+        "@type": "CreativeWork",
+        "@id": "https://k591238.github.io/PB.github.io/projects/c1/#work",
+        "name": "101 手錶發表會商演",
+        "url": "https://k591238.github.io/PB.github.io/projects/c1/",
+        "image": "https://k591238.github.io/PB.github.io/assets/images/projects/c1/og.jpg",
+        "description": "101 手錶發表會商業演出紀錄（2026 年 6 月 10 日），吳承儒（pen_bit）擔任 VJ，與 DJ 達巴斯胡祕 Tapas Humi 合作演出。",
+        "dateCreated": "2026",
+        "genre": "Case",
+        "contributor": {
+          "@type": "Role",
+          "roleName": "VJ",
+          "contributor": {
+            "@type": "Person",
+            "name": "Wu Cheng-Ru",
+            "alternateName": [
+              "吳承儒",
+              "PB",
+              "Pen_bit",
+              "penbit"
+            ],
+            "url": "https://k591238.github.io/PB.github.io/"
+          }
+        },
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "吳承儒 Wu Cheng-Ru（PB）",
+          "url": "https://k591238.github.io/PB.github.io/"
+        }
+      },
+      {
+        "@type": "Event",
+        "name": "101 手錶發表會",
+        "startDate": "2026-06-10",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "台北101 4樓 The One"
+        },
+        "performer": {
+          "@type": "Person",
+          "name": "Wu Cheng-Ru",
+          "alternateName": [
+            "吳承儒",
+            "PB",
+            "Pen_bit",
+            "penbit"
+          ],
+          "url": "https://k591238.github.io/PB.github.io/"
+        },
+        "workFeatured": {
+          "@id": "https://k591238.github.io/PB.github.io/projects/c1/#work"
+        }
+      }
+    ]
   }
   </script>
 

@@ -28,29 +28,58 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    "name": "聽說 Whisper",
-    "url": "https://k591238.github.io/PB.github.io/projects/e1/",
-    "image": "https://k591238.github.io/PB.github.io/assets/images/projects/e1/og.jpg",
-    "description": "吳承儒（PB）聲音裝置《聽說 Whisper》，2024 關渡光藝術節 X 後花園實驗場《燒聲》。資訊來源只有來自水管內的聲音，卻無法確定其真實性與具體內容。",
-    "dateCreated": "2024",
-    "genre": "Exhibition",
-    "creator": {
-      "@type": "Person",
-      "name": "Wu Cheng-Ru",
-      "alternateName": [
-        "吳承儒",
-        "PB",
-        "Pen_bit",
-        "penbit"
-      ],
-      "url": "https://k591238.github.io/PB.github.io/"
-    },
-    "isPartOf": {
-      "@type": "WebSite",
-      "name": "吳承儒 Wu Cheng-Ru（PB）",
-      "url": "https://k591238.github.io/PB.github.io/"
-    }
+    "@graph": [
+      {
+        "@type": "CreativeWork",
+        "@id": "https://k591238.github.io/PB.github.io/projects/e1/#work",
+        "name": "聽說 Whisper",
+        "url": "https://k591238.github.io/PB.github.io/projects/e1/",
+        "image": "https://k591238.github.io/PB.github.io/assets/images/projects/e1/og.jpg",
+        "description": "吳承儒（PB）聲音裝置《聽說 Whisper》，2024 關渡光藝術節 X 後花園實驗場《燒聲》。資訊來源只有來自水管內的聲音，卻無法確定其真實性與具體內容。",
+        "dateCreated": "2024",
+        "genre": "Exhibition",
+        "creator": [
+          {
+            "@type": "Role",
+            "roleName": "藝術家 Artist",
+            "creator": {
+              "@type": "Person",
+              "name": "Wu Cheng-Ru",
+              "alternateName": [
+                "吳承儒",
+                "PB",
+                "Pen_bit",
+                "penbit"
+              ],
+              "url": "https://k591238.github.io/PB.github.io/"
+            }
+          }
+        ],
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "吳承儒 Wu Cheng-Ru（PB）",
+          "url": "https://k591238.github.io/PB.github.io/"
+        }
+      },
+      {
+        "@type": "ExhibitionEvent",
+        "name": "2024 關渡光藝術節 X 後花園實驗場跨域展演《燒聲》",
+        "startDate": "2024-10-19",
+        "endDate": "2024-11-03",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "國立臺北藝術大學 戰車草原"
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "關渡光藝術節"
+        },
+        "workFeatured": {
+          "@id": "https://k591238.github.io/PB.github.io/projects/e1/#work"
+        }
+      }
+    ]
   }
   </script>
 

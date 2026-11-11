@@ -32,6 +32,8 @@ const esc = s => String(s)
 
 // ── 檢查資料 ────────────────────────────────────────
 const REQUIRED = ['id', 'title', 'year', 'meta', 'category', 'thumb', 'description'];
+const EVENT_TYPES = ['Event', 'ExhibitionEvent', 'EducationEvent'];
+const DATE_RE = /^\d{4}(-\d{2}-\d{2}(T\d{2}:\d{2}(\+\d{2}:\d{2})?)?)?$/;
 const errors = [];
 const seen = new Set();
 const index0 = read('index.html');
@@ -44,6 +46,18 @@ for (const [i, p] of projects.entries()) {
   if (p.thumb && !fs.existsSync(path.join(ROOT, p.thumb))) errors.push(`${where}：找不到縮圖 ${p.thumb}`);
   if (p.id && !fs.existsSync(path.join(ROOT, `content/projects/${p.id}.html`))) errors.push(`${where}：找不到作品內容 content/projects/${p.id}.html`);
   if (p.category && !index0.includes(`data-filter="${p.category}"`)) errors.push(`${where}：分類 ${p.category} 沒有對應的篩選按鈕（data-filter="${p.category}"）`);
+  // 選填：credit（你在作品中的身分）、creators（其他作者）、events（展演活動）
+  if (p.credit && (!['creator', 'contributor'].includes(p.credit.as) || !p.credit.role))
+    errors.push(`${where}：credit 要有 as（creator 或 contributor）和 role`);
+  for (const [k, e] of (p.events || []).entries()) {
+    const w = `${where} events 第 ${k + 1} 筆`;
+    if (!EVENT_TYPES.includes(e.type)) errors.push(`${w}：type 要是 ${EVENT_TYPES.join('／')}`);
+    if (!e.name || !e.location) errors.push(`${w}：要有 name 和 location`);
+    for (const d of ['startDate', 'endDate']) {
+      if (d === 'startDate' && !e[d]) errors.push(`${w}：缺少 startDate`);
+      if (e[d] && !DATE_RE.test(e[d])) errors.push(`${w}：${d} 格式要像 2026-05-02、2026-05-02T19:30+08:00 或只寫年份 2025`);
+    }
+  }
 }
 if (errors.length) {
   console.error('✗ 資料有問題，沒有寫入任何檔案：\n  ' + errors.join('\n  '));
@@ -99,18 +113,35 @@ for (const p of projects) {
     raw = raw.replace(tag, hero);
   }
   const content = raw.split('\n').map(l => (l ? '      ' + l : l)).join('\n');
-  const ld = {
-    '@context': 'https://schema.org',
+  // JSON-LD：作品（CreativeWork）＋展演活動（Event），資料都來自 data/projects.json
+  const workId = url + '#work';
+  const others = (p.creators || []).map(name => ({ '@type': /小隊|實驗所|團|工作室|Studio/i.test(name) ? 'Organization' : 'Person', name }));
+  const asCreator = !p.credit || p.credit.as === 'creator';
+  const me = p.credit ? { '@type': 'Role', roleName: p.credit.role, [asCreator ? 'creator' : 'contributor']: person } : person;
+  const work = {
     '@type': 'CreativeWork',
+    '@id': workId,
     name: p.title,
     url,
     image: ogImage(p),
     description: p.description,
     dateCreated: String(p.year),
     genre: p.meta,
-    creator: person,
+    ...(asCreator ? { creator: [me, ...others] } : { contributor: me, ...(others.length ? { creator: others } : {}) }),
     isPartOf: { '@type': 'WebSite', name: '吳承儒 Wu Cheng-Ru（PB）', url: BASE },
   };
+  const events = (p.events || []).map(e => ({
+    '@type': e.type,
+    name: e.name,
+    startDate: e.startDate,
+    ...(e.endDate ? { endDate: e.endDate } : {}),
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    location: { '@type': 'Place', name: e.location, ...(e.address ? { address: e.address } : {}) },
+    ...(e.organizer ? { organizer: { '@type': 'Organization', name: e.organizer } } : {}),
+    ...(e.type === 'Event' ? { performer: person } : {}),
+    workFeatured: { '@id': workId },
+  }));
+  const ld = { '@context': 'https://schema.org', '@graph': [work, ...events] };
   const page = `<!DOCTYPE html>
 <!-- 由 scripts/build_site.mjs 產生，不要手改。內容請改 content/projects/${p.id}.html，資料請改 data/projects.json -->
 <html lang="zh-Hant">

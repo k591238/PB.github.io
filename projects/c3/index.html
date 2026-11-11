@@ -28,29 +28,61 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    "name": "離水山：再臨 Shuishan: Returnings",
-    "url": "https://k591238.github.io/PB.github.io/projects/c3/",
-    "image": "https://k591238.github.io/PB.github.io/assets/images/projects/c3/og.jpg",
-    "description": "蔡昱廷《離水山：再臨 Shuishan: Returnings》，2025 臺灣美術雙年展「黑水」三頻道影像與聲音裝置，吳承儒（PB）擔任 AI Visual Programmer。",
-    "dateCreated": "2025",
-    "genre": "Case",
-    "creator": {
-      "@type": "Person",
-      "name": "Wu Cheng-Ru",
-      "alternateName": [
-        "吳承儒",
-        "PB",
-        "Pen_bit",
-        "penbit"
-      ],
-      "url": "https://k591238.github.io/PB.github.io/"
-    },
-    "isPartOf": {
-      "@type": "WebSite",
-      "name": "吳承儒 Wu Cheng-Ru（PB）",
-      "url": "https://k591238.github.io/PB.github.io/"
-    }
+    "@graph": [
+      {
+        "@type": "CreativeWork",
+        "@id": "https://k591238.github.io/PB.github.io/projects/c3/#work",
+        "name": "離水山：再臨 Shuishan: Returnings",
+        "url": "https://k591238.github.io/PB.github.io/projects/c3/",
+        "image": "https://k591238.github.io/PB.github.io/assets/images/projects/c3/og.jpg",
+        "description": "蔡昱廷《離水山：再臨 Shuishan: Returnings》，2025 臺灣美術雙年展「黑水」三頻道影像與聲音裝置，吳承儒（PB）擔任 AI Visual Programmer。",
+        "dateCreated": "2025",
+        "genre": "Case",
+        "contributor": {
+          "@type": "Role",
+          "roleName": "AI Visual Programmer",
+          "contributor": {
+            "@type": "Person",
+            "name": "Wu Cheng-Ru",
+            "alternateName": [
+              "吳承儒",
+              "PB",
+              "Pen_bit",
+              "penbit"
+            ],
+            "url": "https://k591238.github.io/PB.github.io/"
+          }
+        },
+        "creator": [
+          {
+            "@type": "Person",
+            "name": "蔡昱廷 Yu-Ting Tsai"
+          }
+        ],
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "吳承儒 Wu Cheng-Ru（PB）",
+          "url": "https://k591238.github.io/PB.github.io/"
+        }
+      },
+      {
+        "@type": "ExhibitionEvent",
+        "name": "2025 臺灣美術雙年展 — 黑水 Taiwan Art Biennial - Black Water",
+        "startDate": "2025",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "國立臺灣美術館"
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "國立臺灣美術館"
+        },
+        "workFeatured": {
+          "@id": "https://k591238.github.io/PB.github.io/projects/c3/#work"
+        }
+      }
+    ]
   }
   </script>
 

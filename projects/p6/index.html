@@ -28,29 +28,69 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    "name": "視感認知 Visual Cognition",
-    "url": "https://k591238.github.io/PB.github.io/projects/p6/",
-    "image": "https://k591238.github.io/PB.github.io/assets/images/projects/p6/og.jpg",
-    "description": "《視感認知 Visual Cognition》，吳承儒（PB）於 2026 新響藝術季《新聲複樂之夜》（C-LAB 臺灣聲響實驗室）的音像演出，探討數位影像中像素與認知投射之間的觀看經驗。",
-    "dateCreated": "2026",
-    "genre": "Performance",
-    "creator": {
-      "@type": "Person",
-      "name": "Wu Cheng-Ru",
-      "alternateName": [
-        "吳承儒",
-        "PB",
-        "Pen_bit",
-        "penbit"
-      ],
-      "url": "https://k591238.github.io/PB.github.io/"
-    },
-    "isPartOf": {
-      "@type": "WebSite",
-      "name": "吳承儒 Wu Cheng-Ru（PB）",
-      "url": "https://k591238.github.io/PB.github.io/"
-    }
+    "@graph": [
+      {
+        "@type": "CreativeWork",
+        "@id": "https://k591238.github.io/PB.github.io/projects/p6/#work",
+        "name": "視感認知 Visual Cognition",
+        "url": "https://k591238.github.io/PB.github.io/projects/p6/",
+        "image": "https://k591238.github.io/PB.github.io/assets/images/projects/p6/og.jpg",
+        "description": "《視感認知 Visual Cognition》，吳承儒（PB）於 2026 新響藝術季《新聲複樂之夜》（C-LAB 臺灣聲響實驗室）的音像演出，探討數位影像中像素與認知投射之間的觀看經驗。",
+        "dateCreated": "2026",
+        "genre": "Performance",
+        "creator": [
+          {
+            "@type": "Role",
+            "roleName": "Sound / Visual",
+            "creator": {
+              "@type": "Person",
+              "name": "Wu Cheng-Ru",
+              "alternateName": [
+                "吳承儒",
+                "PB",
+                "Pen_bit",
+                "penbit"
+              ],
+              "url": "https://k591238.github.io/PB.github.io/"
+            }
+          }
+        ],
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "吳承儒 Wu Cheng-Ru（PB）",
+          "url": "https://k591238.github.io/PB.github.io/"
+        }
+      },
+      {
+        "@type": "Event",
+        "name": "2026 新響藝術季《新聲複樂之夜》",
+        "startDate": "2026-08-21T19:30+08:00",
+        "endDate": "2026-08-21T20:30+08:00",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "新竹縣政府文化局 實驗劇場"
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "2026 新響藝術季"
+        },
+        "performer": {
+          "@type": "Person",
+          "name": "Wu Cheng-Ru",
+          "alternateName": [
+            "吳承儒",
+            "PB",
+            "Pen_bit",
+            "penbit"
+          ],
+          "url": "https://k591238.github.io/PB.github.io/"
+        },
+        "workFeatured": {
+          "@id": "https://k591238.github.io/PB.github.io/projects/p6/#work"
+        }
+      }
+    ]
   }
   </script>
 

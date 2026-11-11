@@ -28,29 +28,67 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    "name": "PXP 2026 Artist Talk",
-    "url": "https://k591238.github.io/PB.github.io/projects/ev1/",
-    "image": "https://k591238.github.io/PB.github.io/assets/images/projects/ev1/og.jpg",
-    "description": "吳承儒（PB）於 PXP 2026 音像藝術節擔任藝術家短講講者與工作坊助教，以《創作過程中的思考：從觀察到呈現》為題，分享從日常觀察到作品呈現的創作脈絡。",
-    "dateCreated": "2026",
-    "genre": "Events",
-    "creator": {
-      "@type": "Person",
-      "name": "Wu Cheng-Ru",
-      "alternateName": [
-        "吳承儒",
-        "PB",
-        "Pen_bit",
-        "penbit"
-      ],
-      "url": "https://k591238.github.io/PB.github.io/"
-    },
-    "isPartOf": {
-      "@type": "WebSite",
-      "name": "吳承儒 Wu Cheng-Ru（PB）",
-      "url": "https://k591238.github.io/PB.github.io/"
-    }
+    "@graph": [
+      {
+        "@type": "CreativeWork",
+        "@id": "https://k591238.github.io/PB.github.io/projects/ev1/#work",
+        "name": "PXP 2026 Artist Talk",
+        "url": "https://k591238.github.io/PB.github.io/projects/ev1/",
+        "image": "https://k591238.github.io/PB.github.io/assets/images/projects/ev1/og.jpg",
+        "description": "吳承儒（PB）於 PXP 2026 音像藝術節擔任藝術家短講講者與工作坊助教，以《創作過程中的思考：從觀察到呈現》為題，分享從日常觀察到作品呈現的創作脈絡。",
+        "dateCreated": "2026",
+        "genre": "Events",
+        "contributor": {
+          "@type": "Role",
+          "roleName": "藝術家短講講者、Workshop 助教 Speaker / Workshop TA",
+          "contributor": {
+            "@type": "Person",
+            "name": "Wu Cheng-Ru",
+            "alternateName": [
+              "吳承儒",
+              "PB",
+              "Pen_bit",
+              "penbit"
+            ],
+            "url": "https://k591238.github.io/PB.github.io/"
+          }
+        },
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "吳承儒 Wu Cheng-Ru（PB）",
+          "url": "https://k591238.github.io/PB.github.io/"
+        }
+      },
+      {
+        "@type": "Event",
+        "name": "PXP 2026 — Perspectives × Public Visuals Audiovisual Arts Festival",
+        "startDate": "2026-08-22",
+        "endDate": "2026-08-23",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "台北流行音樂中心 Live House D"
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "Perspectives × Public Visuals"
+        },
+        "performer": {
+          "@type": "Person",
+          "name": "Wu Cheng-Ru",
+          "alternateName": [
+            "吳承儒",
+            "PB",
+            "Pen_bit",
+            "penbit"
+          ],
+          "url": "https://k591238.github.io/PB.github.io/"
+        },
+        "workFeatured": {
+          "@id": "https://k591238.github.io/PB.github.io/projects/ev1/#work"
+        }
+      }
+    ]
   }
   </script>
 

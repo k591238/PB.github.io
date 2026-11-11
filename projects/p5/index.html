@@ -28,29 +28,69 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    "name": "《Thiann》聽",
-    "url": "https://k591238.github.io/PB.github.io/projects/p5/",
-    "image": "https://k591238.github.io/PB.github.io/assets/images/projects/p5/og.jpg",
-    "description": "《Thiann》聽，吳承儒（PB）於奧地利林茲 Ars Electronica Festival「Sound Campus 26 – Listening Underground」的音像演出，負責聲音與影像。",
-    "dateCreated": "2026",
-    "genre": "Performance",
-    "creator": {
-      "@type": "Person",
-      "name": "Wu Cheng-Ru",
-      "alternateName": [
-        "吳承儒",
-        "PB",
-        "Pen_bit",
-        "penbit"
-      ],
-      "url": "https://k591238.github.io/PB.github.io/"
-    },
-    "isPartOf": {
-      "@type": "WebSite",
-      "name": "吳承儒 Wu Cheng-Ru（PB）",
-      "url": "https://k591238.github.io/PB.github.io/"
-    }
+    "@graph": [
+      {
+        "@type": "CreativeWork",
+        "@id": "https://k591238.github.io/PB.github.io/projects/p5/#work",
+        "name": "《Thiann》聽",
+        "url": "https://k591238.github.io/PB.github.io/projects/p5/",
+        "image": "https://k591238.github.io/PB.github.io/assets/images/projects/p5/og.jpg",
+        "description": "《Thiann》聽，吳承儒（PB）於奧地利林茲 Ars Electronica Festival「Sound Campus 26 – Listening Underground」的音像演出，負責聲音與影像。",
+        "dateCreated": "2026",
+        "genre": "Performance",
+        "creator": [
+          {
+            "@type": "Role",
+            "roleName": "Sound / Visual",
+            "creator": {
+              "@type": "Person",
+              "name": "Wu Cheng-Ru",
+              "alternateName": [
+                "吳承儒",
+                "PB",
+                "Pen_bit",
+                "penbit"
+              ],
+              "url": "https://k591238.github.io/PB.github.io/"
+            }
+          }
+        ],
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "吳承儒 Wu Cheng-Ru（PB）",
+          "url": "https://k591238.github.io/PB.github.io/"
+        }
+      },
+      {
+        "@type": "Event",
+        "name": "Sound Campus 26 – Listening Underground, Ars Electronica Festival Linz",
+        "startDate": "2026-09-09",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "Kunstuniversität Linz",
+          "address": "Hauptplatz 6, Linz, Austria"
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "Ars Electronica Festival"
+        },
+        "performer": {
+          "@type": "Person",
+          "name": "Wu Cheng-Ru",
+          "alternateName": [
+            "吳承儒",
+            "PB",
+            "Pen_bit",
+            "penbit"
+          ],
+          "url": "https://k591238.github.io/PB.github.io/"
+        },
+        "workFeatured": {
+          "@id": "https://k591238.github.io/PB.github.io/projects/p5/#work"
+        }
+      }
+    ]
   }
   </script>
 

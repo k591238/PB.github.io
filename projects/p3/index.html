@@ -28,29 +28,67 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    "name": "FUTURE VISION LAB 2023 《未來視覺派對》",
-    "url": "https://k591238.github.io/PB.github.io/projects/p3/",
-    "image": "https://k591238.github.io/PB.github.io/assets/images/projects/p3/og.jpg",
-    "description": "FUTURE VISION LAB 2023《未來視覺派對》，C-LAB 戶外穹頂劇場（DOME）的音像演出，吳承儒（pen_bit）為參與藝術家並擔任技術執行。",
-    "dateCreated": "2023",
-    "genre": "Performance",
-    "creator": {
-      "@type": "Person",
-      "name": "Wu Cheng-Ru",
-      "alternateName": [
-        "吳承儒",
-        "PB",
-        "Pen_bit",
-        "penbit"
-      ],
-      "url": "https://k591238.github.io/PB.github.io/"
-    },
-    "isPartOf": {
-      "@type": "WebSite",
-      "name": "吳承儒 Wu Cheng-Ru（PB）",
-      "url": "https://k591238.github.io/PB.github.io/"
-    }
+    "@graph": [
+      {
+        "@type": "CreativeWork",
+        "@id": "https://k591238.github.io/PB.github.io/projects/p3/#work",
+        "name": "FUTURE VISION LAB 2023 《未來視覺派對》",
+        "url": "https://k591238.github.io/PB.github.io/projects/p3/",
+        "image": "https://k591238.github.io/PB.github.io/assets/images/projects/p3/og.jpg",
+        "description": "FUTURE VISION LAB 2023《未來視覺派對》，C-LAB 戶外穹頂劇場（DOME）的音像演出，吳承儒（pen_bit）為參與藝術家並擔任技術執行。",
+        "dateCreated": "2023",
+        "genre": "Performance",
+        "contributor": {
+          "@type": "Role",
+          "roleName": "參與藝術家、技術執行 Artist / Technical Execution",
+          "contributor": {
+            "@type": "Person",
+            "name": "Wu Cheng-Ru",
+            "alternateName": [
+              "吳承儒",
+              "PB",
+              "Pen_bit",
+              "penbit"
+            ],
+            "url": "https://k591238.github.io/PB.github.io/"
+          }
+        },
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "吳承儒 Wu Cheng-Ru（PB）",
+          "url": "https://k591238.github.io/PB.github.io/"
+        }
+      },
+      {
+        "@type": "Event",
+        "name": "FUTURE VISION LAB 2023《未來視覺派對》",
+        "startDate": "2023-12-01T19:30+08:00",
+        "endDate": "2023-12-02",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "臺灣當代文化實驗場 C-LAB 戶外穹頂劇場（DOME）"
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "臺灣當代文化實驗場 C-LAB"
+        },
+        "performer": {
+          "@type": "Person",
+          "name": "Wu Cheng-Ru",
+          "alternateName": [
+            "吳承儒",
+            "PB",
+            "Pen_bit",
+            "penbit"
+          ],
+          "url": "https://k591238.github.io/PB.github.io/"
+        },
+        "workFeatured": {
+          "@id": "https://k591238.github.io/PB.github.io/projects/p3/#work"
+        }
+      }
+    ]
   }
   </script>
 

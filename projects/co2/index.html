@@ -7,14 +7,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <base href="../../" />
   <title>VIVIDO: re-Action｜吳承儒 PB</title>
-  <meta name="description" content="VIVIDO: re-Action，XTRUX VIVIDO 創作計畫最終章，於臺北數位藝術中心（DAC）。吳承儒以 Pen Bit 身分與 Sandy's Trace 合作 live A/V 演出。" />
+  <meta name="description" content="VIVIDO: re-Action，XTRUX VIVIDO 創作計畫最終章，於臺北數位藝術中心（DAC）。吳承儒以 Pen Bit 身分與 Sandy's Trace 合作 live audiovisual 演出。" />
   <link rel="canonical" href="https://k591238.github.io/PB.github.io/projects/co2/" />
 
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="吳承儒 Wu Cheng-Ru（PB）" />
   <meta property="og:url" content="https://k591238.github.io/PB.github.io/projects/co2/" />
   <meta property="og:title" content="VIVIDO: re-Action｜吳承儒 PB" />
-  <meta property="og:description" content="VIVIDO: re-Action，XTRUX VIVIDO 創作計畫最終章，於臺北數位藝術中心（DAC）。吳承儒以 Pen Bit 身分與 Sandy's Trace 合作 live A/V 演出。" />
+  <meta property="og:description" content="VIVIDO: re-Action，XTRUX VIVIDO 創作計畫最終章，於臺北數位藝術中心（DAC）。吳承儒以 Pen Bit 身分與 Sandy's Trace 合作 live audiovisual 演出。" />
   <meta property="og:image" content="https://k591238.github.io/PB.github.io/assets/images/projects/co2/og.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -22,35 +22,91 @@
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="VIVIDO: re-Action｜吳承儒 PB" />
-  <meta name="twitter:description" content="VIVIDO: re-Action，XTRUX VIVIDO 創作計畫最終章，於臺北數位藝術中心（DAC）。吳承儒以 Pen Bit 身分與 Sandy's Trace 合作 live A/V 演出。" />
+  <meta name="twitter:description" content="VIVIDO: re-Action，XTRUX VIVIDO 創作計畫最終章，於臺北數位藝術中心（DAC）。吳承儒以 Pen Bit 身分與 Sandy's Trace 合作 live audiovisual 演出。" />
   <meta name="twitter:image" content="https://k591238.github.io/PB.github.io/assets/images/projects/co2/og.jpg" />
 
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    "name": "VIVIDO: re-Action",
-    "url": "https://k591238.github.io/PB.github.io/projects/co2/",
-    "image": "https://k591238.github.io/PB.github.io/assets/images/projects/co2/og.jpg",
-    "description": "VIVIDO: re-Action，XTRUX VIVIDO 創作計畫最終章，於臺北數位藝術中心（DAC）。吳承儒以 Pen Bit 身分與 Sandy's Trace 合作 live A/V 演出。",
-    "dateCreated": "2024",
-    "genre": "Collaboration",
-    "creator": {
-      "@type": "Person",
-      "name": "Wu Cheng-Ru",
-      "alternateName": [
-        "吳承儒",
-        "PB",
-        "Pen_bit",
-        "penbit"
-      ],
-      "url": "https://k591238.github.io/PB.github.io/"
-    },
-    "isPartOf": {
-      "@type": "WebSite",
-      "name": "吳承儒 Wu Cheng-Ru（PB）",
-      "url": "https://k591238.github.io/PB.github.io/"
-    }
+    "@graph": [
+      {
+        "@type": "CreativeWork",
+        "@id": "https://k591238.github.io/PB.github.io/projects/co2/#work",
+        "name": "VIVIDO: re-Action",
+        "url": "https://k591238.github.io/PB.github.io/projects/co2/",
+        "image": "https://k591238.github.io/PB.github.io/assets/images/projects/co2/og.jpg",
+        "description": "VIVIDO: re-Action，XTRUX VIVIDO 創作計畫最終章，於臺北數位藝術中心（DAC）。吳承儒以 Pen Bit 身分與 Sandy's Trace 合作 live audiovisual 演出。",
+        "dateCreated": "2024",
+        "genre": "Collaboration",
+        "contributor": {
+          "@type": "Role",
+          "roleName": "Live Audiovisual Performance（與 Sandy's Trace）",
+          "contributor": {
+            "@type": "Person",
+            "name": "Wu Cheng-Ru",
+            "alternateName": [
+              "吳承儒",
+              "PB",
+              "Pen_bit",
+              "penbit"
+            ],
+            "url": "https://k591238.github.io/PB.github.io/"
+          }
+        },
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "吳承儒 Wu Cheng-Ru（PB）",
+          "url": "https://k591238.github.io/PB.github.io/"
+        }
+      },
+      {
+        "@type": "ExhibitionEvent",
+        "name": "VIVIDO: re-Action",
+        "startDate": "2024-03-12",
+        "endDate": "2024-03-17",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "臺北數位藝術中心（DAC）"
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "臺北數位藝術中心"
+        },
+        "workFeatured": {
+          "@id": "https://k591238.github.io/PB.github.io/projects/co2/#work"
+        }
+      },
+      {
+        "@type": "Event",
+        "name": "VIVIDO: re-Action 開幕派對 Opening Party",
+        "startDate": "2024-03-09T18:00+08:00",
+        "endDate": "2024-03-10T01:00+08:00",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "臺北數位藝術中心（DAC）"
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "臺北數位藝術中心"
+        },
+        "performer": {
+          "@type": "Person",
+          "name": "Wu Cheng-Ru",
+          "alternateName": [
+            "吳承儒",
+            "PB",
+            "Pen_bit",
+            "penbit"
+          ],
+          "url": "https://k591238.github.io/PB.github.io/"
+        },
+        "workFeatured": {
+          "@id": "https://k591238.github.io/PB.github.io/projects/co2/#work"
+        }
+      }
+    ]
   }
   </script>
 

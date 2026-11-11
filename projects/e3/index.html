@@ -28,29 +28,79 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    "name": "鹹淡適中 Glub Glub",
-    "url": "https://k591238.github.io/PB.github.io/projects/e3/",
-    "image": "https://k591238.github.io/PB.github.io/assets/images/projects/e3/og.jpg",
-    "description": "吳承儒、胡貽斐互動影像作品《鹹淡適中 Glub Glub》。將水域帶入城市，當觀眾靠近時，水邊的動植物隨身影浮現並隨動作變化，於金車文藝中心承德館及臺北白晝之夜展出。",
-    "dateCreated": "2025",
-    "genre": "Exhibition",
-    "creator": {
-      "@type": "Person",
-      "name": "Wu Cheng-Ru",
-      "alternateName": [
-        "吳承儒",
-        "PB",
-        "Pen_bit",
-        "penbit"
-      ],
-      "url": "https://k591238.github.io/PB.github.io/"
-    },
-    "isPartOf": {
-      "@type": "WebSite",
-      "name": "吳承儒 Wu Cheng-Ru（PB）",
-      "url": "https://k591238.github.io/PB.github.io/"
-    }
+    "@graph": [
+      {
+        "@type": "CreativeWork",
+        "@id": "https://k591238.github.io/PB.github.io/projects/e3/#work",
+        "name": "鹹淡適中 Glub Glub",
+        "url": "https://k591238.github.io/PB.github.io/projects/e3/",
+        "image": "https://k591238.github.io/PB.github.io/assets/images/projects/e3/og.jpg",
+        "description": "吳承儒、胡貽斐互動影像作品《鹹淡適中 Glub Glub》。將水域帶入城市，當觀眾靠近時，水邊的動植物隨身影浮現並隨動作變化，於金車文藝中心承德館及臺北白晝之夜展出。",
+        "dateCreated": "2025",
+        "genre": "Exhibition",
+        "creator": [
+          {
+            "@type": "Role",
+            "roleName": "藝術家 Artist",
+            "creator": {
+              "@type": "Person",
+              "name": "Wu Cheng-Ru",
+              "alternateName": [
+                "吳承儒",
+                "PB",
+                "Pen_bit",
+                "penbit"
+              ],
+              "url": "https://k591238.github.io/PB.github.io/"
+            }
+          },
+          {
+            "@type": "Person",
+            "name": "胡貽斐 Hu Yi-Fei"
+          }
+        ],
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "吳承儒 Wu Cheng-Ru（PB）",
+          "url": "https://k591238.github.io/PB.github.io/"
+        }
+      },
+      {
+        "@type": "ExhibitionEvent",
+        "name": "2025 臺北數位藝術節──層疊的海平線",
+        "startDate": "2025-10-25",
+        "endDate": "2025-11-09",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "金車文藝中心承德館 1F"
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "臺北數位藝術節"
+        },
+        "workFeatured": {
+          "@id": "https://k591238.github.io/PB.github.io/projects/e3/#work"
+        }
+      },
+      {
+        "@type": "ExhibitionEvent",
+        "name": "2025 臺北白晝之夜 Nuit Blanche Taipei",
+        "startDate": "2025-11-01",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "花博園區花海廣場"
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "臺北數位藝術節"
+        },
+        "workFeatured": {
+          "@id": "https://k591238.github.io/PB.github.io/projects/e3/#work"
+        }
+      }
+    ]
   }
   </script>
 

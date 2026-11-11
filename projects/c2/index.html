@@ -28,29 +28,56 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    "name": "Live VJ Lab 即時影像演出工作營",
-    "url": "https://k591238.github.io/PB.github.io/projects/c2/",
-    "image": "https://k591238.github.io/PB.github.io/assets/images/projects/c2/og.jpg",
-    "description": "BLND Academy × 透視音像 Perspectives「Live VJ Lab 即時影像演出工作營」，吳承儒擔任講師，以 Resolume Arena 與 TouchDesigner 帶領即時影像創作、視覺演出與系統整合。",
-    "dateCreated": "2025",
-    "genre": "Case",
-    "creator": {
-      "@type": "Person",
-      "name": "Wu Cheng-Ru",
-      "alternateName": [
-        "吳承儒",
-        "PB",
-        "Pen_bit",
-        "penbit"
-      ],
-      "url": "https://k591238.github.io/PB.github.io/"
-    },
-    "isPartOf": {
-      "@type": "WebSite",
-      "name": "吳承儒 Wu Cheng-Ru（PB）",
-      "url": "https://k591238.github.io/PB.github.io/"
-    }
+    "@graph": [
+      {
+        "@type": "CreativeWork",
+        "@id": "https://k591238.github.io/PB.github.io/projects/c2/#work",
+        "name": "Live VJ Lab 即時影像演出工作營",
+        "url": "https://k591238.github.io/PB.github.io/projects/c2/",
+        "image": "https://k591238.github.io/PB.github.io/assets/images/projects/c2/og.jpg",
+        "description": "BLND Academy × 透視音像 Perspectives「Live VJ Lab 即時影像演出工作營」，吳承儒擔任講師，以 Resolume Arena 與 TouchDesigner 帶領即時影像創作、視覺演出與系統整合。",
+        "dateCreated": "2025",
+        "genre": "Case",
+        "contributor": {
+          "@type": "Role",
+          "roleName": "工作坊講師 Instructor",
+          "contributor": {
+            "@type": "Person",
+            "name": "Wu Cheng-Ru",
+            "alternateName": [
+              "吳承儒",
+              "PB",
+              "Pen_bit",
+              "penbit"
+            ],
+            "url": "https://k591238.github.io/PB.github.io/"
+          }
+        },
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "吳承儒 Wu Cheng-Ru（PB）",
+          "url": "https://k591238.github.io/PB.github.io/"
+        }
+      },
+      {
+        "@type": "EducationEvent",
+        "name": "Live VJ Lab 即時影像演出工作營",
+        "startDate": "2025-07-30T09:30+08:00",
+        "endDate": "2025-08-03T16:30+08:00",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "BLND Academy"
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "透視音像 Perspectives Audio-Visual Art × BLND Academy"
+        },
+        "workFeatured": {
+          "@id": "https://k591238.github.io/PB.github.io/projects/c2/#work"
+        }
+      }
+    ]
   }
   </script>
 

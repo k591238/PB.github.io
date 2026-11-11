@@ -28,29 +28,68 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    "name": "視感認知 Mind Fluid",
-    "url": "https://k591238.github.io/PB.github.io/projects/p1/",
-    "image": "https://k591238.github.io/PB.github.io/assets/images/projects/p1/og.jpg",
-    "description": "《視感認知 Mind Fluid》，吳承儒（PB）於台北流行音樂中心 Live House D 的音像演出，以段落式呈現探討數位影像由像素構成的觀看方式。",
-    "dateCreated": "2025",
-    "genre": "Performance",
-    "creator": {
-      "@type": "Person",
-      "name": "Wu Cheng-Ru",
-      "alternateName": [
-        "吳承儒",
-        "PB",
-        "Pen_bit",
-        "penbit"
-      ],
-      "url": "https://k591238.github.io/PB.github.io/"
-    },
-    "isPartOf": {
-      "@type": "WebSite",
-      "name": "吳承儒 Wu Cheng-Ru（PB）",
-      "url": "https://k591238.github.io/PB.github.io/"
-    }
+    "@graph": [
+      {
+        "@type": "CreativeWork",
+        "@id": "https://k591238.github.io/PB.github.io/projects/p1/#work",
+        "name": "視感認知 Mind Fluid",
+        "url": "https://k591238.github.io/PB.github.io/projects/p1/",
+        "image": "https://k591238.github.io/PB.github.io/assets/images/projects/p1/og.jpg",
+        "description": "《視感認知 Mind Fluid》，吳承儒（PB）於台北流行音樂中心 Live House D 的音像演出，以段落式呈現探討數位影像由像素構成的觀看方式。",
+        "dateCreated": "2025",
+        "genre": "Performance",
+        "creator": [
+          {
+            "@type": "Role",
+            "roleName": "音像演出 Audiovisual Performance",
+            "creator": {
+              "@type": "Person",
+              "name": "Wu Cheng-Ru",
+              "alternateName": [
+                "吳承儒",
+                "PB",
+                "Pen_bit",
+                "penbit"
+              ],
+              "url": "https://k591238.github.io/PB.github.io/"
+            }
+          }
+        ],
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "吳承儒 Wu Cheng-Ru（PB）",
+          "url": "https://k591238.github.io/PB.github.io/"
+        }
+      },
+      {
+        "@type": "Event",
+        "name": "透視音像 Perspectives Audio-Visual Art",
+        "startDate": "2025-04-20",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "台北流行音樂中心 Live House D"
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "透視音像 Perspectives"
+        },
+        "performer": {
+          "@type": "Person",
+          "name": "Wu Cheng-Ru",
+          "alternateName": [
+            "吳承儒",
+            "PB",
+            "Pen_bit",
+            "penbit"
+          ],
+          "url": "https://k591238.github.io/PB.github.io/"
+        },
+        "workFeatured": {
+          "@id": "https://k591238.github.io/PB.github.io/projects/p1/#work"
+        }
+      }
+    ]
   }
   </script>
 

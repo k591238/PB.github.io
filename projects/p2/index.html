@@ -28,29 +28,69 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    "name": "認夢 Dream Percept",
-    "url": "https://k591238.github.io/PB.github.io/projects/p2/",
-    "image": "https://k591238.github.io/PB.github.io/assets/images/projects/p2/og.jpg",
-    "description": "吳承儒（PB）主要創作《認夢 Dream Percept》，FUTURE VISION LAB 於 C-LAB 穹頂劇場的演出。表演者在現場透過對話引導 AI 做夢，探討 AI 與人類的自我意識。",
-    "dateCreated": "2024",
-    "genre": "Performance",
-    "creator": {
-      "@type": "Person",
-      "name": "Wu Cheng-Ru",
-      "alternateName": [
-        "吳承儒",
-        "PB",
-        "Pen_bit",
-        "penbit"
-      ],
-      "url": "https://k591238.github.io/PB.github.io/"
-    },
-    "isPartOf": {
-      "@type": "WebSite",
-      "name": "吳承儒 Wu Cheng-Ru（PB）",
-      "url": "https://k591238.github.io/PB.github.io/"
-    }
+    "@graph": [
+      {
+        "@type": "CreativeWork",
+        "@id": "https://k591238.github.io/PB.github.io/projects/p2/#work",
+        "name": "認夢 Dream Percept",
+        "url": "https://k591238.github.io/PB.github.io/projects/p2/",
+        "image": "https://k591238.github.io/PB.github.io/assets/images/projects/p2/og.jpg",
+        "description": "吳承儒（PB）主要創作《認夢 Dream Percept》，FUTURE VISION LAB 於 C-LAB 穹頂劇場的演出。表演者在現場透過對話引導 AI 做夢，探討 AI 與人類的自我意識。",
+        "dateCreated": "2024",
+        "genre": "Performance",
+        "creator": [
+          {
+            "@type": "Role",
+            "roleName": "主要創作、AI 設計 Director / AI Design",
+            "creator": {
+              "@type": "Person",
+              "name": "Wu Cheng-Ru",
+              "alternateName": [
+                "吳承儒",
+                "PB",
+                "Pen_bit",
+                "penbit"
+              ],
+              "url": "https://k591238.github.io/PB.github.io/"
+            }
+          }
+        ],
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "吳承儒 Wu Cheng-Ru（PB）",
+          "url": "https://k591238.github.io/PB.github.io/"
+        }
+      },
+      {
+        "@type": "Event",
+        "name": "FUTURE VISION LAB — 吳承儒《認夢 Dream Percept》",
+        "startDate": "2024-11-30",
+        "endDate": "2024-12-01",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "臺灣當代文化實驗場 C-LAB 穹頂劇場（東草坪）"
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "臺灣當代文化實驗場 C-LAB"
+        },
+        "performer": {
+          "@type": "Person",
+          "name": "Wu Cheng-Ru",
+          "alternateName": [
+            "吳承儒",
+            "PB",
+            "Pen_bit",
+            "penbit"
+          ],
+          "url": "https://k591238.github.io/PB.github.io/"
+        },
+        "workFeatured": {
+          "@id": "https://k591238.github.io/PB.github.io/projects/p2/#work"
+        }
+      }
+    ]
   }
   </script>
 

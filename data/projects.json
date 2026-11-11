@@ -7,7 +7,28 @@
     "category": "exhibition",
     "thumb": "assets/images/projects/e2/thumb.webp",
     "description": "吳承儒（PB）個展《繫 Sync》。回應空間的既有結構與語彙，透過音像技術生成沉浸式現場，將影像、聲響與空間動線交織，打造一座異質化的感知風景。",
-    "youtubeId": "j6Q909i4HB0"
+    "youtubeId": "j6Q909i4HB0",
+    "credit": {
+      "as": "creator",
+      "role": "受邀展出藝術家 Invited Artist"
+    },
+    "events": [
+      {
+        "type": "ExhibitionEvent",
+        "name": "吳承儒（PB）個展《繫 Sync》",
+        "startDate": "2026-05-02",
+        "endDate": "2026-06-07",
+        "location": "glitch.home 2F 數位藝術實驗場",
+        "organizer": "glitch 毛刺空間"
+      },
+      {
+        "type": "Event",
+        "name": "《繫 Sync》展覽演出",
+        "startDate": "2026-05-31",
+        "location": "glitch.home 2F 數位藝術實驗場",
+        "organizer": "glitch 毛刺空間"
+      }
+    ]
   },
   {
     "id": "p4",
@@ -16,8 +37,28 @@
     "meta": "Performance",
     "category": "performance",
     "thumb": "assets/images/projects/p4/thumb.webp",
-    "description": "光之曲幕 X DJ Friday Night《聲．光．域》，吳承儒 pen_bit 於歌劇院 2F 大劇前廳光之曲幕穹頂空間的音像演出，分別與宋義威 ALLO WILL、吳道勳 WU TAO HSUN 同台。",
-    "youtubeId": "TazR2qhRegI"
+    "description": "光之曲幕 X DJ Friday Night《聲．光．域》，吳承儒 pen_bit 於臺中國家歌劇院 2F 大劇前廳光之曲幕穹頂空間的音像演出，分別與宋義威 ALLO WILL、吳道勳 WU TAO HSUN 同台。",
+    "youtubeId": "TazR2qhRegI",
+    "credit": {
+      "as": "contributor",
+      "role": "音像演出 Audiovisual Performance"
+    },
+    "events": [
+      {
+        "type": "Event",
+        "name": "光之曲幕 X DJ Friday Night《聲．光．域》",
+        "startDate": "2026-05-15",
+        "location": "臺中國家歌劇院 2F 大劇前廳",
+        "organizer": "臺中國家歌劇院"
+      },
+      {
+        "type": "Event",
+        "name": "光之曲幕 X DJ Friday Night《聲．光．域》",
+        "startDate": "2026-06-12",
+        "location": "臺中國家歌劇院 2F 大劇前廳",
+        "organizer": "臺中國家歌劇院"
+      }
+    ]
   },
   {
     "id": "p5",
@@ -27,7 +68,21 @@
     "category": "performance",
     "thumb": "assets/images/projects/p5/thumb.webp",
     "description": "《Thiann》聽，吳承儒（PB）於奧地利林茲 Ars Electronica Festival「Sound Campus 26 – Listening Underground」的音像演出，負責聲音與影像。",
-    "alt": "《Thiann》聽 — Sound Campus 26 演出紀錄"
+    "alt": "《Thiann》聽 — Sound Campus 26 演出紀錄",
+    "credit": {
+      "as": "creator",
+      "role": "Sound / Visual"
+    },
+    "events": [
+      {
+        "type": "Event",
+        "name": "Sound Campus 26 – Listening Underground, Ars Electronica Festival Linz",
+        "startDate": "2026-09-09",
+        "location": "Kunstuniversität Linz",
+        "address": "Hauptplatz 6, Linz, Austria",
+        "organizer": "Ars Electronica Festival"
+      }
+    ]
   },
   {
     "id": "c1",
@@ -36,7 +91,19 @@
     "meta": "Case",
     "category": "case",
     "thumb": "assets/images/projects/c1/thumb.webp",
-    "description": "101 手錶發表會商業演出紀錄（2026 年 6 月 10 日），吳承儒（pen_bit）擔任 VJ，與 DJ 達巴斯胡祕 Tapas Humi 合作演出。"
+    "description": "101 手錶發表會商業演出紀錄（2026 年 6 月 10 日），吳承儒（pen_bit）擔任 VJ，與 DJ 達巴斯胡祕 Tapas Humi 合作演出。",
+    "credit": {
+      "as": "contributor",
+      "role": "VJ"
+    },
+    "events": [
+      {
+        "type": "Event",
+        "name": "101 手錶發表會",
+        "startDate": "2026-06-10",
+        "location": "台北101 4樓 The One"
+      }
+    ]
   },
   {
     "id": "co3",
@@ -45,7 +112,15 @@
     "meta": "Collaboration",
     "category": "collaboration",
     "thumb": "assets/images/projects/co3/thumb.webp",
-    "description": "樓頂小隊《自動販賣機》，第四屆桃園科技表演藝術獎科藝獎競賽作品，結合即時影像生成、新媒體藝術與劇場表演，獲文化部 115 年度扶植青年藝術發展補助支持。"
+    "description": "樓頂小隊《自動販賣機》，第四屆桃園科技表演藝術獎科藝獎競賽作品，結合即時影像生成、新媒體藝術與劇場表演，吳承儒擔任影像技術。本作品獲文化部 115 年度扶植青年藝術發展補助支持。",
+    "credit": {
+      "as": "contributor",
+      "role": "影像技術"
+    },
+    "creators": [
+      "樓頂小隊"
+    ],
+    "note": "第四屆桃園科技表演藝術獎的階段性呈現，未對外公開，所以沒有活動資料；之後有正式演出再補"
   },
   {
     "id": "ev1",
@@ -54,7 +129,21 @@
     "meta": "Events",
     "category": "events",
     "thumb": "assets/images/projects/ev1/thumb.webp",
-    "description": "吳承儒（PB）於 PXP 2026 音像藝術節擔任藝術家短講講者與工作坊助教，以《創作過程中的思考：從觀察到呈現》為題，分享從日常觀察到作品呈現的創作脈絡。"
+    "description": "吳承儒（PB）於 PXP 2026 音像藝術節擔任藝術家短講講者與工作坊助教，以《創作過程中的思考：從觀察到呈現》為題，分享從日常觀察到作品呈現的創作脈絡。",
+    "credit": {
+      "as": "contributor",
+      "role": "藝術家短講講者、Workshop 助教 Speaker / Workshop TA"
+    },
+    "events": [
+      {
+        "type": "Event",
+        "name": "PXP 2026 — Perspectives × Public Visuals Audiovisual Arts Festival",
+        "startDate": "2026-08-22",
+        "endDate": "2026-08-23",
+        "location": "台北流行音樂中心 Live House D",
+        "organizer": "Perspectives × Public Visuals"
+      }
+    ]
   },
   {
     "id": "p6",
@@ -63,7 +152,21 @@
     "meta": "Performance",
     "category": "performance",
     "thumb": "assets/images/projects/p6/thumb.webp",
-    "description": "《視感認知 Visual Cognition》，吳承儒（PB）於 2026 新響藝術季《新聲複樂之夜》（C-LAB 臺灣聲響實驗室）的音像演出，探討數位影像中像素與認知投射之間的觀看經驗。"
+    "description": "《視感認知 Visual Cognition》，吳承儒（PB）於 2026 新響藝術季《新聲複樂之夜》（C-LAB 臺灣聲響實驗室）的音像演出，探討數位影像中像素與認知投射之間的觀看經驗。",
+    "credit": {
+      "as": "creator",
+      "role": "Sound / Visual"
+    },
+    "events": [
+      {
+        "type": "Event",
+        "name": "2026 新響藝術季《新聲複樂之夜》",
+        "startDate": "2026-08-21T19:30+08:00",
+        "endDate": "2026-08-21T20:30+08:00",
+        "location": "新竹縣政府文化局 實驗劇場",
+        "organizer": "2026 新響藝術季"
+      }
+    ]
   },
   {
     "id": "p1",
@@ -73,7 +176,20 @@
     "category": "performance",
     "thumb": "assets/images/projects/p1/pic_15.webp",
     "description": "《視感認知 Mind Fluid》，吳承儒（PB）於台北流行音樂中心 Live House D 的音像演出，以段落式呈現探討數位影像由像素構成的觀看方式。",
-    "youtubeId": "MoqFfofD9oY"
+    "youtubeId": "MoqFfofD9oY",
+    "credit": {
+      "as": "creator",
+      "role": "音像演出 Audiovisual Performance"
+    },
+    "events": [
+      {
+        "type": "Event",
+        "name": "透視音像 Perspectives Audio-Visual Art",
+        "startDate": "2025-04-20",
+        "location": "台北流行音樂中心 Live House D",
+        "organizer": "透視音像 Perspectives"
+      }
+    ]
   },
   {
     "id": "e3",
@@ -82,7 +198,31 @@
     "meta": "Exhibition",
     "category": "exhibition",
     "thumb": "assets/images/projects/e3/thumb.webp",
-    "description": "吳承儒、胡貽斐互動影像作品《鹹淡適中 Glub Glub》。將水域帶入城市，當觀眾靠近時，水邊的動植物隨身影浮現並隨動作變化，於金車文藝中心承德館及臺北白晝之夜展出。"
+    "description": "吳承儒、胡貽斐互動影像作品《鹹淡適中 Glub Glub》。將水域帶入城市，當觀眾靠近時，水邊的動植物隨身影浮現並隨動作變化，於金車文藝中心承德館及臺北白晝之夜展出。",
+    "credit": {
+      "as": "creator",
+      "role": "藝術家 Artist"
+    },
+    "creators": [
+      "胡貽斐 Hu Yi-Fei"
+    ],
+    "events": [
+      {
+        "type": "ExhibitionEvent",
+        "name": "2025 臺北數位藝術節──層疊的海平線",
+        "startDate": "2025-10-25",
+        "endDate": "2025-11-09",
+        "location": "金車文藝中心承德館 1F",
+        "organizer": "臺北數位藝術節"
+      },
+      {
+        "type": "ExhibitionEvent",
+        "name": "2025 臺北白晝之夜 Nuit Blanche Taipei",
+        "startDate": "2025-11-01",
+        "location": "花博園區花海廣場",
+        "organizer": "臺北數位藝術節"
+      }
+    ]
   },
   {
     "id": "c2",
@@ -92,7 +232,21 @@
     "category": "case",
     "thumb": "assets/images/projects/c2/thumb.webp",
     "description": "BLND Academy × 透視音像 Perspectives「Live VJ Lab 即時影像演出工作營」，吳承儒擔任講師，以 Resolume Arena 與 TouchDesigner 帶領即時影像創作、視覺演出與系統整合。",
-    "alt": "Live VJ Lab"
+    "alt": "Live VJ Lab",
+    "credit": {
+      "as": "contributor",
+      "role": "工作坊講師 Instructor"
+    },
+    "events": [
+      {
+        "type": "EducationEvent",
+        "name": "Live VJ Lab 即時影像演出工作營",
+        "startDate": "2025-07-30T09:30+08:00",
+        "endDate": "2025-08-03T16:30+08:00",
+        "location": "BLND Academy",
+        "organizer": "透視音像 Perspectives Audio-Visual Art × BLND Academy"
+      }
+    ]
   },
   {
     "id": "c3",
@@ -102,7 +256,23 @@
     "category": "case",
     "thumb": "assets/images/projects/c3/work_01.webp",
     "description": "蔡昱廷《離水山：再臨 Shuishan: Returnings》，2025 臺灣美術雙年展「黑水」三頻道影像與聲音裝置，吳承儒（PB）擔任 AI Visual Programmer。",
-    "youtubeId": "EtbHRLqTuyA"
+    "youtubeId": "EtbHRLqTuyA",
+    "credit": {
+      "as": "contributor",
+      "role": "AI Visual Programmer"
+    },
+    "creators": [
+      "蔡昱廷 Yu-Ting Tsai"
+    ],
+    "events": [
+      {
+        "type": "ExhibitionEvent",
+        "name": "2025 臺灣美術雙年展 — 黑水 Taiwan Art Biennial - Black Water",
+        "startDate": "2025",
+        "location": "國立臺灣美術館",
+        "organizer": "國立臺灣美術館"
+      }
+    ]
   },
   {
     "id": "p2",
@@ -112,7 +282,21 @@
     "category": "performance",
     "thumb": "assets/images/projects/p2/thumb.webp",
     "description": "吳承儒（PB）主要創作《認夢 Dream Percept》，FUTURE VISION LAB 於 C-LAB 穹頂劇場的演出。表演者在現場透過對話引導 AI 做夢，探討 AI 與人類的自我意識。",
-    "youtubeId": "VWdl_gF3HBw"
+    "youtubeId": "VWdl_gF3HBw",
+    "credit": {
+      "as": "creator",
+      "role": "主要創作、AI 設計 Director / AI Design"
+    },
+    "events": [
+      {
+        "type": "Event",
+        "name": "FUTURE VISION LAB — 吳承儒《認夢 Dream Percept》",
+        "startDate": "2024-11-30",
+        "endDate": "2024-12-01",
+        "location": "臺灣當代文化實驗場 C-LAB 穹頂劇場（東草坪）",
+        "organizer": "臺灣當代文化實驗場 C-LAB"
+      }
+    ]
   },
   {
     "id": "e1",
@@ -122,7 +306,21 @@
     "category": "exhibition",
     "thumb": "assets/images/projects/e1/thumb.webp",
     "description": "吳承儒（PB）聲音裝置《聽說 Whisper》，2024 關渡光藝術節 X 後花園實驗場《燒聲》。資訊來源只有來自水管內的聲音，卻無法確定其真實性與具體內容。",
-    "youtubeId": "3zMIU6YjPEk"
+    "youtubeId": "3zMIU6YjPEk",
+    "credit": {
+      "as": "creator",
+      "role": "藝術家 Artist"
+    },
+    "events": [
+      {
+        "type": "ExhibitionEvent",
+        "name": "2024 關渡光藝術節 X 後花園實驗場跨域展演《燒聲》",
+        "startDate": "2024-10-19",
+        "endDate": "2024-11-03",
+        "location": "國立臺北藝術大學 戰車草原",
+        "organizer": "關渡光藝術節"
+      }
+    ]
   },
   {
     "id": "co1",
@@ -133,7 +331,24 @@
     "thumb": "assets/images/projects/co1/thumb.webp",
     "description": "明白實驗所《翼手龍摩天劇院 The Archaeology of Wonderland》，2024 臺北藝穗節，吳承儒（PB）擔任技術統籌暨執行與 AI 影像設計，打造一座關於記憶考古的飛行劇院。",
     "alt": "翼手龍摩天劇院",
-    "youtubeId": "1NetdkQiMT4"
+    "youtubeId": "1NetdkQiMT4",
+    "credit": {
+      "as": "contributor",
+      "role": "技術統籌暨執行、AI 影像設計 Technical Director / AI Image Design"
+    },
+    "creators": [
+      "明白實驗所"
+    ],
+    "events": [
+      {
+        "type": "Event",
+        "name": "2024 臺北藝穗節《翼手龍摩天劇院》",
+        "startDate": "2024-09-06",
+        "endDate": "2024-09-08",
+        "location": "國立臺灣科學教育館",
+        "organizer": "明白實驗所"
+      }
+    ]
   },
   {
     "id": "co2",
@@ -142,8 +357,30 @@
     "meta": "Collaboration",
     "category": "collaboration",
     "thumb": "assets/images/projects/co2/work_10.webp",
-    "description": "VIVIDO: re-Action，XTRUX VIVIDO 創作計畫最終章，於臺北數位藝術中心（DAC）。吳承儒以 Pen Bit 身分與 Sandy's Trace 合作 live A/V 演出。",
-    "youtubeId": "K276uwK-u5A"
+    "description": "VIVIDO: re-Action，XTRUX VIVIDO 創作計畫最終章，於臺北數位藝術中心（DAC）。吳承儒以 Pen Bit 身分與 Sandy's Trace 合作 live audiovisual 演出。",
+    "youtubeId": "K276uwK-u5A",
+    "credit": {
+      "as": "contributor",
+      "role": "Live Audiovisual Performance（與 Sandy's Trace）"
+    },
+    "events": [
+      {
+        "type": "ExhibitionEvent",
+        "name": "VIVIDO: re-Action",
+        "startDate": "2024-03-12",
+        "endDate": "2024-03-17",
+        "location": "臺北數位藝術中心（DAC）",
+        "organizer": "臺北數位藝術中心"
+      },
+      {
+        "type": "Event",
+        "name": "VIVIDO: re-Action 開幕派對 Opening Party",
+        "startDate": "2024-03-09T18:00+08:00",
+        "endDate": "2024-03-10T01:00+08:00",
+        "location": "臺北數位藝術中心（DAC）",
+        "organizer": "臺北數位藝術中心"
+      }
+    ]
   },
   {
     "id": "p3",
@@ -152,6 +389,20 @@
     "meta": "Performance",
     "category": "performance",
     "thumb": "assets/images/projects/p3/thumb.webp",
-    "description": "FUTURE VISION LAB 2023《未來視覺派對》，C-LAB 戶外穹頂劇場（DOME）的音像演出，吳承儒（pen_bit）為參與藝術家並擔任技術執行。"
+    "description": "FUTURE VISION LAB 2023《未來視覺派對》，C-LAB 戶外穹頂劇場（DOME）的音像演出，吳承儒（pen_bit）為參與藝術家並擔任技術執行。",
+    "credit": {
+      "as": "contributor",
+      "role": "參與藝術家、技術執行 Artist / Technical Execution"
+    },
+    "events": [
+      {
+        "type": "Event",
+        "name": "FUTURE VISION LAB 2023《未來視覺派對》",
+        "startDate": "2023-12-01T19:30+08:00",
+        "endDate": "2023-12-02",
+        "location": "臺灣當代文化實驗場 C-LAB 戶外穹頂劇場（DOME）",
+        "organizer": "臺灣當代文化實驗場 C-LAB"
+      }
+    ]
   }
 ]

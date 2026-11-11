@@ -28,29 +28,86 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    "name": "繫 Sync",
-    "url": "https://k591238.github.io/PB.github.io/projects/e2/",
-    "image": "https://k591238.github.io/PB.github.io/assets/images/projects/e2/og.jpg",
-    "description": "吳承儒（PB）個展《繫 Sync》。回應空間的既有結構與語彙，透過音像技術生成沉浸式現場，將影像、聲響與空間動線交織，打造一座異質化的感知風景。",
-    "dateCreated": "2026",
-    "genre": "Exhibition",
-    "creator": {
-      "@type": "Person",
-      "name": "Wu Cheng-Ru",
-      "alternateName": [
-        "吳承儒",
-        "PB",
-        "Pen_bit",
-        "penbit"
-      ],
-      "url": "https://k591238.github.io/PB.github.io/"
-    },
-    "isPartOf": {
-      "@type": "WebSite",
-      "name": "吳承儒 Wu Cheng-Ru（PB）",
-      "url": "https://k591238.github.io/PB.github.io/"
-    }
+    "@graph": [
+      {
+        "@type": "CreativeWork",
+        "@id": "https://k591238.github.io/PB.github.io/projects/e2/#work",
+        "name": "繫 Sync",
+        "url": "https://k591238.github.io/PB.github.io/projects/e2/",
+        "image": "https://k591238.github.io/PB.github.io/assets/images/projects/e2/og.jpg",
+        "description": "吳承儒（PB）個展《繫 Sync》。回應空間的既有結構與語彙，透過音像技術生成沉浸式現場，將影像、聲響與空間動線交織，打造一座異質化的感知風景。",
+        "dateCreated": "2026",
+        "genre": "Exhibition",
+        "creator": [
+          {
+            "@type": "Role",
+            "roleName": "受邀展出藝術家 Invited Artist",
+            "creator": {
+              "@type": "Person",
+              "name": "Wu Cheng-Ru",
+              "alternateName": [
+                "吳承儒",
+                "PB",
+                "Pen_bit",
+                "penbit"
+              ],
+              "url": "https://k591238.github.io/PB.github.io/"
+            }
+          }
+        ],
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "吳承儒 Wu Cheng-Ru（PB）",
+          "url": "https://k591238.github.io/PB.github.io/"
+        }
+      },
+      {
+        "@type": "ExhibitionEvent",
+        "name": "吳承儒（PB）個展《繫 Sync》",
+        "startDate": "2026-05-02",
+        "endDate": "2026-06-07",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "glitch.home 2F 數位藝術實驗場"
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "glitch 毛刺空間"
+        },
+        "workFeatured": {
+          "@id": "https://k591238.github.io/PB.github.io/projects/e2/#work"
+        }
+      },
+      {
+        "@type": "Event",
+        "name": "《繫 Sync》展覽演出",
+        "startDate": "2026-05-31",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "glitch.home 2F 數位藝術實驗場"
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "glitch 毛刺空間"
+        },
+        "performer": {
+          "@type": "Person",
+          "name": "Wu Cheng-Ru",
+          "alternateName": [
+            "吳承儒",
+            "PB",
+            "Pen_bit",
+            "penbit"
+          ],
+          "url": "https://k591238.github.io/PB.github.io/"
+        },
+        "workFeatured": {
+          "@id": "https://k591238.github.io/PB.github.io/projects/e2/#work"
+        }
+      }
+    ]
   }
   </script>
 
