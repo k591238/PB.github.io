@@ -784,7 +784,7 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
     <li><b>Laser CHOP</b>：Source = POP，Output Sample Rate 設成投影機規格的掃描速度（例如投影機標示 30K，就設 30000），不超過 65500。</li>
     <li><b>Laser Device CHOP</b>：接在 Laser CHOP 後面，<b>Type 選 Helios</b>，Device 選單會自動列出接上的 Helios。沒出現時按 Scan。</li>
     <li><b>先調暗</b>：Red / Green / Blue Scale 調到 0.1～0.2，再把 Active 打開。</li>
-    <li><b>確認路徑後才加亮度</b>：圖形方向不對時，用 X Scale 或 Y Scale 設 −1 翻轉。</li>
+    <li><b>確認路徑後才加亮度</b>：圖形方向不對時，在送進 Laser Device CHOP 之前用 Math CHOP 把 x 或 y 乘上 −1（或在 POP 用 Transform POP 翻轉）。<b>不要</b>把 Laser Device CHOP 的 X/Y Scale 設成負數：實測 Helios 會卡在角落、只剩一個點。</li>
   </ol>
   <div class="grid2">
     <div class="card"><div class="lbl">Type 要選對</div><p>Type 選 <b>EtherDream</b> 時（網路型 DAC，要填 IP 和 Port），找不到裝置節點就會變紅。使用 Helios 時 Type 選 <b>Helios</b>，不需要填 IP。</p></div>
@@ -823,7 +823,7 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
     <tbody>
       <tr><td>Device 選單是空的</td><td>USB 有沒有接好、電源燈有沒有亮；先關掉其他使用中的 Laser Device CHOP，再按 Scan；舊版 Windows 要裝 WinUSB 驅動</td></tr>
       <tr><td>TD 沒錯誤，但完全沒光</td><td>投影機是否在 ILDA 模式、鑰匙與 interlock、RGB Scale 是否為 0、Laser CHOP 的 Active、POP 是否有 Color</td></tr>
-      <tr><td>圖形左右或上下顛倒</td><td>X Scale / Y Scale 設 −1（背投或鏡面反射時常見）</td></tr>
+      <tr><td>圖形左右或上下顛倒</td><td>在 Laser Device CHOP 之前用 Math CHOP 把 x 或 y 乘上 −1（背投或鏡面反射時常見）。不要用負的 X/Y Scale</td></tr>
       <tr><td>閃爍</td><td>每秒重畫太低：減少筆畫、曲線改導引點、縮小圖形</td></tr>
       <tr><td>轉角變圓、角落過亮</td><td>Corner Hold 太小或太大；取樣率超過投影機的掃描速度</td></tr>
       <tr><td>線段頭尾有拖尾或缺口</td><td>調 Color Delay 與 blanking 參數</td></tr>
@@ -896,7 +896,7 @@ input[type=range]:hover::-moz-range-thumb,input[type=range]:focus::-moz-range-th
       <tr><td class="k">device</td><td>自動列出接上的 Helios</td></tr>
       <tr><td class="k">scan</td><td>重新掃描。掃描時會關閉使用中的 Helios 連線</td></tr>
       <tr><td class="k">queuetime = 0.1 · queueunits = seconds</td><td>緩衝長度；點數少時可以調小</td></tr>
-      <tr><td class="k">xscale / yscale</td><td>縮放與翻轉（−1）</td></tr>
+      <tr><td class="k">xscale / yscale</td><td>縮放。設成負數時 Helios 會卡在角落，翻轉請在前面用 Math CHOP</td></tr>
       <tr><td class="k wrap">redscale / greenscale / bluescale / intensityscale</td><td>RGB 全為 0 時自動 blanking</td></tr>
       <tr><td class="k">輸入通道</td><td>x、y（−1～1），r、g、b、i（0～1），user1～4 選用</td></tr>
     </tbody></table></div>
